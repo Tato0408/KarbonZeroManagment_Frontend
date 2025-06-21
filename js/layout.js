@@ -1,28 +1,28 @@
 
-const sidebar        = document.getElementById("sidebar");
+const sidebar = document.getElementById("sidebar");
 const sidebarToggler = document.querySelector(".menu-toggle");
-const mainContent    = document.getElementById("main-content");
+const mainContent = document.getElementById("main-content");
 
 sidebarToggler.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
 const HTML_PATH = "views/";
-const CSS_PATH  = "css/";
-const JS_PATH   = "js/";
+const CSS_PATH = "css/";
+const JS_PATH = "js/";
 
 const routes = {
-  "Canal":       "canal.html",
-  "Medidas":     "medidas.html",
-  "Mascota":     "mascota.html",
-  "Vehículo":    "vehiculo.html",
-  "Vivienda":    "vivienda.html",
-  "Alimentos":   "alimentos.html",
-  "Servicios":   "servicios.html",
-  "Compañías":   "companias.html",
-  "Países":      "paises.html",
-  "Transporte":  "transporte.html",
-  "Logros":      "logros.html"
+  "Canal": "canal.html",
+  "Medidas": "medidas.html",
+  "Mascota": "mascota.html",
+  "Vehículo": "vehiculo.html",
+  "Vivienda": "vivienda.html",
+  "Alimentos": "alimentos.html",
+  "Servicios": "servicios.html",
+  "Compañías": "companias.html",
+  "Países": "paises.html",
+  "Transporte": "transporte.html",
+  "Logros": "logros.html"
 };
 
 const initializers = {
@@ -35,13 +35,13 @@ function loadCSSIfExists(path) {
       if (res.ok) {
         document.querySelector(`link[data-dynamic-css="${path}"]`)?.remove();
         const link = document.createElement('link');
-        link.rel  = "stylesheet";
+        link.rel = "stylesheet";
         link.href = path;
         link.setAttribute("data-dynamic-css", path);
         document.head.appendChild(link);
       }
     })
-    .catch(() => {});
+    .catch(() => { });
 }
 
 function loadJSIfExists(path, initFn) {
@@ -58,7 +58,7 @@ function loadJSIfExists(path, initFn) {
         document.body.appendChild(script);
       }
     })
-    .catch(() => {});
+    .catch(() => { });
 }
 
 function loadContent(pageUrl) {
@@ -88,7 +88,7 @@ function loadContent(pageUrl) {
           setTimeout(() => mainContent.classList.remove("fade-in"), 300);
         }, 10);
       })
-        ///Manejar error si por caso de la vida no podemos cargar la pagina
+      ///Manejar error si por caso de la vida no podemos cargar la pagina
       .catch(err => {
         console.error("loadContent:", err);
         mainContent.innerHTML = `
@@ -105,8 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!a) return;
 
     const texto = a.textContent.trim();
-    const ruta  = routes[texto];
-    if (!ruta) return; 
+    const ruta = routes[texto];
+    if (!ruta) return;
 
     e.preventDefault();
     loadContent(HTML_PATH + ruta);
@@ -116,6 +116,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // carga inicial
+
   loadContent(HTML_PATH + routes["Canal"]);
 });
+document.addEventListener("click", function (event) {
+  const isClickInsideSidebar = sidebar.contains(event.target);
+  const isClickOnToggle = sidebarToggler.contains(event.target);
+
+
+  if (window.innerWidth <= 768 && sidebar.classList.contains("show") && !isClickInsideSidebar && !isClickOnToggle) {
+    sidebar.classList.remove("show");
+  }
+});
+
+
