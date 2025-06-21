@@ -129,3 +129,8 @@ body {
     opacity: 1;
     transition: opacity 0.3s;
 }
+.content-wrapper {
+  margin-left: 280px;             
+  width: calc(100% - 280px);      
+  overflow-x: auto;
+}

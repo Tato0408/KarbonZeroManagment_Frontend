@@ -1,123 +1,121 @@
-function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    sidebar.classList.toggle("show");
-}
+
+const sidebar        = document.getElementById("sidebar");
+const sidebarToggler = document.querySelector(".menu-toggle");
+const mainContent    = document.getElementById("main-content");
+
+sidebarToggler.addEventListener("click", () => {
+  sidebar.classList.toggle("show");
+});
 
 const HTML_PATH = "views/";
-const CSS_PATH = "css/";
-const JS_PATH = "js/";
-
+const CSS_PATH  = "css/";
+const JS_PATH   = "js/";
 
 const routes = {
-    'canal': 'canal.html',
-    'medidas': 'medidas.html',
-    'mascota': 'mascota.html',
-    'vehiculo': 'vehiculo.html',
-    'vivienda': 'vivienda.html',
-    'alimentos': 'alimentos.html',
-    'servicios': 'servicios.html',
-    'compañias': 'compañias.html',
-    'paises': 'paises.html',
-    'transporte': 'transporte.html',
-    'logros': 'logros.html'
+  "Canal":       "canal.html",
+  "Medidas":     "medidas.html",
+  "Mascota":     "mascota.html",
+  "Vehículo":    "vehiculo.html",
+  "Vivienda":    "vivienda.html",
+  "Alimentos":   "alimentos.html",
+  "Servicios":   "servicios.html",
+  "Compañías":   "companias.html",
+  "Países":      "paises.html",
+  "Transporte":  "transporte.html",
+  "Logros":      "logros.html"
 };
 
 const initializers = {
-
+  ///TODO: Initializers de cada pagina
 };
 
-function loadContent(url) {
-    fetch(url)
-        .then(response => {
-            if (!response.ok) throw new Error('No se pudo cargar la vista.');
-            return response.text();
-        })
-        .then(html => {
-            document.getElementById('main-content').innerHTML = html;
-        })
-        .catch(error => {
-            console.error('Error al cargar contenido:', error);
-            document.getElementById('main-content').innerHTML = '<p>Error al cargar la vista.</p>';
-        });
+function loadCSSIfExists(path) {
+  fetch(path, { method: 'HEAD' })
+    .then(res => {
+      if (res.ok) {
+        document.querySelector(`link[data-dynamic-css="${path}"]`)?.remove();
+        const link = document.createElement('link');
+        link.rel  = "stylesheet";
+        link.href = path;
+        link.setAttribute("data-dynamic-css", path);
+        document.head.appendChild(link);
+      }
+    })
+    .catch(() => {});
 }
 
-
-document.addEventListener('DOMContentLoaded', () => {
-    loadContent('views/canal.html');
-
-    document.querySelectorAll('.sidebar a.nav-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            const href = link.getAttribute('href');
-
-            if (href.startsWith('#')) return;
-
-            e.preventDefault();
-
-            loadContent(href);
-
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('show');
-            }
-        });
-    });
-});
-
-function loadContent(pagePath) {
-    const container = document.getElementById('main-content');
-    if (!container) return;
-
-    container.classList.add('fade-out');
-
-    setTimeout(() => {
-        fetch(pagePath)
-            .then(res => res.text())
-            .then(html => {
-                const temp = document.createElement('div');
-                temp.innerHTML = html;
-                const body = temp.querySelector('body');
-                container.innerHTML = body ? body.innerHTML : html;
-
-                const cssPath = CSS_PATH + fileName + '.css';
-                document.querySelector(`link[data-dynamic-css="${cssPath}"]`)?.remove();
-                loadCSSIfExists(cssPath);
-
-
-                const initFn = initializers[fileName + '.html'];
-                if (initFn) {
-                    const jsPath = JS_PATH + fileName + '.js';
-                    document.querySelector(`script[src="${jsPath}"]`)?.remove();
-                    window[initFn] = undefined;
-                    loadJSIfExists(jsPath, initFn);
-                }
-                ///Aca la animacion de entrada 
-                setTimeout(() => {
-                    container.classList.remove('fade-out');
-                    container.classList.add('fade-in');
-                    setTimeout(() => container.classList.remove('fade-in'), 300);
-                }, 10);
-            })
-            ///Manejar error si por caso de la vida no podemos cargar la pagina
-            .catch(err => {
-                console.error(`Error cargando ${pagePath}:`, err);
-                container.innerHTML = `
-                        <div class="alert alert-danger">
-                            <strong>Error:</strong> No se pudo cargar la página "${pagePath}".
-                        </div>
-                    `;
-            });
-    }, 300);
+function loadJSIfExists(path, initFn) {
+  fetch(path, { method: 'HEAD' })
+    .then(res => {
+      if (res.ok) {
+        const script = document.createElement('script');
+        script.src = path;
+        script.onload = () => {
+          if (initFn && typeof window[initFn] === "function") {
+            window[initFn]();
+          }
+        };
+        document.body.appendChild(script);
+      }
+    })
+    .catch(() => {});
 }
 
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', function (e) {
-        const label = this.querySelector('.nav-label')?.textContent.trim().toLowerCase();
-        if (routes[label]) {
-            e.preventDefault();
-            loadContent(HTML_PATH + routes[label]);
-        }
-    });
+function loadContent(pageUrl) {
+  mainContent.classList.add("fade-out");
+
+  setTimeout(() => {
+    fetch(pageUrl)
+      .then(resp => {
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        return resp.text();
+      })
+      .then(htmlText => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, "text/html");
+        //! inyectamos únicamente lo que haya dentro de <body>
+        mainContent.innerHTML = doc.body.innerHTML;
+
+        const fileName = pageUrl.split("/").pop().replace(".html", "");
+
+        loadCSSIfExists(`${CSS_PATH}${fileName}.css`);
+        const initFn = initializers[`${fileName}.html`];
+        if (initFn) loadJSIfExists(`${JS_PATH}${fileName}.js`, initFn);
+        //?Animacion al entrar y salir
+        setTimeout(() => {
+          mainContent.classList.remove("fade-out");
+          mainContent.classList.add("fade-in");
+          setTimeout(() => mainContent.classList.remove("fade-in"), 300);
+        }, 10);
+      })
+        ///Manejar error si por caso de la vida no podemos cargar la pagina
+      .catch(err => {
+        console.error("loadContent:", err);
+        mainContent.innerHTML = `
+          <div class="alert alert-danger">
+            <strong>Error:</strong> No se pudo cargar "${pageUrl}".
+          </div>`;
+      });
+  }, 300);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  sidebar.addEventListener("click", e => {
+    const a = e.target.closest("a.nav-link");
+    if (!a) return;
+
+    const texto = a.textContent.trim();
+    const ruta  = routes[texto];
+    if (!ruta) return; 
+
+    e.preventDefault();
+    loadContent(HTML_PATH + ruta);
+
+    if (window.innerWidth <= 768) {
+      sidebar.classList.remove("show");
+    }
+  });
+
+  // carga inicial
+  loadContent(HTML_PATH + routes["Canal"]);
 });
-
-loadContent(HTML_PATH + 'dashboard.html');
-
-
