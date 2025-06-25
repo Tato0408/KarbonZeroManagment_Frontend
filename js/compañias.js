@@ -40,8 +40,19 @@ function initCompani() {
     ]
   }
 ];
+    initCopaniModal();
   renderTabs(tabsData);
 }
+function initCopaniModal(){
+  const modal = document.querySelector('#CompaniModal');
+  if(!modal) return;
+  window.userModal = bootstrap.Modal.getOrCreateInstance(modal);
+}
+document.getElementById('CompaniForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+
+  window.userModal.hide();
+})
 function renderTabs(tabsData) {
   const tabList    = document.getElementById('tabList');
   const tabContent = document.getElementById('tabContent');
