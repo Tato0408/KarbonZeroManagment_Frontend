@@ -20,14 +20,15 @@ const routes = {
   "Alimentos": "alimentos.html",
   "Servicios": "servicios.html",
   'Compañías': 'compañias.html',
-  "Países": "paises.html",
+  'Países': 'paises.html',
   "Transporte": "transporte.html",
   "Logros": "logros.html"
 };
 
 const initializers = {
   ///TODO: Initializers de cada pagina
-  'compañias.html' : 'initCompani'
+  'compañias.html' : 'initCompani',
+  'paises.html' : 'initCountry'
 };
 
 function loadCSSIfExists(path) {
