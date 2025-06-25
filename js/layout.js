@@ -19,7 +19,7 @@ const routes = {
   "Vivienda": "vivienda.html",
   "Alimentos": "alimentos.html",
   "Servicios": "servicios.html",
-  "Compañías": "companias.html",
+  'Compañías': 'compañias.html',
   "Países": "paises.html",
   "Transporte": "transporte.html",
   "Logros": "logros.html"
@@ -27,6 +27,7 @@ const routes = {
 
 const initializers = {
   ///TODO: Initializers de cada pagina
+  'compañias.html' : 'initCompani'
 };
 
 function loadCSSIfExists(path) {
