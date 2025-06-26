@@ -22,14 +22,15 @@ const routes = {
   'Compañías': 'compañias.html',
   'Países': 'paises.html',
   'Transporte': 'transporte.html',
-  "Logros": "logros.html"
+  'Logros': 'logros.html'
 };
 
 const initializers = {
   ///TODO: Initializers de cada pagina
   'compañias.html' : 'initCompani',
   'paises.html' : 'initCountry',
-  'transporte.html' : 'initTransport'
+  'transporte.html' : 'initTransport',
+  'logros.html' : 'initAchievements'
 };
 
 function loadCSSIfExists(path) {
