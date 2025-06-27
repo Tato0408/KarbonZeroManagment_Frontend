@@ -113,7 +113,7 @@ function setupPagination(pane, data, columns) {
       <tr>
         ${columns.map(c => `<td>${r[c.field] ?? ''}</td>`).join('')}
         <td>
-          <button class="btn btn-sm btn-success me-1"><i class="bi bi-pencil-fill"></i></button>
+          <button class="btn btn-sm btn-success me-1" data-bs-toggle="modal" data-bs-target="#CompaniModal"><i class="bi bi-pencil-fill"></i></button>
           <button class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></button>
         </td>
       </tr>
