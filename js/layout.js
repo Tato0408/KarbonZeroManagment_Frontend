@@ -16,7 +16,7 @@ const routes = {
   "Medidas": "medidas.html",
   'Mascota': 'mascota.html',
   "Vehículo": "vehiculo.html",
-  "Vivienda": "vivienda.html",
+  'Vivienda': 'vivienda.html',
   "Alimentos": "alimentos.html",
   "Servicios": "servicios.html",
   'Compañías': 'compañias.html',
@@ -28,6 +28,7 @@ const routes = {
 const initializers = {
   ///TODO: Initializers de cada pagina
   'mascota.html' : 'initPet',
+  'vivienda.html' : 'initdwellin',
   'compañias.html' : 'initCompani',
   'paises.html' : 'initCountry',
   'transporte.html' : 'initTransport',
