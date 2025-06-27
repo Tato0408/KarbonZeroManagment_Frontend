@@ -14,7 +14,7 @@ const JS_PATH = "js/";
 const routes = {
   "Canal": "canal.html",
   "Medidas": "medidas.html",
-  "Mascota": "mascota.html",
+  'Mascota': 'mascota.html',
   "Vehículo": "vehiculo.html",
   "Vivienda": "vivienda.html",
   "Alimentos": "alimentos.html",
@@ -27,6 +27,7 @@ const routes = {
 
 const initializers = {
   ///TODO: Initializers de cada pagina
+  'mascota.html' : 'initPet',
   'compañias.html' : 'initCompani',
   'paises.html' : 'initCountry',
   'transporte.html' : 'initTransport',
