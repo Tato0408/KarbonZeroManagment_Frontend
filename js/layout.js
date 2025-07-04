@@ -35,7 +35,8 @@ const initializers = {
   'transporte.html' : 'initTransport',
   'logros.html' : 'initAchievements',
   'medidas.html': 'initMeasures',
-  'alimentos.html': 'initFoods'
+  'alimentos.html': 'initFoods',
+  'servicios.html': 'initServices'
 };
 
 function loadCSSIfExists(path) {
