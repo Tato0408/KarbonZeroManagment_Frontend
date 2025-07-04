@@ -33,7 +33,10 @@ const initializers = {
   'compañias.html' : 'initCompani',
   'paises.html' : 'initCountry',
   'transporte.html' : 'initTransport',
-  'logros.html' : 'initAchievements'
+  'logros.html' : 'initAchievements',
+  'medidas.html': 'initMeasures',
+  'alimentos.html': 'initFoods',
+  'servicios.html': 'initServices'
 };
 
 function loadCSSIfExists(path) {
