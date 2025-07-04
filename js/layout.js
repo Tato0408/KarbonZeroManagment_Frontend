@@ -34,7 +34,8 @@ const initializers = {
   'paises.html' : 'initCountry',
   'transporte.html' : 'initTransport',
   'logros.html' : 'initAchievements',
-  'medidas.html': 'initMeasures'
+  'medidas.html': 'initMeasures',
+  'alimentos.html': 'initFoods'
 };
 
 function loadCSSIfExists(path) {
