@@ -1,0 +1,91 @@
+body {
+  height: 100vh;
+  background-color: #00684A;
+
+  position: relative;
+  isolation: isolate;
+}
+
+body::after {
+    content: "";
+    background-color: #00684A;
+    background-image: url("../img/background-pattern-nobg.png");
+    background-size: 450px 450px;
+
+    position: absolute;
+    z-index: -1;
+    opacity: 0.75;
+    inset: 0;
+}
+
+.container {
+    max-width: 950px;
+    height: 60vh;
+    box-shadow: 5px 5px 10px 10px rgba(1, 69, 49, 0.50);
+    border-radius: 30px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+#left-side {
+    background: linear-gradient(#00684A, #0F4435) ;
+    color: #FFF;
+    font-size: 1.2em;
+}
+
+#left-side img {
+    object-fit: cover;
+    object-position: center;
+    height: 250px;
+}
+
+.login-entry label {
+    font-size: 1.3em;
+    font-weight: 500;
+}
+
+.login-entry .form-control, #hide-password{
+    background-color: #eae7e6;
+}
+
+#hide-password i {
+    color: #000;
+}
+
+#hide-password i:hover {
+    color: #00684A
+}
+
+.login-checkbox {
+    font-size: 1em;
+}
+
+.login-checkbox input:checked {
+    background-color: #505050;
+    border: 2px solid #505050
+}
+
+.login-checkbox a {
+    color: #505050;
+    text-decoration: none;
+}
+
+.login-checkbox a:hover {
+    color: #606060;
+    text-decoration: underline;
+}
+
+#right-side {
+    background-color: #FFF;
+}
+
+#right-side button {
+    font-size: 1.2em;
+}
+
+#hide-password {
+    border: none;
+
+}
+
+
