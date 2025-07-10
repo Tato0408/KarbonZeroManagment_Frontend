@@ -36,7 +36,8 @@ const initializers = {
   'logros.html' : 'initAchievements',
   'medidas.html': 'initMeasures',
   'alimentos.html': 'initFoods',
-  'servicios.html': 'initServices'
+  'servicios.html': 'initServices',
+  'canal.html':"initChannel"
 };
 
 function loadCSSIfExists(path) {
