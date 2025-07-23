@@ -16,7 +16,7 @@
     const tabsData = [
       {
         id: 'tamanocarro',
-        name: 'tamanocarro',
+        name: 'Tamaño Carro',
         columns: [
           { label: 'ID', field: 'id' },
           { label: 'Tamano', field: 'tamano' }
@@ -32,7 +32,7 @@
       },
       {
         id: 'tipoCombustible',
-        name: 'tipoCombustible',
+        name: 'Tipo Combustible',
         columns: [
           { label: 'ID', field: 'id' },
           { label: 'Nombre', field: 'nombre' },
