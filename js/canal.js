@@ -128,5 +128,40 @@ function initChannel() {
             });
         }, 100);
     });
+    const styleResponsive = document.createElement('style');
+    styleResponsive.innerHTML = `
+  @media (max-width: 768px) {
+    #canal-chat > div {
+      flex-direction: row; /* mantiene filas en contenedor principal */
+      overflow: hidden;
+    }
+    /* Ocultar panel derecho */
+    #canal-chat > div > div:last-child {
+      display: none !important;
+    }
+    /* Panel izquierdo */
+    #canal-chat > div > div:first-child {
+      width: 25% !important;
+      min-width: 200px !important;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+    }
+    /* Panel central - chat - se amplía para usar todo el espacio restante */
+    #canal-chat > div > div:nth-child(2) {
+      width: 75% !important;
+      min-width: unset !important;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Ajustar contenido del chat para que tome todo el alto posible */
+    #chat-content {
+      flex: 1 1 auto;
+      overflow-y: auto;
+    }
+  }
+`;
+    document.head.appendChild(styleResponsive);
+
 }
 document.addEventListener("DOMContentLoaded", initChannel);
