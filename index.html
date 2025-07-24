@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="css/index.css">
+   <title>Inicio</title>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Josefin+Sans:wght@700&display=swap"
+      rel="stylesheet" />
+   <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+   <header class="fixed w-full top-0 left-0 bg-[#00684A]/95 backdrop-blur shadow-md z-50 transition-all">
+      <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6 md:px-12">
+         <a href="#" class="flex items-center">
+            <img src="img/imagennn-removebg-preview.png" alt="KARBONZERO" class="h-16 md:h-20" />
+         </a>
+         <nav class="hidden md:flex space-x-10 font-semibold text-white tracking-wide">
+            <a href="#que-es"
+               class="relative hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-green-300 after:left-0 after:-bottom-1 hover:after:w-full after:transition-all">¿Qué
+               es?</a>
+            <a href="#como-funciona"
+               class="relative hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-green-300 after:left-0 after:-bottom-1 hover:after:w-full after:transition-all">Cómo
+               Funciona</a>
+            <a href="#beneficios"
+               class="relative hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-green-300 after:left-0 after:-bottom-1 hover:after:w-full after:transition-all">Beneficios</a>
+            <a href="#contacto"
+               class="relative hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bg-green-300 after:left-0 after:-bottom-1 hover:after:w-full after:transition-all">Contacto</a>
+         </nav>
+         <a href="login.html"
+            class="btn-green rounded-full px-6 py-2 font-semibold hidden md:inline-block shadow-md hover:shadow-lg transition">Comenzar
+            ahora</a>
+         <button id="menuBtn" class="md:hidden text-white focus:outline-none transition transform hover:scale-105">
+            <svg id="hamburgerIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+               stroke="currentColor" stroke-width="2">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+         </button>
+      </div>
+      <div id="mobileMenu"
+         class="hidden flex flex-col bg-[#0F4435] text-white py-6 px-6 space-y-4 md:hidden transition-all duration-300">
+         <a href="#que-es" class="hover:text-green-300 transition">¿Qué es?</a>
+         <a href="#como-funciona" class="hover:text-green-300 transition">Cómo Funciona</a>
+         <a href="#beneficios" class="hover:text-green-300 transition">Beneficios</a>
+         <a href="#contacto" class="hover:text-green-300 transition">Contacto</a>
+         <a href="#probar"
+            class="btn-green rounded-full text-center py-3 px-6 shadow-lg hover:shadow-xl transition">Prueba gratis</a>
+      </div>
+   </header>
+
+   <main class="pt-24">
+      <section
+         class="relative bg-gradient-to-b from-[#0F4435] to-[#00684A] min-h-[85vh] flex flex-col justify-center px-6 md:px-12 text-center md:text-left">
+         <div class="max-w-5xl mx-auto md:flex md:items-center md:gap-12 fade-in">
+            <div class="md:w-1/2">
+               <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-green-100 drop-shadow-lg">
+                  Transforma tu huella en impacto con<br />
+                  <span class="text-green-50">KARBONZERO</span>
+               </h1>
+               <p class="mt-6 text-lg md:text-xl text-green-200 max-w-lg drop-shadow-md leading-relaxed tracking-wide">
+                  Una plataforma que te guía para calcular, reducir y compensar tu huella de carbono personal y
+                  empresarial,
+                  con datos reales y herramientas precisas.
+               </p>
+               <a href="#probar"
+                  class="inline-block mt-10 btn-green rounded-full px-10 py-4 font-semibold shadow-lg hover:shadow-xl transition">
+                  Comienza ahora
+               </a>
+            </div>
+            <div class="md:w-1/2 mt-20 md:mt-0 relative">
+               <img src="img/loroHero.png" alt="Naturaleza" class=" mx-auto md:mx-0" />
+               <div
+                  class="absolute -bottom-10 -right-10 w-40 h-40 bg-green-700 rounded-full opacity-60 blur-3xl mix-blend-multiply hidden md:block">
+               </div>
+               <div
+                  class="absolute -top-16 -left-16 w-52 h-52 bg-green-900 rounded-full opacity-50 blur-3xl mix-blend-multiply hidden md:block">
+               </div>
+            </div>
+         </div>
+      </section>
+      <section id="que-es" class="max-w-7xl mx-auto px-6 md:px-12 py-20 fade-in fade-in-delay-1">
+         <h2 class="text-3xl font-extrabold text-[#00684A] mb-8 text-center md:text-left">¿Qué es KARBONZERO?</h2>
+         <div class="md:flex md:gap-16 md:items-center">
+            <div class="md:w-1/2 text-[#0F4435] text-justify leading-relaxed space-y-6">
+               <p>
+                  KARBONZERO es un sistema que permite a empresas y personas medir y gestionar su huella de carbono con
+                  gran
+                  precisión y personalización. Utilizamos factores de conversión aprobados por el IPCC, y ofrecemos la
+                  posibilidad de agregar factores propios para adaptar los cálculos a cada contexto.
+               </p>
+               <p>
+                  Las estimaciones no pueden ser 100% exactas por la complejidad y diversidad de procesos, pero
+                  KARBONZERO
+                  garantiza flexibilidad y transparencia, para que tomes decisiones informadas y responsables en el
+                  cuidado
+                  del planeta.
+               </p>
+               <p>
+                  Además, la app móvil recopila datos reales del consumo diario, permitiendo análisis avanzados que
+                  impulsan
+                  mejoras ambientales sostenibles.
+               </p>
+            </div>
+            <div class="md:w-1/2 mt-12 md:mt-0 rounded-xl overflow-hidden shadow-xl">
+               <img src="img/CO2.webp" alt="Huella de carbono" class="object-cover w-full h-full" />
+            </div>
+         </div>
+      </section>
+      <section id="como-funciona" class="bg-[#F0F8F4] py-20 fade-in fade-in-delay-2">
+         <div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
+            <h2 class="text-3xl font-extrabold text-[#00684A] mb-10">¿Cómo Funciona?</h2>
+            <div class="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto text-left">
+               <div
+                  class="bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition cursor-default flex flex-col items-start gap-4">
+                  <h3 class="text-xl font-semibold text-[#0F4435]">1. Mide</h3>
+                  <p class="text-[#555555] leading-relaxed">
+                     Registra hábitos como transporte, energía, alimentación y consumo. La app calcula tu huella con
+                     precisión.
+                  </p>
+               </div>
+               <div
+                  class="bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition cursor-default flex flex-col items-start gap-4">
+                  <h3 class="text-xl font-semibold text-[#0F4435]">2. Reduce</h3>
+                  <p class="text-[#555555] leading-relaxed">
+                     Recibe recomendaciones basadas en ciencia para tomar decisiones sostenibles y reducir emisiones.
+                  </p>
+               </div>
+               <div
+                  class="bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition cursor-default flex flex-col items-start gap-4">
+                  <h3 class="text-xl font-semibold text-[#0F4435]">3. Compensa</h3>
+                  <p class="text-[#555555] leading-relaxed">
+                     Invierte en proyectos certificados como reforestación y energías limpias para neutralizar tu
+                     huella.
+                  </p>
+               </div>
+            </div>
+         </div>
+      </section>
+      <section id="beneficios" class="max-w-7xl mx-auto px-6 md:px-12 py-20 fade-in">
+         <h2 class="text-3xl font-extrabold text-[#00684A] mb-8 text-center md:text-left">Beneficios de usar Karbonzero
+         </h2>
+         <p class="text-[#0F4435] max-w-4xl mx-auto mb-12 text-center md:text-left leading-relaxed">
+            Más que una plataforma, KARBONZERO es tu aliado climático. Aquí te mostramos cómo te ayudamos a lograr un
+            impacto positivo.
+         </p>
+         <div class="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto text-left">
+            <div
+               class="bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition cursor-default flex flex-col items-center gap-6">
+               <img src="img/loro1.png" alt="Datos reales" class="rounded-lg shadow-md" />
+               <h3 class="text-xl font-semibold text-[#00684A]">Datos reales</h3>
+               <p class="text-[#555555] leading-relaxed text-center px-4">
+                  Obtén informes precisos y personalizados sobre tus emisiones.
+               </p>
+            </div>
+            <div
+               class="bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition cursor-default flex flex-col items-center gap-6">
+               <img src="img/loro2.png" alt="App móvil" class="rounded-lg shadow-md" />
+               <h3 class="text-xl font-semibold text-[#00684A]">App móvil</h3>
+               <p class="text-[#555555] leading-relaxed text-center px-4">
+                  Mide tu huella diaria fácilmente con nuestra aplicación.
+               </p>
+            </div>
+            <div
+               class="bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition cursor-default flex flex-col items-center gap-6">
+               <img src="img/loro3.png" alt="Comunidad" class="rounded-lg shadow-md" />
+               <h3 class="text-xl font-semibold text-[#00684A]">Comunidad consciente</h3>
+               <p class="text-[#555555] leading-relaxed text-center px-4">
+                  Forma parte de una red que actúa por el planeta.
+               </p>
+            </div>
+         </div>
+      </section>
+      <section id="probar" class="bg-[#0F4435] text-white py-10 px-6 md:px-10 text-center fade-in">
+         <h2 class="text-4xl font-extrabold mb-6 max-w-3xl mx-auto leading-tight">¿Quieres empezar hoy mismo?</h2>
+         <p class="max-w-2xl mx-auto mb-12 text-lg leading-relaxed">
+            Prueba KARBONZERO y comienza a transformar tu impacto ambiental. ¡Es fácil y accesible para todos!
+         </p>
+      </section>
+      <footer id="contacto" class="bg-[#00684A] text-green-100 py-12 text-center text-sm select-none">
+         &copy; 2025 KARBONZERO. Todos los derechos reservados.
+      </footer>
+   </main>
+   <script src="js/index.js"></script>
+</body>
+
+</html>
