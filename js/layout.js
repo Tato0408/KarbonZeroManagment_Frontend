@@ -38,7 +38,7 @@ const initializers = {
   'medidas.html': 'initMeasures',
   'alimentos.html': 'initFoods',
   'servicios.html': 'initServices',
-  'canal.html':"initChannel",
+  'canal.html': 'initChannel',
   'usuarios.html' : 'initUsers',
 };
 

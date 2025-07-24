@@ -60,8 +60,8 @@ function renderTabs(tabsData) {
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              ${tab.columns.map(c => `<th>${c.label}</th>`).join('')}
-              <th>Acciones</th>
+              ${tab.columns.map(c => `<th class="accion">${c.label}</th>`).join('')}
+              <th class="accion">Acciones</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -92,8 +92,8 @@ function setupPagination(pane, data, columns) {
 
     tbody.innerHTML = rows.map(r => `
       <tr>
-        ${columns.map(c => `<td>${r[c.field] ?? ''}</td>`).join('')}
-        <td>
+        ${columns.map(c => `<td class="accion">${r[c.field] ?? ''}</td>`).join('')}
+        <td class="accion">
           <button class="btn btn-sm btn-success me-1" data-bs-toggle="modal" data-bs-target="#dwellingModal"><i class="bi bi-pencil-fill"></i></button>
           <button class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></button>
         </td>
