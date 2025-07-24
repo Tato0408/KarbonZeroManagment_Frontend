@@ -171,3 +171,8 @@
     display: none !important;
   }
 }
+th.accion, td.accion {
+  width: 120px; /* o el ancho que necesités */
+  text-align: center;
+  white-space: nowrap;
+}

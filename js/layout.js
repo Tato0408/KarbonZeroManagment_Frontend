@@ -22,7 +22,8 @@ const routes = {
   'Compañías': 'compañias.html',
   'Países': 'paises.html',
   'Transporte': 'transporte.html',
-  'Logros': 'logros.html'
+  'Logros': 'logros.html',
+  'Usuario' : 'usuarios.html'
 };
 
 const initializers = {
@@ -37,7 +38,8 @@ const initializers = {
   'medidas.html': 'initMeasures',
   'alimentos.html': 'initFoods',
   'servicios.html': 'initServices',
-  'canal.html':"initChannel"
+  'canal.html': 'initChannel',
+  'usuarios.html' : 'initUsers',
 };
 
 function loadCSSIfExists(path) {
