@@ -140,6 +140,7 @@ document.addEventListener("click", function (event) {
   if (window.innerWidth <= 768 && sidebar.classList.contains("show") && !isClickInsideSidebar && !isClickOnToggle) {
     sidebar.classList.remove("show");
   }
+
 });
 
 
