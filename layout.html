@@ -36,59 +36,65 @@
                     <iconify-icon icon="mdi:chart-bar" class="me-2"></iconify-icon> Medidas
                 </a>
             </li>
-            <li>
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                    href="#submenuPropiedades" role="button">
-                    <span><iconify-icon icon="carbon:home" class="me-2"></iconify-icon> Propiedades</span>
-                    <iconify-icon icon="mdi:chevron-down"></iconify-icon>
-                </a>
-                <div class="collapse" id="submenuPropiedades">
-                    <a href="views/mascota.html" class="nav-link"><iconify-icon icon="mdi:paw"
-                            class="me-2"></iconify-icon> Mascota</a>
-                    <a href="views/vehiculo.html" class="nav-link"><iconify-icon icon="mdi:car"
-                            class="me-2"></iconify-icon> Vehículo</a>
-                    <a href="views/vivienda.html" class="nav-link"><iconify-icon icon="mdi:home-city-outline"
-                            class="me-2"></iconify-icon> Vivienda</a>
-                </div>
-            </li>
-            <li>
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                    href="#submenuRecursos" role="button">
-                    <span><iconify-icon icon="mdi:tools" class="me-2"></iconify-icon> Recursos</span>
-                    <iconify-icon icon="mdi:chevron-down"></iconify-icon>
-                </a>
-                <div class="collapse" id="submenuRecursos">
-                    <a href="views/alimentos.html" class="nav-link"><iconify-icon icon="mdi:food"
-                            class="me-2"></iconify-icon> Alimentos</a>
-                    <a href="views/servicios.html" class="nav-link"><iconify-icon icon="mdi:flash"
-                            class="me-2"></iconify-icon> Servicios</a>
-                </div>
-            </li>
-            <li>
-                <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                    href="#submenuOtros" role="button">
-                    <span><iconify-icon icon="mdi:earth" class="me-2"></iconify-icon> Otros</span>
-                    <iconify-icon icon="mdi:chevron-down"></iconify-icon>
-                </a>
-                <div class="collapse" id="submenuOtros">
-                    <a href="views/compañias.html" class="nav-link"><iconify-icon icon="mdi:domain"
-                            class="me-2"></iconify-icon> Compañías</a>
-                    <a href="views/paises.html" class="nav-link"><iconify-icon icon="mdi:flag"
-                            class="me-2"></iconify-icon> Países</a>
-                    <a href="views/transporte.html" class="nav-link"><iconify-icon icon="mdi:bus"
-                            class="me-2"></iconify-icon> Transporte</a>
-                    <a href="views/logros.html" class="nav-link"><iconify-icon icon="mdi:trophy-outline"
-                            class="me-2"></iconify-icon> Logros</a>
-                </div>
+            <div class="accordion" id="sidebarAccordion">
+                <li>
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                        href="#submenuPropiedades" role="button">
+                        <span><iconify-icon icon="carbon:home" class="me-2"></iconify-icon> Propiedades</span>
+                        <iconify-icon icon="mdi:chevron-down"></iconify-icon>
+                    </a>
+                    <div class="collapse" id="submenuPropiedades" data-bs-parent="#sidebarAccordion">
+                        <a href="views/mascota.html" class="nav-link"><iconify-icon icon="mdi:paw"
+                                class="me-2"></iconify-icon> Mascota</a>
+                        <a href="views/vehiculo.html" class="nav-link"><iconify-icon icon="mdi:car"
+                                class="me-2"></iconify-icon> Vehículo</a>
+                        <a href="views/vivienda.html" class="nav-link"><iconify-icon icon="mdi:home-city-outline"
+                                class="me-2"></iconify-icon> Vivienda</a>
+                    </div>
+                </li>
+
+                <li>
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                        href="#submenuRecursos" role="button">
+                        <span><iconify-icon icon="mdi:tools" class="me-2"></iconify-icon> Recursos</span>
+                        <iconify-icon icon="mdi:chevron-down"></iconify-icon>
+                    </a>
+                    <div class="collapse" id="submenuRecursos" data-bs-parent="#sidebarAccordion">
+                        <a href="views/alimentos.html" class="nav-link"><iconify-icon icon="mdi:food"
+                                class="me-2"></iconify-icon> Alimentos</a>
+                        <a href="views/servicios.html" class="nav-link"><iconify-icon icon="mdi:flash"
+                                class="me-2"></iconify-icon> Servicios</a>
+                    </div>
+                </li>
+
+                <li>
+                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                        href="#submenuOtros" role="button">
+                        <span><iconify-icon icon="mdi:earth" class="me-2"></iconify-icon> Otros</span>
+                        <iconify-icon icon="mdi:chevron-down"></iconify-icon>
+                    </a>
+                    <div class="collapse" id="submenuOtros" data-bs-parent="#sidebarAccordion">
+                        <a href="views/compañias.html" class="nav-link"><iconify-icon icon="mdi:domain"
+                                class="me-2"></iconify-icon> Compañías</a>
+                        <a href="views/paises.html" class="nav-link"><iconify-icon icon="mdi:flag"
+                                class="me-2"></iconify-icon> Países</a>
+                        <a href="views/transporte.html" class="nav-link"><iconify-icon icon="mdi:bus"
+                                class="me-2"></iconify-icon> Transporte</a>
+                        <a href="views/logros.html" class="nav-link"><iconify-icon icon="mdi:trophy-outline"
+                                class="me-2"></iconify-icon> Logros</a>
+                        <a href="#" class="nav-link text-white">
+                            <iconify-icon icon="mdi:account" class="me-2" width="18"></iconify-icon> Usuario</a>
+                    </div>
+                </li>
+            </div>
+
             </li>
         </ul>
         <div class="mt-auto">
             <ul class="nav flex-column mb-0"
                 style="list-style: none; padding-left: 0; font-size: 0.85rem; margin-top: 2rem;">
                 <li class="nav-item mb-1">
-                    <a href="#" class="nav-link text-white">
-                        <iconify-icon icon="mdi:account" class="me-2" width="18"></iconify-icon> Usuario
-                    </a>
+
                 </li>
                 <li class="nav-item">
                     <a href="login.html" class="nav-link text-white" onclick="cerrarSesion()">
