@@ -1,7 +1,7 @@
 const button = document.getElementById("login-button");
 
 function open_layout () {
-    window.location.href = "../layout.html";
+    window.location.href = "index.html";
 };
 
 button.addEventListener("click", e => {
