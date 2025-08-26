@@ -26,6 +26,7 @@ export async function render() {
                         <label for="nombreAlimento" class="form-label">Nombre</label>
                         <input id="nombreAlimento" 
                         type="text" 
+                        pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" 
                         class="form-control" 
                         placeholder="Nombre del alimento">
                         <label for="categoriaAlimento" 
@@ -60,11 +61,11 @@ export async function render() {
                 <form id="CategoriaForm">
                     <div class="modal-body mx-3">
                         <label for="categoriaNombre" class="form-label">Nombre</label>
-                        <input id="categoriaNombre" type="text" class="form-control"
+                        <input id="categoriaNombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+"  type="text" class="form-control"
                             placeholder="Nombre de la categoría" required>
 
                         <label for="huellaTxt" class="form-label mt-3">Huella de carbono </label>
-                        <input id="huellaTxt" type="text" class="form-control" placeholder="Huella de carbono">
+                        <input id="huellaTxt" type="text" step="any"class="form-control" placeholder="Huella de carbono">
                         <label for="idCategoria" class="form-label mt-3 d-none">Id </label>
                         <input id="idCategoria" type="text" class="form-control d-none" placeholder="Id">
                     </div>
@@ -82,20 +83,15 @@ export async function render() {
     </div>
 
     <ul class="nav nav-tabs mb-3" id="tabList"></ul>
-    <div class="tab-content" id="tabContent"></div>
 
-
-
-
-
-
-        //Tabla
-        <div class="tab-content" id="tabContentCategory"></div>
+        <div class="tab-pane fade show active" id="foodTab">
+            <div id="tabContent"></div>
+        </div>
+        <div class="tab-pane fade"id="categoriesTab">
+            <div id="tab-ContentCategory"></div>
+        </div>
     
-        
-
-
-        ///Paginacion
+    
       <div class="row flex-nowrap mt-2" style="overflow-x: auto;">
         <div class="col-auto d-flex justify-content-start">
           <select class="form-select" aria-label="Items por pagina" id="itemsSelect">
@@ -109,7 +105,7 @@ export async function render() {
         <div class="col d-flex justify-content-end">
           <nav aria-label="Page navigation example" class="d-flex justify-content-center">
             <ul class="pagination mb-0" id="foodPagination">
-              
+
             </ul>
           </nav>
         </div>
@@ -161,6 +157,14 @@ export async function foodProcess(){
         });
     }
 
+     document.getElementById("nombreAlimento").addEventListener("keypress", function (e) {
+    let char = String.fromCharCode(e.which); // la tecla presionada
+    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+    if (!regex.test(char)) {
+        e.preventDefault(); // cancela la tecla
+    }
+});
+
     let isLoading = false;
     //Aca ya vinculamos la parte del insert/update con el submit de nuestro formulario, pasamos datos segun sean solicitados
     foodForm.addEventListener('submit', async e =>{
@@ -185,7 +189,7 @@ export async function foodProcess(){
 
 export async function foodCategoriesProcess(){
      const container = document.getElementById('foods-root');
-    
+
       FoodCategoryController.initCategory(container);
 
       const addCategory = document.getElementById('addCategory-kz');
@@ -210,6 +214,40 @@ export async function foodCategoriesProcess(){
       carbonFootPrint.value = "";
      });
     }
+
+    document.getElementById("categoriaNombre").addEventListener("keypress", function (e) {
+    let char = String.fromCharCode(e.which); // la tecla presionada
+    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+    if (!regex.test(char)) {
+        e.preventDefault(); // cancela la tecla
+    }
+});
+
+document.getElementById("huellaTxt").addEventListener("keypress", function (e) {
+    let val = String.fromCharCode(e.which);
+    let p = e.target.value;
+
+    //Permitir numeros y punto
+    if (!/[0-9.]/.test(val)) {
+        e.preventDefault();
+        return;
+    }
+
+    //Validacion para no permitir mas de un punto de decimal
+    if (val === "." && p.includes(".")) {
+        e.preventDefault();
+        return;
+    }
+
+    //No mas de dos decimales despues del punto
+    if (p.includes(".")) {
+        let parte = p.split(".");
+        if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
+            e.preventDefault();
+            return;
+        }
+    }
+});
 
     let isLoading = false;
 

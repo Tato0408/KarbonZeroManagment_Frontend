@@ -6,7 +6,7 @@ export async function getFood(page = 0, size = 10){
         const response = await fetch (`http://localhost:8080/apiFood/getAllFoods?page=${page}&size=${size}`);
         //Evaluación de respuesta
         if(!response.ok){
-            throw new Error(`Error al cargar alimentos: ${repspose.status}`)
+            throw new Error(`Error al cargar alimentos: ${response.status}`)
         }
         //Retorno de respuesta en formato json
         return response.json();
@@ -104,7 +104,7 @@ export async function deleteFood(id){
     try{
         const res =  await fetch (`http://localhost:8080/apiFood/deleteFood/${id}`, {method:'DELETE'});
         if(!res.ok){
-            Alerts.showToastCloseError("No ha sido posible eliminar el alimento", response.status);
+            Alerts.showToastCloseError("No ha sido posible eliminar el alimento", res.status);
             return false;
         }
         Alerts.showToastCloseSuccess("Alimento eliminado exitosamente");
