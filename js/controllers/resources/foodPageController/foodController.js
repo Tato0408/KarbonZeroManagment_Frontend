@@ -89,13 +89,12 @@ export async function reload(container){
         if(!editBtn) return;
         const id = editBtn.dataset.id;
         try{
-            console.log(id)
             const food = await FoodService.getFoodById(id);
             console.log(food)
             
-          let ola =  document.getElementById('idtxt').value = food.idFood ?? '';
-            document.getElementById('nombreAlimento').value = food.foodName ?? '';
-           let ola2= document.getElementById('categoriaAlimento').value = food.idFoodCategory ?? '';
+          document.getElementById('idtxt').value = food.idFood ?? '';
+          document.getElementById('nombreAlimento').value = food.foodName ?? '';
+          document.getElementById('categoriaAlimento').value = food.idFoodCategory ?? '';
 
         }
         

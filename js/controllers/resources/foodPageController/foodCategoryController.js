@@ -22,9 +22,7 @@ export async function reloadCategories(container){
         //Aqui esta la DATA
         const data = await FoodCategoryService.getCategoriesPagination(currentPage, currentSize);
         const foodCategories = data.content; 
-
-
-        const $tabContent = container.querySelector('#tabContentCategory');
+        const $tabContent = container.querySelector('#tab-ContentCategory');
 
         //A este metodo mando la DATA y tambien mando la tabla con los datos
         loadFoodCategoryTable(foodCategories, $tabContent);
@@ -50,11 +48,7 @@ export async function renderCategoryData(container){
         return container.innerHTML = `<p class="text-danger">No se pudieron cargar los recursos.</p>`;
     }
 
-    const categoryTab = container.querySelector("#tabContentCategory");
-    if (!categoryTab) {
-        console.error("No se encontró #tabContentCategory dentro del container");
-        return;
-    }
+    const categoryTab = container.querySelector("#tab-ContentCategory");
 
     loadFoodCategoryTable(foodCategories, categoryTab);
 
@@ -97,7 +91,7 @@ function loadFoodCategoryTable(categories, tab){
         <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
           <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
               <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-              <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar" id="find">
+              <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar" id="findCategory">
           </div>
           <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
               <button class="kz-button-create" id="addCategory-kz" data-bs-toggle="modal"
@@ -139,12 +133,13 @@ export async function insertCategory(categoryName, carbonFootPrint, categoryForm
         carbonFootPrint: carbonFootPrint.value.trim()
     }
     try {
-        FoodCategoryService.insertFoodCategory(payload);
+      let res =   FoodCategoryService.insertFoodCategory(payload);
         await reloadCategories(container); 
+        categoryForm.reset();
+        return res;
     } catch (err) {
         Alerts.showToastCloseError(`No se pudo agregar la categoria de alimento`)
     }
-    categoryForm.reset();
 }
 
 export async function updateCategory(idCategory, categoryName,  carbonFootprint, categoryForm) {
@@ -159,10 +154,11 @@ export async function updateCategory(idCategory, categoryName,  carbonFootprint,
         
         const prueba =await reloadCategories(container); 
         console.log(prueba)
+        categoryForm.reset();
     } catch (err) {
         Alerts.showToastCloseError(`No se pudo actualizar la categoria`)
     }
-    categoryForm.reset();
+    
 }
 
  export function renderPagination(current, totalPages, container){
