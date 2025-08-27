@@ -1,4 +1,4 @@
-import * as ChannelService from "../../../services/resources/ChannelService.js"
+import * as CarSizeService from "../../../services/resources/CarSizeService.js"
 import * as Alerts from "../../../../utils/alerts.js"
 
 export async function init(container){
@@ -12,10 +12,10 @@ export async function reload(container) {
     if(!container) return;
 
     try{
-        const data = await ChannelService.getChannels(currentPage, currentSize);
-        const companies = data.content;
+        const data = await CarSizeService.getCarSize(currentPage, currentSize);
+        const carSize = data.content;
         const $tabContent = content.querySelector('#tabContent');
-        LoadTable(companies, $tabContent);
+        LoadTable(carSize, $tabContent);
 
         renderPagination(data.number, data.totalPages, container);
     }
@@ -29,31 +29,31 @@ async function renderData(container){
     const $tabList = container.querySelector('#tabList');
     const $tabContent = container.querySelector('#tabContent')
 
-    let companies = [];
+    let carSize = [];
 
 
     try{
         //Traemos al json en data
-        const data =  await ChannelService.getChannels(currentPage, currentSize);
+        const data =  await CarSizeService.getCarSize(currentPage, currentSize);
 
         //Acceder al content de eso
-        companies = data.content;
+        carSize = data.content;
 
         renderPagination(data.number, data.totalPages, container)
     }
     catch(error) {
     console.error(error);
-    return container.innerHTML = `<p class="text-danger">No se ha sido posible cargar el canal.</p>`;
+    return container.innerHTML = `<p class="text-danger">No se ha sido posible cargar el tamaño de carro.</p>`;
     }
 
      ///Aca definimos nuestros tabs y de igual forma a donde estan dirigidos, puedes definir varios en page, y cada uno debe tener su div con ru ID 
      $tabList.innerHTML = `
          <li class="nav-item d-flex">
-            <a class="nav-link active" data-bs-toggle="tab" href="#channel">Canales</a>
+            <a class="nav-link active" data-bs-toggle="tab" href="#carsize">Tamaño de Vehiculos</a>
         </li>
      `
     ///Cargamos datos, pasamos nuestros usuarios y nuestro contenedor
-     LoadTable(companies, $tabContent);
+     LoadTable(carSize, $tabContent);
 
      const sizeSelector = document.getElementById("itemsSelect")
      sizeSelector.addEventListener("change", ()=>{
@@ -64,11 +64,11 @@ async function renderData(container){
 
      //Aca definimos que hace el botón de eliminar
      container.addEventListener('click', async e =>{
-        const btn = e.target.closest('.btn-delete-channel');
+        const btn = e.target.closest('.btn-delete-carsize');
         if(!btn) return;
         const id = btn.dataset.id;
         console.log(id)
-        const ok = await ChannelService.deleteChannel(id);
+        const ok = await CarSizeService.deleteCarSize(id);
         console.log(ok)
         //En caso de que duvuelva true retornamos
         if(ok) await reload(container);
@@ -76,29 +76,28 @@ async function renderData(container){
 
      ///Aca lo que hacemos es llenar el formulario de editar, puesto que eso es lo que hace el boton, abrir con datos, quien se encarga de enviar el PUT es en page
      container.addEventListener('click', async e =>{
-        const editBtn =  e.target.closest('.btn-edit-channel');
+        const editBtn =  e.target.closest('.btn-edit-carsize');
         if(!editBtn) return;
         const id = editBtn.dataset.id;
         try{
             console.log(id)
-            const channel = await ChannelService.getChannelById(id);
-            console.log(channel)
+            const carsize = await CarSizeService.getCarSizeById(id);
+            console.log(carsize)
             
-            let ola =  document.getElementById('idtxt').value = channel.idChannel ?? '';
-            let ola2= document.getElementById('nombreCanal').value = channel.channelName ?? '';
-            document.getElementById('Compañia').value = channel.idCompany ?? '';
+            let ola =  document.getElementById('idtxt').value = carsize.idCarSize ?? '';
+            document.getElementById('nombreTamañoCarro').value = carsize.carSizeName ?? '';
 
         }
         
         catch (err){
-        Alerts.showToastCloseError('No ha sido posible cargar los canales');
+        Alerts.showToastCloseError('No ha sido posible cargar los tamaños de carros');
         console.error(err);
         }
      })
 }
 
 
-export function LoadTable(companies, tab){
+export function LoadTable(carSize, tab){
     ///EL base index nos sirve para que siempre se guarden las filas que llevamos en pase a la pagina y su tamaño
     const baseIndex  = currentPage * currentSize;
     tab.innerHTML = "";
@@ -108,34 +107,32 @@ export function LoadTable(companies, tab){
             <span class="input-group-text bg-transparent border-0">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar" id="findChannel">
+            <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar" id="findCarSize">
         </div>
                 <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto ">
-            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#CanalModal">
-                <i class="bi bi-plus-circle"></i> Añadir Canal
+            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#TamañoCarroModal">
+                <i class="bi bi-plus-circle"></i> Añadir tamaño de carro
             </button>
         </div>
     </div>
-    <div id="channel" class="tab-pane fade show active">
+    <div id="carSize" class="tab-pane fade show active">
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
                 <th>#</th>
                 <th>Nombre</th>
-                <th>Categoria</th>
                 <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="containerChannel">
-            ${companies.map((u, i) => `
+          <tbody id="containerCarSize">
+            ${carSize.map((u, i) => `
               <tr>
                 <td>${baseIndex+ i + 1}</td>
-                <td>${u.channelName}</td>
-                <td>${u.idCompany}</td>
+                <td>${u.carSizeName}</td>
                 <td>
-                    <button class="btn btn-sm btn-success me-1 btn-edit-channel" data-id="${u.idChannel}" data-bs-toggle="modal" data-bs-target="#CanalModal"><i class="bi bi-pencil-fill"></i></button>
-                    <button class="btn btn-sm btn-danger btn-delete-channel" data-id="${u.idChannel}"><i class="bi bi-trash-fill"></i></button>
+                    <button class="btn btn-sm btn-success me-1 btn-edit-carSize" data-id="${u.idCarSize}" data-bs-toggle="modal" data-bs-target="#TamañoCarroModal"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="btn btn-sm btn-danger btn-delete-carSize" data-id="${u.idCarSize}"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>`).join('')}
           </tbody>
@@ -144,42 +141,30 @@ export function LoadTable(companies, tab){
     </div>`
 }
 
-export function loadCompanies(companies, companySelect) {
-    companySelect.innerHTML = ''
-    companySelect.innerHTML += `<option value="">Selecciona una Compañia</option>`
-  companies.forEach(element => {
-    companySelect.innerHTML += `
-        <option value="${element.idCompany}">${element.companyName}</option>
-      `
-    });
-}
-
-export async function insertChannel(nombreCanal, nombreCompañia, form) {
+export async function insertCarSize(nombreTamañoCarro, form) {
     const playload = {
-        channelName: nombreCanal.value.trim(),
-        idCompany: nombreCompañia.value.trim(),
+        carSizeName: nombreTamañoCarro.value.trim()
     }
     try{
         console.log(playload)
-        const res = await ChannelService.insertChannel(playload);
+        const res = await CarSizeService.insertCarSize(playload);
         form.reset()
         return res;
     }
     catch(err){
-        Alerts.showToastCloseError(`No se pudo agregar el canal ${err}`)
+        Alerts.showToastCloseError(`No se pudo agregar el tamaño de carro ${err}`)
         return {ok: false}
     }
 }
 
-export async function updateChannel(nombreCanal, nombreCompañia, form, idtxt){
+export async function updateCarSize(nombreTamañoCarro, form, idtxt){
     const playload= {
-        idChannel:idtxt.value,
-        channelName: nombreCanal.value.trim(),
-        idCompany: nombreCompañia.value.trim()
+        idCarSize:idtxt.value,
+        carSizeName: nombreTamañoCarro.value.trim()
     }
     console.log(playload)
     try{
-        const res = await ChannelService.updateChannel(playload, idtxt);
+        const res = await CarSizeService.updateCarSize(playload, idtxt);
         console.log(res)
         form.reset();
         return res;
@@ -192,7 +177,7 @@ export async function updateChannel(nombreCanal, nombreCompañia, form, idtxt){
 }
 
 export function renderPagination(current, totalPages, container){
-    const pagination = document.getElementById('channelPagination')
+    const pagination = document.getElementById('carSizePagination')
     if(!pagination) return;
     pagination.innerHTML = "";
 
