@@ -66,7 +66,7 @@ export async function render() {
         </div>
         <div class="col d-flex justify-content-end">
           <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-            <ul class="pagination mb-0" id="userPagination">
+            <ul class="pagination mb-0" id="transportPagination">
               
             </ul>
           </nav>

@@ -12,7 +12,7 @@ let currentSize = 10;
 export async function reload(container) {
   ///Si nuestro container es nulo....
   if (!container) return;
-  ///Si no pues hacemos una peticion get y le pasamos ese array de usuarios + el tab donde queremos poner la grid
+  ///Si no pues hacemos una peticion get y le pasamos ese array de transporte + el tab donde queremos poner la grid
   try {
     const data = await transportService.getTransport(currentPage, currentSize);
     const transport = data.content;
@@ -33,7 +33,7 @@ async function renderData(container) {
   ///Array donde se guardan los usuarios
   let transport = [];
 
-  ///Llenamos los usuarios
+  ///Llenamos los servicios
   try {
     ///traemos el json en data
     const data = await transportService.getTransport(currentPage, currentSize);
@@ -49,11 +49,11 @@ async function renderData(container) {
   ///Aca definimos nuestros tabs y de igual forma a donde estan dirigidos, puedes definir varios en page, y cada uno debe tener su div con ru ID 
   $tabList.innerHTML = `
         <li class="nav-item d-flex">
-            <a class="nav-link active" data-bs-toggle="tab" href="#ransporte">Transporte</a>
+            <a class="nav-link active" data-bs-toggle="tab" href="#transporte">Transporte</a>
         </li>`;
 
   ///Cargamos datos, pasamos nuestros transportes y nuestro contenedor
-  loadUsersTable(transport, $tabContent);
+  loadTransportTable(transport, $tabContent);
 
   const sizeSelector = document.getElementById("itemsSelectTransport");
   sizeSelector.addEventListener("change", () => {
@@ -90,7 +90,7 @@ async function renderData(container) {
 }
 
 ///Aca cargamos nuestros transportes, nada nuevo, eso si en lugar del id mandamos un numero, por que pues si, usamos RAW, xdnt
-export function loadUsersTable(transport, tab) {
+export function loadTransportTable(transport, tab) {
   ///EL base index nos sirve para que siempre se guarden las filas que llevamos en pase a la pagina y su tamaño
   const baseIndex = currentPage * currentSize;
   tab.innerHTML = "";
@@ -166,7 +166,7 @@ export async function updateTransport(nametxt, carbonFootprinttxt, form, id) {
 
 export function renderPagination(current, totalPages, container) {
   ///Aca accedemos a nuestro ul de pagination
-  const pagination = document.getElementById("userPagination");
+  const pagination = document.getElementById("transportPagination");
   if (!pagination) return;
   pagination.innerHTML = "";///Limpiamos la paginacion previa
 
