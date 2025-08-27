@@ -1,3 +1,4 @@
+import * as CompanyController from '../../controllers/others/companiesController';
 export async function render() {
     return `
 <div class="container py-4">
@@ -50,6 +51,76 @@ export async function render() {
 </div>
   `;
 }
-export function afterRender() {
+export function afterRender() {   
+    companiesProcess()
+}
 
+export async function companiesProcess(){
+    const container = document.getElementById('companie-root')
+    CompanyController.CompanieInit(container)
+
+    const addCompanyBtn = container.querySelector('#addCompany')
+    const closebtn = container.querySelector('#btnClose')
+    const companyName = container.querySelector('#nombretxt')
+    const companyDomain = container.querySelector('#dominiotxt')
+    const idCompany = container.querySelector('#idtxt')
+    const companyModal = container.querySelector('#CompanyModal')
+    const bsModal = bootstrap.Modal.getOrCreateInstance(companyModal)
+    const companyForm = container.querySelector('#CompaniForm')
+
+    if(addCompanyBtn){
+        addCompanyBtn.addEventListener('click', ()=>{
+            idCompany.value = ''
+            companyName.value = ''
+            companyDomain.value = "";
+        });
+    }
+    if(closebtn){
+        closebtn.addEventListener('click', ()=>{
+            idCompany.value = ''
+            companyName.value = ''
+            companyDomain.value = "";
+        });
+    }
+
+    document.getElementById("nombretxt").addEventListener("keypress", function (e) {
+    let char = String.fromCharCode(e.which); // la tecla presionada
+    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+    if (!regex.test(char)) {
+        e.preventDefault(); // cancela la tecla
+    }
+});
+
+ document.getElementById("dominiotxt").addEventListener("keypress", function (e) {
+    let val = String.fromCharCode(e.which);
+    
+    const regex = /^www\.[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/; // Expresión regular para validar el dominio
+
+   if (!regex.test(val)) {
+        errorMessage.textContent = "Por favor, ingrese un dominio válido (ejemplo: www.abc.com)";
+    }
+});
+
+let isLoading = false;
+
+companyForm.addEventListener('submit', async e =>{
+    e.preventDefault();
+    if(isLoading) return;
+    isLoading = true;
+    let res;
+
+    if(idCompany.value){
+        res = await CompanyController.updateCompany(companyName, companyDomain, companyForm, idCompany)
+    }
+    else {
+        res = await CompanyController.insertCompany(companyName, companyDomain, companyForm)
+    }
+
+    bsModal.hide();
+    isLoading = false;
+    idCompany.value = ''
+    if(res?.ok){
+        await CompanyController.reloadComapny(container)
+    }
+})
 }
