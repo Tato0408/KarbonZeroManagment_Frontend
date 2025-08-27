@@ -1,6 +1,7 @@
+import * as CountryController from '../../controllers/others/countriesController';
 export async function render() {
     return `
-<div class="container py-4">
+<div class="container py-4" id="country-root">
     <h2 class="general-title">
         País
     </h2>
@@ -10,7 +11,7 @@ export async function render() {
             <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar">
         </div>
         <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
-            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#CountryModal">
+            <button class="kz-button-create" id="addCountry"data-bs-toggle="modal" data-bs-target="#CountryModal">
                 <i class="bi bi-plus-circle"></i> Añadir País
             </button>
         </div>
@@ -21,7 +22,9 @@ export async function render() {
             <div class="modal-content kz-modal-mongo border-0">
                 <div class="modal-header" style="justify-content: center; position: relative;">
                     <h4 class="kz-modal-title" id="exampleModalLongTitle">País</h4>
-                    <button type="button" class="btn-close" style="position: absolute; right: 1rem; top: 1rem;"
+                    <button type="button" class="btn-close" 
+                    id="btnClose"
+                    style="position: absolute; right: 1rem; top: 1rem;"
                         data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
@@ -34,12 +37,15 @@ export async function render() {
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" type="number" class="form-control" placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" type="text" class="form-control" step="0.01"placeholder="Huella de carbono">
                             </div>
+                             <label for="idtxt"class="form-label d-none">id</label>
+                        <input id="idtxt"type="text"class="form-control d-none hidden"placeholder="id">
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
-                        <button type="submit" class="btn kz-button-create">Guardar</button>
+                        <button type="submit" class="btn kz-button-create"
+                        id="btnAddCountry">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -49,8 +55,116 @@ export async function render() {
     <div class="tab-content" id="tabContent"></div>
 </div>
 
+<div class="row flex-nowrap mt-2" style="overflow-x: auto;">
+        <div class="col-auto d-flex justify-content-start">
+          <select class="form-select" aria-label="Items por pagina" id="itemsSelect">
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+        <div class="col d-flex justify-content-end">
+          <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+            <ul class="pagination mb-0" id="countryPagination">
+              
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+</div>
+
   `;
 }
 export function afterRender() {
+    countryProcess()
+}
 
+export async function countryProcess(){
+    const container = document.getElementById('country-root')
+    CountryController.CountryInit(container)
+
+    const addCountryBtn = container.querySelector('#addCountry')
+    const closebtn = container.querySelector('#btnClose')
+    const countryName = container.querySelector('#nombretxt')
+    const carbonFootPrint = container.querySelector('#huellacarbontxt')
+    const idCountry = container.querySelector('#idtxt')
+    const countryModal = container.querySelector('#CountryModal')
+    const bsModal = bootstrap.Modal.getOrCreateInstance(countryModal)
+    const countryForm = container.querySelector('#CountryForm')
+
+    if(addCountryBtn){
+        addCountryBtn.addEventListener('click', ()=>{
+            idCountry.value = ''
+            countryName.value = ''
+            carbonFootPrint.value = "";
+        });
+    }
+    if(closebtn){
+        closebtn.addEventListener('click', ()=>{
+            idCountry.value = ''
+            countryName.value = ''
+            carbonFootPrint.value = "";
+        });
+    }
+
+    document.getElementById("nombretxt").addEventListener("keypress", function (e) {
+    let char = String.fromCharCode(e.which); // la tecla presionada
+    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+    if (!regex.test(char)) {
+        e.preventDefault(); // cancela la tecla
+    }
+});
+
+ document.getElementById("huellacarbontxt").addEventListener("keypress", function (e) {
+    let val = String.fromCharCode(e.which);
+    let p = e.target.value;
+
+    //Permitir numeros y punto
+    if (!/[0-9.]/.test(val)) {
+        e.preventDefault();
+        return;
+    }
+
+    //Validacion para no permitir mas de un punto de decimal
+    if (val === "." && p.includes(".")) {
+        e.preventDefault();
+        return;
+    }
+
+    //No mas de dos decimales despues del punto
+    if (p.includes(".")) {
+        let parte = p.split(".");
+        if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
+            e.preventDefault();
+            return;
+        }
+    }
+});
+
+let isLoading = false;
+
+countryForm.addEventListener('submit', async e =>{
+    e.preventDefault();
+    if(isLoading) return;
+    isLoading = true;
+    let res;
+
+    if(idCountry.value){
+        res = await CountryController.updateCountry(countryName, carbonFootPrint, countryForm, idCountry)
+    }
+    else {
+        res = await CountryController.insertCountry(countryName, carbonFootPrint, countryForm)
+    }
+
+    bsModal.hide();
+    isLoading = false;
+    idCountry.value = ''
+    if(res?.ok){
+        await CountryController.reloadCountry(container)
+    }
+})
 }

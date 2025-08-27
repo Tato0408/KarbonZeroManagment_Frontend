@@ -31,11 +31,11 @@ export async function render() {
                         <div class="row g-2 mb-3">
                             <div class="col-sm-6">
                                 <label for="nombretxt"  class="form-label">Tipo de Vivienda</label>
-                                <input id="nombretxt" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" type="text" class="form-control" placeholder="Tipo de Vivienda">
+                                <input id="nombretxt"  type="text" class="form-control" placeholder="Tipo de Vivienda">
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" type="text" step="any"class="form-control" placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" type="number" step="any"class="form-control" placeholder="Huella de carbono">
                             </div>
                              <label for="idtxt"class="form-label d-none">id</label>
                         <input id="idtxt"type="text"class="form-control d-none hidden"placeholder="id">
@@ -86,11 +86,11 @@ export async function houseProcess(){
     
     const adsHouseBtn = document.querySelector('#addHouse-kz')
     const houseName = document.querySelector('#nombretxt')
-    const carbonFootPrint = document.querySelector('#huellacarbontxt') // ✅ corregido id
+    const carbonFootPrint = document.querySelector('#huellacarbontxt') 
     const idHidden = document.querySelector('#idtxt')
-    const houseModal = document.querySelector('#viviendaModal') // ✅ corregido id
+    const houseModal = document.querySelector('#viviendaModal')
     const bsModal = bootstrap.Modal.getOrCreateInstance(houseModal)
-    const btnClose = document.getElementById('btnClose') // ✅ quitado #
+    const btnClose = document.getElementById('btnClose') 
     const houseForm = document.querySelector('#houseForm')
 
     if(adsHouseBtn){
@@ -117,28 +117,10 @@ export async function houseProcess(){
 });
 
  document.getElementById("huellacarbontxt").addEventListener("keypress", function (e) {
-    let val = String.fromCharCode(e.which);
-    let p = e.target.value;
-
-    //Permitir numeros y punto
-    if (!/[0-9.]/.test(val)) {
-        e.preventDefault();
-        return;
-    }
-
-    //Validacion para no permitir mas de un punto de decimal
-    if (val === "." && p.includes(".")) {
-        e.preventDefault();
-        return;
-    }
-
-    //No mas de dos decimales despues del punto
-    if (p.includes(".")) {
-        let parte = p.split(".");
-        if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
-            e.preventDefault();
-            return;
-        }
+    let char = String.fromCharCode(e.which); // la tecla presionada
+    let regex = /^[0-9.]$/; // solo letras y espacios
+    if (!regex.test(char)) {
+        e.preventDefault(); // cancela la tecla
     }
 });
 
@@ -162,7 +144,7 @@ export async function houseProcess(){
         isLoading = false;
         idHidden.value = ''
         if(res?.ok){
-            await LivingSpaceController.reloadHouse(container); // ✅ usar reloadHouse
+            await LivingSpaceController.reloadHouse(container); 
         }
     })    
 }
