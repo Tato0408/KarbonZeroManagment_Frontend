@@ -82,7 +82,7 @@ export async function afterRender() {
     ///Obtenemos los servicios
     let service = await getAllServicesList();
     ///Obtenemos las unidades de medida
-    let measureUnit = await getAllMeasureUnitList();
+    let idMeasureUnit = await getAllMeasureUnitList();
     ///Aca mandamos a llamar el init de userController que es el que llena la tabla, por eso le pasamos container
     const container = document.getElementById('service-root');
     ServiceController.init(container);
@@ -100,7 +100,7 @@ export async function afterRender() {
     ///Aca mandamos a llenar el loadServices y le pasamos los roles que hemos obtenido asi como el formselect
     ServiceController.loadService(service, serviceSelect);
    ///Aca mandamos a llenar el loadMeasureUnit y le pasamos los roles que hemos obtenido asi como el formselect
-    ServiceController.loadMeasureUnit(measureUnit, measureUnitSelect);
+    ServiceController.loadMeasureUnit(idMeasureUnit, measureUnitSelect);
     
     ///Aca definimos que si el boton existe, al hacerle click vamos a limpiar los campos al cargar
     if (addServiceBtn) {

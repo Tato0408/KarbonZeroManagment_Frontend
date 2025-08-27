@@ -17,7 +17,7 @@ export async function reload(container) {
     const data = await transportService.getTransport(currentPage, currentSize);
     const transport = data.content;
     const $tabContent = container.querySelector('#tabContent');
-    loadUsersTable(transport, $tabContent);
+    loadTransportTable(transport, $tabContent);
     ///Llamamos a renderPagination para que siempre vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload
     renderPagination(data.number, data.totalPages, container);  
   } catch (e) {

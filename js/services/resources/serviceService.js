@@ -33,7 +33,7 @@ export async function getServiceById(id) {
 }
 export async function insertService(payload) {
     try {
-        const response = await fetch(`${API_URL}/apiService/insertMeasureUnitService`, {
+        const response = await fetch(`${API_URL}/apiService/insertMeasureUnitService`,  {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

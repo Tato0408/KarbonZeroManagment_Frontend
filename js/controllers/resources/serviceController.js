@@ -83,9 +83,9 @@ async function renderData(container) {
     try {
       const service = await ServiceService.getServiceById(id);
       document.getElementById('idtxt').value = service.idMeasureUnitService ?? '';
-      document.getElementById('nombreServiciotxt').value = service.idService ?? '';
+      document.getElementById('servicetxt').value = service.idService ?? '';
       document.getElementById('unidadServiciotxt').value = service.idMeasureUnit ?? '';
-      document.getElementById('huellaServiciotxt').value = service.username ?? '';
+      document.getElementById('carbonFootprinttxt').value = service.carbonFootprint ?? '';
     } catch (err) {
       Alerts.showToastCloseError('No se pudo cargar el servicio');
       console.error(err);
@@ -147,10 +147,10 @@ export function loadService(service, serviceSelect) {
 }
 
 ///Aca llenamos nuestras unidades de medida, la funcionalidad esta en page
-export function loadMeasureUnit(measureUnit, measureUnitSelect) {
-  measureUnit.forEach(element => {
+export function loadMeasureUnit(idMeasureUnit, measureUnitSelect) {
+  idMeasureUnit.forEach(element => {
     measureUnitSelect.innerHTML += `
-        <option value="${element.measureUnitSelect}">${element.nameMeasureUnit}</option>
+        <option value="${element.idMeasureUnit}">${element.nameMeasureUnit}</option>
       `
   });
 }
@@ -178,8 +178,8 @@ export async function insertService(idService, idMeasureUnit, carbonFootprinttxt
 export async function updateService(idService, idMeasureUnit, carbonFootprinttxt, form, id) {
   const payload = {
     idService: idService.value,
-    idMeasureUni: idMeasureUnit.value,
-    carbonFootprinttxt: parseFloat(carbonFootprinttxt.value.trim())
+    idMeasureUnit: idMeasureUnit.value,
+    carbonFootprint: parseFloat(carbonFootprinttxt.value.trim())
   }
   try {
     ///Hacemos la peticion
