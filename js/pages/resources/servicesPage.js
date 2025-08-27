@@ -34,14 +34,16 @@ export async function render() {
                         <div class="mb-3">
                             <label for="nombreServicio" class="form-label">Servicio</label>
                             <select id="servicetxt" class="form-select">
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="unidadServicio" class="form-label">Unidad de medida</label>
                             <select id="unidadServiciotxt" class="form-select">
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="huellaCarbono" class="form-label">Huella de carbono</label>
-                            <input id="huellaCarbonotxt" type="number" class="form-control" placeholder="Huella de carbono">
+                            <input id="carbonFootprinttxt" type="number" class="form-control" placeholder="Huella de carbono">
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
@@ -57,7 +59,7 @@ export async function render() {
     <!-- Paginación -->
       <div class="row flex-nowrap mt-2" style="overflow-x: auto;">
         <div class="col-auto d-flex justify-content-start">
-          <select class="form-select" aria-label="Items por pagina" id="itemsSelect">
+          <select class="form-select" aria-label="Items por pagina" id="itemsSelectService">
             <option value="2">2</option>
             <option value="5">5</option>
             <option value="10" selected>10</option>
@@ -89,7 +91,7 @@ export async function afterRender() {
     const addServiceBtn = document.querySelector('#addService-kz');
     const serviceSelect = document.querySelector('#servicetxt');
     const measureUnitSelect = document.querySelector('#unidadServiciotxt');
-    const huellacarbontxt = document.querySelector('#huellacarbontxt');
+    const carbonFootprinttxt = document.querySelector('#carbonFootprinttxt');
     const serviceForm = document.querySelector('#ServiceForm');
     const modalEl = document.getElementById('ServiceModal')
     const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl)
@@ -102,11 +104,11 @@ export async function afterRender() {
     
     ///Aca definimos que si el boton existe, al hacerle click vamos a limpiar los campos al cargar
     if (addServiceBtn) {
-        addUserBtn.addEventListener('click', () => {
-        idHideen.value = '';
-        serviceSelect.selectedIndex = 0;
-        measureUnitSelect.selectedIndex = 0;
-        huellacarbontxt.value = '';
+        addServiceBtn.addEventListener('click', () => {
+            idHideen.value = '';
+            serviceSelect.selectedIndex = 0;
+            measureUnitSelect.selectedIndex = 0;
+            carbonFootprinttxt.value = '';
         });
     }
 
@@ -116,12 +118,12 @@ export async function afterRender() {
     serviceForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (isLoading) return;
-    isLoading = true;
+    isLoading = true;   
     let res;
     if (idHideen.value) {
-      res = await ServiceController.updateService(serviceSelect, measureUnitSelect, huellacarbontxt, serviceForm, idHideen);
+      res = await ServiceController.updateService(serviceSelect, measureUnitSelect, carbonFootprinttxt, serviceForm, idHideen);
     } else {
-      res = await ServiceController.insertService(serviceSelect, measureUnitSelect, huellacarbontxt, serviceForm);
+      res = await ServiceController.insertService(serviceSelect, measureUnitSelect, carbonFootprinttxt, serviceForm);
     }
 
     bsModal.hide();

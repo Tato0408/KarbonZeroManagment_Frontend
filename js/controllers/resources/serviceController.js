@@ -18,9 +18,9 @@ export async function reload(container) {
     ///Si no pues hacemos una peticion get y le pasamos ese array de services + el tab donde queremos poner la grid
     try {
         const data = await ServiceService.getService(currentPage, currentSize);
-        const users = data.content;
+        const service = data.content;
         const $tabContent = container.querySelector('#tabContent');
-        loadUsersTable(users, $tabContent);
+        loadServiceTable(service, $tabContent);
         ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload
         renderPagination(data.number, data.totalPages, container);  
     } catch (e) {
@@ -157,11 +157,11 @@ export function loadMeasureUnit(measureUnit, measureUnitSelect) {
 
 ///!IMPORTANTE: con el tema de los idfk nosotros aca usamos el .value, en el page, pasamos el select entero
 ///Aca hacemos la funcionalidad del insert, su uso esta en page
-export async function insertService(idService, idMeasureUni, carbonFootprinttxt, form) {
+export async function insertService(idService, idMeasureUnit, carbonFootprinttxt, form) {
   const payload = {
     idService: idService.value,
-    idMeasureUni: idMeasureUni.value,
-    carbonFootprinttxt: parseFloat(carbonFootprinttxt.value.trim())
+    idMeasureUnit: idMeasureUnit.value,
+    carbonFootprint: parseFloat(carbonFootprinttxt.value.trim())
   }
   try {
     const res = await ServiceService.insertService(payload);
@@ -175,10 +175,10 @@ export async function insertService(idService, idMeasureUni, carbonFootprinttxt,
 }
 
 ///Lo mismo que el insert pero ahora update,
-export async function updateService(idService, idMeasureUni, carbonFootprinttxt, form, id) {
+export async function updateService(idService, idMeasureUnit, carbonFootprinttxt, form, id) {
   const payload = {
     idService: idService.value,
-    idMeasureUni: idMeasureUni.value,
+    idMeasureUni: idMeasureUnit.value,
     carbonFootprinttxt: parseFloat(carbonFootprinttxt.value.trim())
   }
   try {
