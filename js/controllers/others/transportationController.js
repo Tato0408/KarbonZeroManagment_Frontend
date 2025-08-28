@@ -14,7 +14,14 @@ export async function reload(container) {
   if (!container) return;
   ///Si no pues hacemos una peticion get y le pasamos ese array de transporte + el tab donde queremos poner la grid
   try {
-    const data = await transportService.getTransport(currentPage, currentSize);
+    const TransportName = document.querySelector("#TransportSearch");
+    const searchName = TransportName.value.trim();
+    let data;
+    if (!searchName) {
+          data = await transportService.getTransport(currentPage, currentSize);
+    } else {
+      data = await transportService.getAllTransportByName(searchName, currentPage, currentSize);
+    }
     const transport = data.content;
     const $tabContent = container.querySelector('#tabContent');
     loadTransportTable(transport, $tabContent);
@@ -217,4 +224,7 @@ export function renderPagination(current, totalPages, container) {
     }
   });
   pagination.appendChild(next);
+}
+export async function setCurrentPage(page) {
+  currentPage = page;
 }

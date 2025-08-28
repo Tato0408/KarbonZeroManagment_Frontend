@@ -9,7 +9,7 @@ export async function render() {
     <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
         <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
             <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar">
+            <input type="text" class="form-control border-0 bg-transparent" id="TransportSearch" placeholder="Buscar">
         </div>
         <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
             <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#TransportModal" id="addTransport-kz">
@@ -76,44 +76,52 @@ export async function render() {
   `;
 }
 export function afterRender() {
-    const container = document.getElementById('transport-root');
-    TransportController.init(container);
+  const container = document.getElementById('transport-root');
+  TransportController.init(container);
 
-    const addTransportBtn = document.querySelector('#addTransport-kz');
-    const nametxt = document.querySelector('#nombretxt');
-    const huellacarbontxt = document.querySelector('#huellacarbontxt');
-    const transportForm = document.querySelector('#TransportForm');
-    const modalEl = document.getElementById('TransportModal')
-    const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl)
-    const idHideen = document.querySelector('#idtxt');
+  const addTransportBtn = document.querySelector('#addTransport-kz');
+  const nametxt = document.querySelector('#nombretxt');
+  const huellacarbontxt = document.querySelector('#huellacarbontxt');
+  const transportForm = document.querySelector('#TransportForm');
+  const modalEl = document.getElementById('TransportModal')
+  const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl)
+  const idHideen = document.querySelector('#idtxt');
 
-    if (addTransportBtn) {
-        addTransportBtn.addEventListener('click', () => {
-        idHideen.value = '';
-        nametxt.value = '';
-        huellacarbontxt.value = '';
-        });
-    }
+  if (addTransportBtn) {
+    addTransportBtn.addEventListener('click', () => {
+      idHideen.value = '';
+      nametxt.value = '';
+      huellacarbontxt.value = '';
+      });
+  }
 
-    let isLoading = false;
+  let isLoading = false;
 
-    transportForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (isLoading) return;
-    isLoading = true;
-    let res;
-    if (idHideen.value) {
-      res = await TransportController.updateTransport(nametxt, huellacarbontxt, transportForm, idHideen);
-    } else {
-      res = await TransportController.insertTransport(nametxt, huellacarbontxt, transportForm);
-    }
+  transportForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (isLoading) return;
+  isLoading = true;
+  let res;
+  if (idHideen.value) {
+    res = await TransportController.updateTransport(nametxt, huellacarbontxt, transportForm, idHideen);
+  } else {
+    res = await TransportController.insertTransport(nametxt, huellacarbontxt, transportForm);
+  }
 
-    bsModal.hide();
-    isLoading = false;
-    idHideen.value = '';
-    ///Si la respueta que nos retorna ya sea updateUser o insertUser es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
-    if (res?.ok) {
-      await TransportController.reload(container);
-    }
+  bsModal.hide();
+  isLoading = false;
+  idHideen.value = '';
+  ///Si la respueta que nos retorna ya sea updateUser o insertUser es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
+  if (res?.ok) {
+    await TransportController.reload(container);
+  }
+  });
+
+  const transportSearch = document.querySelector("#TransportSearch");
+  transportSearch.addEventListener("keyup", (e) => {
+  if (e.key == "Enter") {
+    TransportController.setCurrentPage(0);
+    TransportController.reload(container);
+  }
   });
 }
