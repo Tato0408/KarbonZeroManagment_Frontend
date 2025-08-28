@@ -34,6 +34,24 @@ export async function getLivingSpaceTypeById(id) {
     }
 }
 
+export async function getLivingSpaceTypeByName(searchName, page = 0, size = 10) {
+  try {
+    ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
+    const response = await fetch(`http://localhost:8080/apiLivingSpace/getLivingSpaceTypeByName/${searchName}?page=${page}&size=${size}`
+    );
+    ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
+    if (!response.ok) {
+      console.error(`Error : ${response}`);
+    }
+    ///Finalmente retornamos nuestra respuesta en formato json
+    return response.json();
+    ///Ya el catch, supongo que ya se la saben ok
+  } catch (error) {
+    console.error(`Error fetching users: ${error}`);
+    throw error;
+  }
+}
+
 export async function insertLivingSpaceTypes(playload) {
     try {
         const response = await fetch(`http://localhost:8080/apiLivingSpace/insertLivingSpaceType`, {
