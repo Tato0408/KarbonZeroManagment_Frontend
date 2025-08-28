@@ -2,11 +2,18 @@ import { initCategory } from "./foodCategoryController";
 import { init } from "./foodController";
 
 
-//TODO ESTO NO FUNCIONA SI SE ELIMINA NO PASA NADA
 export async function initAllResourcesTabs(container) {
-
-
-
+ const $tabList = container.querySelector('#tabList');
+$tabList.innerHTML = `
+         <li class="nav-item d-flex">
+            <a class="nav-link active" data-bs-toggle="tab" href="#foodTab">Alimentos</a>
+        </li>
+        <li class="nav-item d-flex">
+            <a class="nav-link" data-bs-toggle="tab" href="#categoriesTab">Categorias de Alimentos</a>
+        </li>
+     `
+init(container);
+initCategory(container);
     
 }
   

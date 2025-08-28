@@ -1,78 +1,72 @@
 import * as FoodCategoryService from "../../../services/resources/foodCategoryService"
 import * as Alerts from '../../../../utils/alerts'
 
-export async function initCategory(container){
-    try{
-        renderCategoryData(container);
-    }
-    catch(err){
-        console.log("Error : ", err)
-    }
-    
+export async function initCategory(container) {
+    renderCategoryData(container);
 }
 
 let currentPage = 0;
 let currentSize = 10;
- export async function setCurrentPage(page) {
+export async function setCurrentPage(page) {
     currentPage = page;
-    }
-export async function reloadCategories(container){
-    if(!container) return;
-    try{
-        const search = document.querySelector('#findCategory')
+}
+export async function reloadCategories(container) {
+    if (!container) return;
+    try {
+        const search = document.querySelector('#searchCategory')
         const searchCategory = search.value.trim();
 
-        let data;  
-        if(!searchCategory){
+        let data;
+        if (!searchCategory) {
             data = await FoodCategoryService.getCategoriesPagination(currentPage, currentSize);
         }
-        else{
+        else {
             data = await FoodCategoryService.getCategoryByName(searchCategory, currentPage, currentSize); // <-- faltaba await
         }
 
-        const foodCategories = data.content ?? [];  // <-- fallback a []
-        const $tabContent = container.querySelector('#tab-ContentCategory');
+        const foodCategories = data.content
+        const $tabContent = container.querySelector('#tabContentCategory');
 
         loadFoodCategoryTable(foodCategories, $tabContent);
         renderPagination(data.number, data.totalPages, container);
     }
-    catch (e){
+    catch (e) {
         console.log(`Error : ${e}`)
     }
 }
 
-export async function renderCategoryData(container){
-  
+export async function renderCategoryData(container) {
+
     let foodCategories = [];
 
-    try{
+    try {
         const data = await FoodCategoryService.getCategoriesPagination(currentPage, currentSize);
 
         foodCategories = data.content
     }
-    catch (err){
-        console.log("ERROR: ", err  )
+    catch (err) {
+        console.log("ERROR: ", err)
         return container.innerHTML = `<p class="text-danger">No se pudieron cargar los recursos.</p>`;
     }
 
-    const categoryTab = container.querySelector("#tab-ContentCategory");
+    const categoryTab = container.querySelector("#tabContentCategory");
 
     loadFoodCategoryTable(foodCategories, categoryTab);
 
-    const sizeSelector = container.querySelector("#itemsSelect")
-     sizeSelector.addEventListener("change", ()=>{
+    const sizeSelector = container.querySelector("#itemsSelectCategory")
+    sizeSelector.addEventListener("change", () => {
         currentSize = parseInt(sizeSelector.value),
-        currentPage = 0;
+            currentPage = 0;
         reloadCategories(container);
-     });    
+    });
 
 
-     container.addEventListener('click', async e => {
+    container.addEventListener('click', async e => {
         const btn = e.target.closest('.btn-delete-category');
         if (!btn) return;
         const id = btn.dataset.id;
         await FoodCategoryService.deleteFoodCategory(id);
-        await reloadCategories(container);   
+        await reloadCategories(container);
     });
     container.addEventListener('click', async e => {
         const editBtn = e.target.closest('.btn-edit-category');
@@ -80,6 +74,7 @@ export async function renderCategoryData(container){
             const id = editBtn.dataset.id;
             try {
                 const category = await FoodCategoryService.getFoodCategoryById(id);
+                console.log(category)
                 document.getElementById('categoriaNombre').value = category.foodCategoryName;
                 document.getElementById('huellaTxt').value = category.carbonFootPrint;
                 document.querySelector('#idCategoria').value = category.idFoodCategory;
@@ -93,20 +88,10 @@ export async function renderCategoryData(container){
 }
 
 //Categories es la data que sacamos del metodo GET, y tab es la tabla y definimos lo que va a tener la tabla junto al MODAL
-function loadFoodCategoryTable(categories, tab){
+function loadFoodCategoryTable(categories, tab) {
+    tab.innerHTML = ""
+    const baseIndex = currentPage * currentSize
     tab.innerHTML = `
-        <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
-          <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
-              <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-              <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar" id="findCategory">
-          </div>
-          <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
-              <button class="kz-button-create" id="addCategory-kz" data-bs-toggle="modal"
-            data-bs-target="#CategoriaModal"><i class="bi bi-plus-circle"></i>
-                  Crear categoria
-              </button>
-          </div>
-    </div>
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
@@ -120,7 +105,7 @@ function loadFoodCategoryTable(categories, tab){
           <tbody>
             ${categories.map((c, i) => `
               <tr>
-                <td>${i + 1}</td>
+                <td>${baseIndex + i + 1}</td>
                 <td>${c.foodCategoryName}</td>
                 <td>${c.carbonFootPrint}</td>
                 <td>
@@ -132,22 +117,9 @@ function loadFoodCategoryTable(categories, tab){
         </table>
     </div>
     `
-    serchCategory();
 }
 
-export function serchCategory(){
-    const search = document.querySelector('#findCategory')
-        const container = document.querySelector('#foods-root')
-            search.addEventListener("keyup", (e) => {
-             if (e.key == "Enter") {
-                setCurrentPage(0);
-                reloadCategories(container);
-             }
-             if(search.value == ""){
-                reloadCategories(container)
-             }
-          })
-}
+
 
 export async function insertCategory(categoryName, carbonFootPrint, categoryForm) {
     const payload = {
@@ -155,8 +127,8 @@ export async function insertCategory(categoryName, carbonFootPrint, categoryForm
         carbonFootPrint: carbonFootPrint.value.trim()
     }
     try {
-      let res =   FoodCategoryService.insertFoodCategory(payload);
-        await reloadCategories(container); 
+        let res = FoodCategoryService.insertFoodCategory(payload);
+        await reloadCategories(container);
         categoryForm.reset();
         return res;
     } catch (err) {
@@ -164,55 +136,56 @@ export async function insertCategory(categoryName, carbonFootPrint, categoryForm
     }
 }
 
-export async function updateCategory(idCategory, categoryName,  carbonFootprint, categoryForm) {
+export async function updateCategory(idCategory, categoryName, carbonFootprint, categoryForm) {
     const playload = {
         idFoodCategory: idCategory.value,
         foodCategoryName: categoryName.value.trim(),
         carbonFootPrint: carbonFootprint.value.trim()
-        
+
     }
     try {
         FoodCategoryService.updateFoodCategory(playload, idCategory);
-        
-        const prueba =await reloadCategories(container); 
+
+        const prueba = await reloadCategories(container);
         console.log(prueba)
         categoryForm.reset();
     } catch (err) {
         Alerts.showToastCloseError(`No se pudo actualizar la categoria`)
     }
-    
+
 }
 
- export function renderPagination(current, totalPages, container){
+export function renderPagination(current, totalPages, container) {
     //Acá accedemos al ul de paginación
-    const pagination = document.getElementById('foodPagination')
-    if(!pagination) return;
+    const pagination = document.getElementById('foodPaginationCategory')
+    if (!pagination) return;
     pagination.innerHTML = "";
 
     const prev = document.createElement("li");
     prev.className = `page-item ${current <= 0 ? "disabled" : ""}`;
-    prev.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>`
-    
-    prev.addEventListener("click", (e)=>{
-         e.preventDefault();
-         if(current > 0){
-         currentPage = current -1; //Retrocede una página
+    prev.innerHTML = `<a class="page-link" href="#" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                     </a>`
 
-        reloadCategories(container);
-      }
+    prev.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (current > 0) {
+            currentPage = current - 1; //Retrocede una página
+            reloadCategories(container);
+        }
     });
 
     pagination.appendChild(prev);
 
     //Control de número de páginas
 
-    for(let i = 0; i < totalPages; i++){
+    for (let i = 0; i < totalPages; i++) {
         const li = document.createElement("li");
-        li.className =` page-item ${i === current ? "active" : ""}`;
-        li.innerHTML = `<a class="page-link" href="#">${i + 1}</a>`
+        li.className = `page-item ${i === current ? "active" : ""}`;
+    li.innerHTML = `<a class="page-link" href="#">${i + 1}</a>`;
         li.addEventListener("click", (e) => {
             e.preventDefault();
-            if(currentPage !== i){
+            if (currentPage !== i) {
                 currentPage = i;
                 reloadCategories(container);
             }
@@ -220,17 +193,17 @@ export async function updateCategory(idCategory, categoryName,  carbonFootprint,
         pagination.appendChild(li);
     }
 
-     const next = document.createElement("li");
+    const next = document.createElement("li");
     next.className = `page-item ${current >= totalPages - 1 ? "disabled" : ""}`;
-     next.innerHTML = `<a class="page-link" href="#" aria-label="Next">
+    next.innerHTML = `<a class="page-link" href="#" aria-label="Next">
                       <span aria-hidden="true">&raquo;</span>
                     </a>`;
-     next.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (current < totalPages - 1) {
-      currentPage = current + 1;///Avanza una pagina
-      reloadCategories(container);
-    }
-  });
-  pagination.appendChild(next);
+    next.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (current < totalPages - 1) {
+            currentPage = current + 1;///Avanza una pagina
+            reloadCategories(container);
+        }
+    });
+    pagination.appendChild(next);
 }
