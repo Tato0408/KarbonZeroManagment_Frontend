@@ -35,6 +35,28 @@ export async function getPetTypeById(id) {
     }
 }
 
+export async function getPetTypeByName(searchName, page = 0, size = 10) {
+    try {
+        const response = await fetch(`http://localhost:8080/apiPet/getPetTypeByName/${searchName}?page=${page}&size=${size}`);
+        if (!response.ok) {
+            throw new Error(`Error al buscar mascotas: ${response.status}`);
+        }
+        const data = await response.json();
+
+        data.content = data.content.map(p => ({
+            idPet: p.idPetType,
+            name: p.namePetType,
+            carbonFootprint: p.carbonFootPrint
+        }));
+
+        return data;
+    } catch (error) {
+        console.error(`Error fetching pets by name: ${error}`);
+        return { content: [], number: 0, totalPages: 0 };
+    }
+}
+
+
 export async function insertPet(payload) {
     try {
         const body = { namePetType: payload.name, carbonFootPrint: parseFloat(payload.carbonFootprint) };

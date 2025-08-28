@@ -3,6 +3,9 @@ import * as Alerts from '../../../utils/alerts';
 
 let currentPage = 0;
 let currentSize = 10;
+export async function setCurrentPage(page) {
+  currentPage = page;
+}
 
 export async function PetsInit(container) {
     try {
@@ -15,9 +18,17 @@ export async function PetsInit(container) {
 export async function reloadPet(container) {
     if (!container) return;
     try {
-        const data = await PetService.getPets(currentPage, currentSize);
-        const pets = data.content;
-        const tab = container.querySelector('#tabContent');
+        const search = document.querySelector('#PetSearch')
+        const searchPet = search.value
+        let data
+        if(!searchPet){
+            data = await PetService.getPets(currentPage, currentSize)
+        
+        }else{
+            data = await PetService.getPetTypeByName(searchPet, currentPage, currentSize)
+        }
+        const pets = data.content
+        const tab = container.querySelector('#tabContent')
         LoadTable(pets, tab);
         renderPagination(data.number, data.totalPages, container);
     } catch (err) {

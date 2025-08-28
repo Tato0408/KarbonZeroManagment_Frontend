@@ -7,7 +7,7 @@ export async function render() {
     <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
         <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
             <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar">
+            <input type="text" class="form-control border-0 bg-transparent" id="PetSearch" placeholder="Buscar">
         </div>
         <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
             <button class="kz-button-create" id="addPet" data-bs-toggle="modal" data-bs-target="#PetModal">
@@ -85,6 +85,7 @@ export async function petsProcess() {
     const PetModal = container.querySelector('#PetModal');
     const bsModal = bootstrap.Modal.getOrCreateInstance(PetModal);
     const petForm = container.querySelector('#PetForm');
+    const PetSearch = container.querySelector("#PetSearch"); // ✅ el search input
 
     if (addPetBtn) {
         addPetBtn.addEventListener('click', () => {
@@ -119,6 +120,16 @@ export async function petsProcess() {
     });
 
     let isLoading = false;
+
+    // ✅ Muevo el Search afuera del submit
+    if (PetSearch) {
+        PetSearch.addEventListener("keyup", (e) => {
+            if (e.key === "Enter") {
+                PetController.setCurrentPage(0);
+                PetController.reloadPet(container);
+            }
+        });
+    }
 
     petForm.addEventListener('submit', async e => {
         e.preventDefault();
