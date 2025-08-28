@@ -13,20 +13,27 @@ export async function initCategory(container){
 
 let currentPage = 0;
 let currentSize = 10;
-
+ export async function setCurrentPage(page) {
+    currentPage = page;
+    }
 export async function reloadCategories(container){
-    //Si el container es nulo
     if(!container) return;
-    //Si no hacemos un Get y le pasamos el array del alimento y el tab que queremos agregarle al grid
     try{
-        //Aqui esta la DATA
-        const data = await FoodCategoryService.getCategoriesPagination(currentPage, currentSize);
-        const foodCategories = data.content; 
+        const search = document.querySelector('#findCategory')
+        const searchCategory = search.value.trim();
+
+        let data;  
+        if(!searchCategory){
+            data = await FoodCategoryService.getCategoriesPagination(currentPage, currentSize);
+        }
+        else{
+            data = await FoodCategoryService.getCategoryByName(searchCategory, currentPage, currentSize); // <-- faltaba await
+        }
+
+        const foodCategories = data.content ?? [];  // <-- fallback a []
         const $tabContent = container.querySelector('#tab-ContentCategory');
 
-        //A este metodo mando la DATA y tambien mando la tabla con los datos
         loadFoodCategoryTable(foodCategories, $tabContent);
-        ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload\
         renderPagination(data.number, data.totalPages, container);
     }
     catch (e){
@@ -125,6 +132,21 @@ function loadFoodCategoryTable(categories, tab){
         </table>
     </div>
     `
+    serchCategory();
+}
+
+export function serchCategory(){
+    const search = document.querySelector('#findCategory')
+        const container = document.querySelector('#foods-root')
+            search.addEventListener("keyup", (e) => {
+             if (e.key == "Enter") {
+                setCurrentPage(0);
+                reloadCategories(container);
+             }
+             if(search.value == ""){
+                reloadCategories(container)
+             }
+          })
 }
 
 export async function insertCategory(categoryName, carbonFootPrint, categoryForm) {

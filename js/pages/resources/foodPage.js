@@ -7,13 +7,23 @@ export async function render() {
     return `
     
 <div class="container py-4" id="foods-root">
+
     <h2 class="general-title">Alimentos</h2>
-    <div 
-    class="modal fade" 
-    id="AlimentoModal" 
-    tabindex="-1"
-     role="dialog"
-     aria-hidden="true">
+    <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
+        <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
+            <span class="input-group-text bg-transparent border-0">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control border-0 bg-transparent" id="searchFood" placeholder="Buscar" id="findFood">
+        </div>
+                <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto ">
+            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#AlimentoModal">
+                <i class="bi bi-plus-circle"></i> Añadir Alimento
+            </button>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="AlimentoModal" tabindex="-1" role="dialog"aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content kz-modal-mongo border-0">
                 <div class="modal-header justify-content-center position-relative">
@@ -124,7 +134,7 @@ export async function afterRender() {
     foodCategoriesProcess();
 }
 
-export async function foodProcess(){
+export async function foodProcess() {
     let data = await getCategories();
     //Se manda a llamar al init del foodController el cual es el que llena la tabla, por eso le pasamos el container
     const container = document.getElementById('foods-root');
@@ -139,139 +149,151 @@ export async function foodProcess(){
     const bsModal = bootstrap.Modal.getOrCreateInstance(foodModal)
     const idFoodHidden = document.querySelector('#idtxt')
     const btnClose = document.querySelector('#closebtn')
+    const search = document.querySelector('#searchFood')
+
+    search.addEventListener("keyup", (e) => {
+        if (e.key == "Enter") {
+            FoodController.setCurrentPage(0);
+            FoodController.reload(container);
+        }
+        if (search.value == "") {
+            FoodController.reload(container)
+        }
+    })
     ///Aca mandamos a llenar el loadCategories y le pasamos las categorias que hemos obtenido asi como el formselect
     FoodController.loadCategories(data, foodCategorySelect);
     //Aca definimos que si, el boton exite, limpiaomos los campos al cargar
-    if(addFoodBtn){
-        addFoodBtn.addEventListener('click', ()=>{
+    if (addFoodBtn) {
+        addFoodBtn.addEventListener('click', () => {
             idFoodHidden.value = ''
             foodName.value = ''
             foodCategorySelect.selectedIndex = 0;
         });
     }
-    if(btnClose){
-        btnClose.addEventListener('click', ()=>{
+    if (btnClose) {
+        btnClose.addEventListener('click', () => {
             idFoodHidden.value = ''
             foodName.value = ''
             foodCategorySelect.selectedIndex = 0;
         });
     }
 
-     document.getElementById("nombreAlimento").addEventListener("keypress", function (e) {
-    let char = String.fromCharCode(e.which); // la tecla presionada
-    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-    if (!regex.test(char)) {
-        e.preventDefault(); // cancela la tecla
-    }
-});
+    document.getElementById("nombreAlimento").addEventListener("keypress", function (e) {
+        let char = String.fromCharCode(e.which); // la tecla presionada
+        let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+        if (!regex.test(char)) {
+            e.preventDefault(); // cancela la tecla
+        }
+    });
 
     let isLoading = false;
     //Aca ya vinculamos la parte del insert/update con el submit de nuestro formulario, pasamos datos segun sean solicitados
-    foodForm.addEventListener('submit', async e =>{
+    foodForm.addEventListener('submit', async e => {
         e.preventDefault();
-        if(isLoading) return;
+        if (isLoading) return;
         isLoading = true;
         let res;
-        if(idFoodHidden.value){
-             res = await FoodController.updateFood(foodName, foodCategorySelect, foodForm, idFoodHidden)
-        }else{
-            res = await FoodController.insertFood(foodName,foodCategorySelect,foodForm)
+        if (idFoodHidden.value) {
+            res = await FoodController.updateFood(foodName, foodCategorySelect, foodForm, idFoodHidden)
+        } else {
+            res = await FoodController.insertFood(foodName, foodCategorySelect, foodForm)
         }
         bsModal.hide();
         isLoading = false;
         idFoodHidden.value = ''
         ///Si la respueta que nos retorna ya sea updateFood o insertFood es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
-        if(res?.ok){
+        if (res?.ok) {
             await FoodController.reload(container);
         }
-    })    
+    })
 }
 
-export async function foodCategoriesProcess(){
-     const container = document.getElementById('foods-root');
+export async function foodCategoriesProcess() {
+    const container = document.getElementById('foods-root');
 
-      FoodCategoryController.initCategory(container);
+    FoodCategoryController.initCategory(container);
 
-      const addCategory = document.getElementById('addCategory-kz');
-      const closeCategory = document.getElementById('btnCloseCategory')
-      const idHidden = document.getElementById('idCategoria');
-      const categoryName = document.getElementById('categoriaNombre');
-      const carbonFootPrint = document.getElementById('huellaTxt');
-      const categoryModal = document.getElementById('CategoriaModal');
-      const categoryForm = document.getElementById('CategoriaForm');
-      const bsModalCategory = bootstrap.Modal.getOrCreateInstance(categoryModal);
-       if (addCategory) {
-    addCategory.addEventListener("click", () => {
-        idHidden.value = "";
-      categoryName.value = "";
-      carbonFootPrint.value = "";
-     });
+    const addCategory = document.getElementById('addCategory-kz');
+    const closeCategory = document.getElementById('btnCloseCategory')
+    const idHidden = document.getElementById('idCategoria');
+    const categoryName = document.getElementById('categoriaNombre');
+    const carbonFootPrint = document.getElementById('huellaTxt');
+    const categoryModal = document.getElementById('CategoriaModal');
+    const categoryForm = document.getElementById('CategoriaForm');
+    const bsModalCategory = bootstrap.Modal.getOrCreateInstance(categoryModal);
+
+    if (addCategory) {
+        addCategory.addEventListener("click", () => {
+            idHidden.value = "";
+            categoryName.value = "";
+            carbonFootPrint.value = "";
+        });
     }
     if (closeCategory) {
-    closeCategory.addEventListener("click", () => {
-        idHidden.value = "";
-      categoryName.value = "";
-      carbonFootPrint.value = "";
-     });
+        closeCategory.addEventListener("click", () => {
+            idHidden.value = "";
+            categoryName.value = "";
+            carbonFootPrint.value = "";
+        });
     }
 
     document.getElementById("categoriaNombre").addEventListener("keypress", function (e) {
-    let char = String.fromCharCode(e.which); // la tecla presionada
-    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-    if (!regex.test(char)) {
-        e.preventDefault(); // cancela la tecla
-    }
-});
+        let char = String.fromCharCode(e.which); // la tecla presionada
+        let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+        if (!regex.test(char)) {
+            e.preventDefault(); // cancela la tecla
+        }
+    });
 
-document.getElementById("huellaTxt").addEventListener("keypress", function (e) {
-    let val = String.fromCharCode(e.which);
-    let p = e.target.value;
+    document.getElementById("huellaTxt").addEventListener("keypress", function (e) {
+        let val = String.fromCharCode(e.which);
+        let p = e.target.value;
 
-    //Permitir numeros y punto
-    if (!/[0-9.]/.test(val)) {
-        e.preventDefault();
-        return;
-    }
-
-    //Validacion para no permitir mas de un punto de decimal
-    if (val === "." && p.includes(".")) {
-        e.preventDefault();
-        return;
-    }
-
-    //No mas de dos decimales despues del punto
-    if (p.includes(".")) {
-        let parte = p.split(".");
-        if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
+        //Permitir numeros y punto
+        if (!/[0-9.]/.test(val)) {
             e.preventDefault();
             return;
         }
-    }
-});
+
+        //Validacion para no permitir mas de un punto de decimal
+        if (val === "." && p.includes(".")) {
+            e.preventDefault();
+            return;
+        }
+
+        //No mas de dos decimales despues del punto
+        if (p.includes(".")) {
+            let parte = p.split(".");
+            if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
+                e.preventDefault();
+                return;
+            }
+        }
+    });
 
     let isLoading = false;
 
-      categoryForm.addEventListener("submit", async e => {
+    categoryForm.addEventListener("submit", async e => {
         e.preventDefault();
-        if(isLoading) return
+        if (isLoading) return
         isLoading = true;
         let respuesta;
-    if (idHidden.value) {
-      respuesta = FoodCategoryController.updateCategory(idHidden,categoryName,carbonFootPrint,categoryForm);
-    } else {
-      respuesta =  FoodCategoryController.insertCategory(categoryName,carbonFootPrint,categoryForm);  
-      
-    }
-    bsModalCategory.hide();
+        if (idHidden.value) {
+            respuesta = FoodCategoryController.updateCategory(idHidden, categoryName, carbonFootPrint, categoryForm);
+        } else {
+            respuesta = FoodCategoryController.insertCategory(categoryName, carbonFootPrint, categoryForm);
+
+        }
+        bsModalCategory.hide();
         isLoading = false;
         idHidden.value = ''
         ///Si la respueta que nos retorna ya sea updateFood o insertFood es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
-        if(respuesta?.ok){
-         await FoodCategoryController.reloadCategories(container);
-           
-           
+        if (respuesta?.ok) {
+            await FoodCategoryController.reloadCategories(container);
+
+
         }
-  });
+    });
 }
 
 

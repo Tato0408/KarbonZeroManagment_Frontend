@@ -9,23 +9,33 @@ export async function init(container){
 
 let currentPage = 0;
 let currentSize = 10;
-
+ export async function setCurrentPage(page) {
+    currentPage = page;
+    }
 //Metodo reload y el container sera igual al contenedor que le estemos pasando, en este caso el final en page va a ser el de food
 
 export async function reload(container){
-    //Si el container es nulo
     if(!container) return;
-    //Si no hacemos un Get y le pasamos el array del alimento y el tab que queremos agregarle al grid
+
     try{
-        const data = await FoodService.getFood(currentPage, currentSize);
-        const foods = data.content; 
+        const search = document.querySelector('#searchFood');
+        const searchFood = search.value.trim();
+
+        let data;
+        if(!searchFood){
+            data = await FoodService.getFood(currentPage, currentSize);
+        } else {
+            data = await FoodService.getFoodByName(searchFood, currentPage, currentSize); // <-- faltaba await
+        }
+
+        const foods = data.content ; // por si viene vacío
         const $tabContent = container.querySelector('#tabContent');
+
         LoadTable(foods, $tabContent);
-        ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload\
         renderPagination(data.number, data.totalPages, container);
     }
     catch (e){
-        console.error(e)
+        console.error("Error en reload:", e);
     }
 }
 
@@ -111,19 +121,7 @@ export async function reload(container){
     const baseIndex  = currentPage * currentSize;
     tab.innerHTML = "";
     tab.innerHTML = `
-    <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
-        <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
-            <span class="input-group-text bg-transparent border-0">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar" id="findFood">
-        </div>
-                <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto ">
-            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#AlimentoModal">
-                <i class="bi bi-plus-circle"></i> Añadir Alimento
-            </button>
-        </div>
-    </div>
+    
     <div id="food" class="tab-pane fade show active">
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
