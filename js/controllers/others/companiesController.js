@@ -12,21 +12,32 @@ export async function CompanyInit(container) {
 
 let currentPage = 0;
 let currentSize = 10;
-
+export async function setCurrentPage(page) {
+  currentPage = page;
+}
 export async function reloadCompany(container) {
     if (!container) return
 
-    try {
-        const data = await CompanyService.getCompanies(currentPage, currentSize)
-        const country = data.content
-        const $tabContent = container.querySelector('#tabContent')
-        LoadTable(country, $tabContent)
-
-        renderPagination(data.number, data.totalPages, container)
-    }
-    catch (err) {
-        console.error(e)
-    }
+     try {
+            const search = document.querySelector('#searchCompany')
+             const searchCompany = search.value
+             let data
+             if(!searchCompany){
+                data =  await CompanyService.getCompanies(currentPage, currentSize)
+             }
+             else{
+                data = await CompanyService.getCompanyByName(searchCompany, currentPage, currentSize)
+             }
+             
+            const company = data.content
+            const $tabContent = container.querySelector('#tabContent')
+            LoadTable(company, $tabContent)
+    
+            renderPagination(data.number, data.totalPages, container)
+        }
+        catch (err) {
+            console.error(e)
+        }
 }
 
 async function renderData(container) {
@@ -57,7 +68,7 @@ async function renderData(container) {
         reloadCountry(container)
     })
     container.addEventListener('click', async e => {
-        const btn = e.target.closest('.btn-delete-companie');
+        const btn = e.target.closest('.btn-delete-company');
         if (!btn) return;
         const id = btn.dataset.id;
         const ok = await CompanyService.deleteCompany(id);
@@ -68,7 +79,7 @@ async function renderData(container) {
 
     ///Aca lo que hacemos es llenar el formulario de editar, puesto que eso es lo que hace el boton, abrir con datos, quien se encarga de enviar el PUT es en page
     container.addEventListener('click', async e => {
-        const editBtn = e.target.closest('.btn-edit-companie');
+        const editBtn = e.target.closest('.btn-edit-company');
         if (!editBtn) return;
         const id = editBtn.dataset.id;
         try {
@@ -88,7 +99,6 @@ async function renderData(container) {
 export function LoadTable(companie, tab){
     const baseIndex  = currentPage * currentSize;
      tab.innerHTML = "";
-     console.log("Datos de company en LoadTable:", companie);
      tab.innerHTML = `
         <div id="compañias" class="tab-pane fade show active">
       <div class="table-responsive">
@@ -108,7 +118,7 @@ export function LoadTable(companie, tab){
                 <td>${u.name}</td>
                 <td>${u.domain}</td>
                 <td>
-                    <button class="btn btn-sm btn-success me-1 btn-edit-company" data-id="${u.idCompany}" data-bs-toggle="modal" data-bs-target="#CountryModal"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="btn btn-sm btn-success me-1 btn-edit-company" data-id="${u.idCompany}" data-bs-toggle="modal" data-bs-target="#CompanyModal"><i class="bi bi-pencil-fill"></i></button>
                     <button class="btn btn-sm btn-danger btn-delete-company" data-id="${u.idCompany}"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>`).join('')}
