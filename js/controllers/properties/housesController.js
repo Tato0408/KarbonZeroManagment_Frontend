@@ -13,10 +13,9 @@ export async function LivingInit(container){
 
 let currentPage = 0;
 let currentSize = 10;
-
-    export async function setCurrentPage(page) {
-    currentPage = page;
-    }
+export async function setCurrentPage(page) {
+  currentPage = page;
+}
 
 //Metodo reload y el container sera igual al contenedor que le estemos pasando, en este caso el final en page va a ser el de house
 
@@ -25,26 +24,24 @@ export async function reloadHouse(container){
     if(!container) return;
     
     //Si no hacemos un Get y le pasamos el array del alimento y el tab que queremos agregarle al grid
-    try{
+     try {
         const search = document.querySelector('#searchHouse')
-        const searchHouse = search.value.trim();
+         const searchHouse = search.value
+         let data
+         if(!searchHouse){
+            data =  await LivingSpaceService.getLivingSpaceTypes(currentPage, currentSize)
+         }
+         else{
+            data = await LivingSpaceService.getLivingSpaceTypeByName(searchHouse, currentPage, currentSize)
+         }
+         
+        const house = data.content
+        const $tabContent = container.querySelector('#tabContent')
+        LoadTable(house, $tabContent)
 
-        let living;
-        if(!searchHouse){
-            living = await LivingSpaceService.getLivingSpaceTypes(currentPage, currentSize);
-            
-        }
-        else {
-            living = await LivingSpaceService.getLivingSpaceTypeByName(searchHouse, currentPage, currentSize)
-            
-        }
-        const house = living.content
-        const $tabContent = container.querySelector('#tabContent');
-        LoadTable(house, $tabContent);
-        ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload\
-        renderPagination(living.number, living.totalPages, container);
+        renderPagination(data.number, data.totalPages, container)
     }
-    catch (e){
+    catch (err) {
         console.error(e)
     }
 }
@@ -63,6 +60,7 @@ export async function reloadHouse(container){
                 }
             
                 const tab = container.querySelector("#tabContent");
+                console.log("Tab encontrado:", tab)
                 if (!tab) {
                     console.error("No se encontró #tabContent dentro del container");
                     return;
@@ -115,6 +113,7 @@ export async function reloadHouse(container){
      ///EL base index nos sirve para que siempre se guarden las filas que llevamos en pase a la pagina y su tamaño
      const baseIndex  = currentPage * currentSize;
      tab.innerHTML = "";
+     console.log("Datos de house en LoadTable:", house);
      tab.innerHTML =
  ` 
     <div id="viviendas" class="tab-pane fade show active">
@@ -158,7 +157,7 @@ export async function reloadHouse(container){
      }
      catch(err){
          Alerts.showToastCloseError(`No se pudo agregar el tipo de vivienda ${err}`);
-     ///Retornamos un false
+   
      return { ok: false };
      }
  
@@ -198,7 +197,7 @@ export async function reloadHouse(container){
      prev.addEventListener("click", (e)=>{
           e.preventDefault();
           if(current > 0){
-          currentPage = current -1; //Retrocede una página
+          currentPage = current -1; 
  
          reloadHouse(container);
        }
@@ -206,7 +205,6 @@ export async function reloadHouse(container){
  
      pagination.appendChild(prev);
  
-     //Control de número de páginas
  
      for(let i = 0; i < totalPages; i++){
          const li = document.createElement("li");
@@ -230,7 +228,7 @@ export async function reloadHouse(container){
       next.addEventListener("click", (e) => {
      e.preventDefault();
      if (current < totalPages - 1) {
-       currentPage = current + 1;///Avanza una pagina
+       currentPage = current + 1;
        reload(container);
      }
    });
