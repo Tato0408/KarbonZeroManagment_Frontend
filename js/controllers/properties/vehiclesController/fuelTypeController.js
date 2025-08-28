@@ -1,7 +1,7 @@
-import * as VehicleService from "../../services/properties/vehiclesService"
-import * as Alerts from '../../../utils/alerts'
+import * as FuelTypeService from "../../../services/properties/fuelTypeService"
+import * as Alerts from '../../../../utils/alerts'
 
-export async function CarSizeInit(container) {
+export async function FuelTypeInit(container) {
     try {
         renderData(container)
     }
@@ -12,44 +12,50 @@ export async function CarSizeInit(container) {
 
 let currentPage = 0;
 let currentSize = 10;
-
-export async function reloadCarSize(container) {
+export async function setCurrentPage(page){
+    currentPage = page
+}
+export async function reloadFuelType(container) {
     if (!container) return
 
     try {
-        const data = await VehicleService.getCarSize(currentPage, currentSize)
-        const carSize = data.content
-        const $tabContent = container.querySelector('#tabContent')
-        LoadTable(carSize, $tabContent)
-
-        renderPagination(data.number, data.totalPages, container)
-    }
-    catch (err) {
-        console.error(e)
-    }
+            const search = document.querySelector('#searchFuelType');
+            const searchFuel = search.value.trim();
+        
+            let data;
+            if (!searchFuel) {
+              data = await FuelTypeService.getAllFuelType(currentPage, currentSize);
+            } else {
+              data = await FuelTypeService.getFuelByName(searchFuel, currentPage, currentSize); 
+            }
+        
+            const fuel = data.content; 
+            const $tabContent = container.querySelector('#tabContent-FuelType');
+        
+             (fuel, $tabContent);
+            renderPagination(data.number, data.totalPages, container);
+          }
+          catch (e) {
+            console.error("Error en reload:", e);
+          }
 }
 
 async function renderData(container) {
-    let carSize = []
+    let FuelType = []
 
     try {
-        const data = await VehicleService.getCarSize(currentPage, currentSize)
+        const data = await FuelTypeService.getAllFuelType(currentPage, currentSize)
 
-        carSize = data.content
+        FuelType = data.content
     }
     catch {
         console.log("ERROR: ", err)
         return container.innerHTML = `<p class="text-danger">No se pudieron cargar los recursos.</p>`;
     }
 
-    const tab = container.querySelector('#tabContent')
-    const $tabList = container.querySelector("#tabList");
-    $tabList.innerHTML = `
-                <li class="nav-item d-flex">
-            <a class="nav-link active" data-bs-toggle="tab" href="carros">Vehiculos</a>
-        </li>
-        `
-    LoadTable(carSize, tab)
+    const tab = container.querySelector('#tabContent-FuelType')
+    
+    LoadTable(FuelType, tab)
     const sizeSelector = document.getElementById('itemsSelect')
     sizeSelector.addEventListener("change", () => {
         currentSize = parseInt(sizeSelector.value);
@@ -57,89 +63,108 @@ async function renderData(container) {
         reloadCarSize(container)
     })
     container.addEventListener('click', async e => {
-        const btn = e.target.closest('.btn-delete-carSize');
+        const btn = e.target.closest('.btn-delete-FuelType');
         if (!btn) return;
         const id = btn.dataset.id;
-        const ok = await VehicleService.deleteCarSize(id);
+        const ok = await FuelTypeService.deleteFuelType(id);
         console.log(ok)
         //En caso de que duvuelva true retornamos
-        if (ok) await reloadCarSize(container);
+        if (ok) await reloadFuelType(container);
     });
 
     ///Aca lo que hacemos es llenar el formulario de editar, puesto que eso es lo que hace el boton, abrir con datos, quien se encarga de enviar el PUT es en page
     container.addEventListener('click', async e => {
-        const editBtn = e.target.closest('.btn-edit-carSize');
+        const editBtn = e.target.closest('.btn-edit-FuelType');
         if (!editBtn) return;
         const id = editBtn.dataset.id;
+        console.log(id)
         try {
-            const carSize = await VehicleService.getCarSizeById(id);
-            document.getElementById('idtxt').value = carSize.idCarSize ?? '';
-            document.getElementById('nombretxt').value = carSize.name ?? '';
+            const fuelType = await FuelTypeService.getFuelTypeById(id);
+            console.log(fuelType)
+            document.getElementById('idtxt').value = fuelType.idFuelType ?? '';
+            document.getElementById('nombretxtFuel').value = fuelType.name ?? '';
+            document.getElementById('huellatxt').value = fuelType.carbonFootprint ?? '';
+            document.getElementById('recursotxt').value = fuelType.idMeasureUnit?? '';
         }
 
         catch (err) {
-            Alerts.showToastCloseError('No ha sido posible cargar los tamaños de carros');
+            Alerts.showToastCloseError('No ha sido posible cargar los tipos de combustible');
             console.error(err);
         }
     })
 }
 
-export function LoadTable(carSize, tab){
+export function LoadTable(fuelType, tab){
     const baseIndex  = currentPage * currentSize;
      tab.innerHTML = "";
-     console.log("Datos de carSize en LoadTable:", carSize);
+     console.log("Datos de FuelType en LoadTable:", fuelType);
+     console.log(tab)
      tab.innerHTML = `
-        <div id="paises" class="tab-pane fade show active">
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
                 <th>#</th>
                 <th>Nombre</th>
+                <th>Huella de carbono</th>
+                <th>Unidad Medida</th>
                 <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="containerHouse">
-            ${carSize.map((u, i) => `
+          <tbody>
+            ${fuelType.map((u, i) => `
               <tr>
                 <td>${baseIndex+ i + 1}</td>
                 <td>${u.name}</td>
+                <td>${u.carbonFootprint}</td>
+                <td>${u.measureUnit}</td>
                 <td>
-                    <button class="btn btn-sm btn-success me-1 btn-edit-carSize" data-id="${u.idCarSize}" data-bs-toggle="modal" data-bs-target="#CarSizeModal"><i class="bi bi-pencil-fill"></i></button>
-                    <button class="btn btn-sm btn-danger btn-delete-carSize" data-id="${u.idCarSize}"><i class="bi bi-trash-fill"></i></button>
+                    <button class="btn btn-sm btn-success me-1 btn-edit-FuelType" data-id="${u.idFuelType}" data-bs-toggle="modal" data-bs-target="#FuelModal"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="btn btn-sm btn-danger btn-delete-FuelType" data-id="${u.idFuelType}"><i class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>`).join('')}
           </tbody>
         </table>
       </div>
-    </div>
      `
 }
-
-export async function insertCarSize(nombreTamaño, form){
+export function loadMeasureUnit(measureUnit, measureUnitSelect) {
+  measureUnitSelect.innerHTML = ''
+  measureUnitSelect.innerHTML += `<option value="">Selecciona una Categoria</option>`
+  measureUnit.forEach(element => {
+    measureUnitSelect.innerHTML += `
+        <option value="${element.idMeasureUnit}">${element.nameMeasureUnit}</option>
+      `
+  });
+}
+export async function insertFuelType(nombrefueltype, huellaCarbono, recurso, form){
     const playload = {
-        name: nombreTamaño.value.trim()
+        name: nombrefueltype.value.trim(),
+        carbonFootprint: huellaCarbono.value.trim(),
+        measureUnit: recurso.value.trim()
     }
     try{
         console.log(playload)
-        const res = await VehicleService.insertCarSize(playload)
+        const res = await FuelTypeService.insertFuelType(playload)
         form.reset()
         return res
     }
     catch(err){
-        Alerts.showToastCloseError(`No se pudo agregar el tamaño de carro ${err}`);
+        Alerts.showToastCloseError(`No se pudo agregar el tipo de combustible ${err}`);
         return { ok: false };
     }
 }
 
-export async function updateCarSize( nombreTamaño, form, idtxt){
+export async function updateFuelType(nombrefueltype, huellaCarbono, recurso, form, idtxt){
      const playload= {
-         idCarSize:idtxt.value,
-         name: nombreTamaño.value.trim()
+         idFuelType:idtxt.value,
+         name: nombrefueltype.value.trim(),
+         carbonFootprint: huellaCarbono.value.trim(),
+         measureUnit: recurso.value.trim()
      }
      console.log(playload)
      try{
-         const res = await VehicleService.updateCarSize(playload, idtxt);
+         const res = await FuelTypeService.updateFuelType(playload, idtxt);
          console.log(res)
          form.reset();
          return res;
@@ -154,7 +179,7 @@ export async function updateCarSize( nombreTamaño, form, idtxt){
   
   export function renderPagination(current, totalPages, container){
      //Acá accedemos al ul de paginación
-     const pagination = document.getElementById('carSizePagination')
+     const pagination = document.getElementById('fuelTypePagination')
      if(!pagination) return;
      pagination.innerHTML = "";
  
@@ -167,7 +192,7 @@ export async function updateCarSize( nombreTamaño, form, idtxt){
           if(current > 0){
           currentPage = current -1; //Retrocede una página
  
-         reloadCarSize(container);
+         reloadFuelType(container);
        }
      });
  
@@ -198,7 +223,7 @@ export async function updateCarSize( nombreTamaño, form, idtxt){
      e.preventDefault();
      if (current < totalPages - 1) {
        currentPage = current + 1;///Avanza una pagina
-       reloadCarSize(container);
+       reloadFuelType(container);
      }
    });
    pagination.appendChild(next);
