@@ -1,5 +1,5 @@
 import * as FuelTypeService from "../../../services/resources/servicesService"
-import * as Alerts from '../../../utils/alerts'
+import * as Alerts from '../../../../utils/alerts'
 
 export async function FuelTypeInit(container) {
     try {

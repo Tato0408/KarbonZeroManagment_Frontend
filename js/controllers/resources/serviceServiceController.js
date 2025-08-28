@@ -1,4 +1,4 @@
-import * as ServiceService from '../../services/resources/serviceService.js';
+import * as ServiceService from '../../services/resources/serviceServiceService.js';
 import * as Alerts from '../../../utils/alerts.js'
 ///Con import podemos acceder a todos los metodos exportados de X archivo
 
@@ -17,12 +17,20 @@ export async function reload(container) {
     if (!container) return;
     ///Si no pues hacemos una peticion get y le pasamos ese array de services + el tab donde queremos poner la grid
     try {
-        const data = await ServiceService.getService(currentPage, currentSize);
-        const service = data.content;
-        const $tabContent = container.querySelector('#tabContent');
-        loadServiceTable(service, $tabContent);
-        ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload
-        renderPagination(data.number, data.totalPages, container);  
+          const ServiceSearch = document.querySelector("#ServiceSearch");
+          const searchName = ServiceSearch.value.trim();
+
+          let data;
+          if (!searchName) {
+            data = await ServiceService.getService(currentPage, currentSize);
+          } else {
+            data = await ServiceService.getAllMeasureUnitServiceByName(searchName, currentPage, currentSize);
+          }
+          const service = data.content;
+          const $tabContent = container.querySelector('#tabContent');
+          loadServiceTable(service, $tabContent);
+          ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload
+          renderPagination(data.number, data.totalPages, container);  
     } catch (e) {
         console.error(e);
     }
@@ -246,4 +254,7 @@ export function renderPagination(current, totalPages, container) {
     }
   });
   pagination.appendChild(next);
+}
+export async function setCurrentPage(page) {
+  currentPage = page;
 }
