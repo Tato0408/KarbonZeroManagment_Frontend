@@ -1,3 +1,5 @@
+import * as VehiclesController from '../../controllers/properties/vehiclesController';
+
 export async function render() {
     return `
 <div class="container py-4">
@@ -84,5 +86,62 @@ export async function render() {
   `;
 }
 export function afterRender() {
-    
+    carSizeProcess()
+}
+
+export async function carSizeProcess(){
+    const container = document.getElementById('carSize-root')
+    VehiclesController.CarSizeInit(container)
+
+    const addCarSizeBtn = container.querySelector('#addCarSize')
+    const closebtn = container.querySelector('#btnClose')
+    const carSizeName = container.querySelector('#nombretxt')
+    const idCarSize = container.querySelector('#idtxt')
+    const carSizeModal = container.querySelector('#CarSizeModal')
+    const bsModal = bootstrap.Modal.getOrCreateInstance(carSizeModal)
+    const carSizeForm = container.querySelector('#CarSizeForm')
+
+    if(addCarSizeBtn){
+        addCountryBtn.addEventListener('click', ()=>{
+            idCarSize.value = ''
+            carSizeName.value = '';
+        });
+    }
+    if(closebtn){
+        closebtn.addEventListener('click', ()=>{
+            idCarSize.value = ''
+            carSizeName.value = '';
+        });
+    }
+
+    document.getElementById("nombretxt").addEventListener("keypress", function (e) {
+    let char = String.fromCharCode(e.which); // la tecla presionada
+    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+    if (!regex.test(char)) {
+        e.preventDefault(); // cancela la tecla
+    }
+});
+
+let isLoading = false;
+
+carSizeForm.addEventListener('submit', async e =>{
+    e.preventDefault();
+    if(isLoading) return;
+    isLoading = true;
+    let res;
+
+    if(idCarSize.value){
+        res = await VehiclesController.updateCarSize(carSizeName, carSizeForm, idCarSize)
+    }
+    else {
+        res = await VehiclesController.insertCarSize(carSizeName, carSizeForm)
+    }
+
+    bsModal.hide();
+    isLoading = false;
+    idCountry.value = ''
+    if(res?.ok){
+        await VehiclesController.reloadCarSize(container)
+    }
+})
 }
