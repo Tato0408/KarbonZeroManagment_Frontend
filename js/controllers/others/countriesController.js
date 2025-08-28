@@ -12,12 +12,24 @@ export async function CountryInit(container) {
 
 let currentPage = 0;
 let currentSize = 10;
+export async function setCurrentPage(page) {
+  currentPage = page;
+}
 
 export async function reloadCountry(container) {
     if (!container) return
-
+    
     try {
-        const data = await CountryService.getCountries(currentPage, currentSize)
+        const search = document.querySelector('#searchCountry')
+         const searchCountry = search.value
+         let data
+         if(!searchCountry){
+            data =  await CountryService.getCountries(currentPage, currentSize)
+         }
+         else{
+            data = await CountryService.getCountryByName(searchCountry, currentPage, currentSize)
+         }
+         
         const country = data.content
         const $tabContent = container.querySelector('#tabContent')
         LoadTable(country, $tabContent)
@@ -88,7 +100,6 @@ async function renderData(container) {
 export function LoadTable(country, tab){
     const baseIndex  = currentPage * currentSize;
      tab.innerHTML = "";
-     console.log("Datos de country en LoadTable:", country);
      tab.innerHTML = `
         <div id="paises" class="tab-pane fade show active">
       <div class="table-responsive">

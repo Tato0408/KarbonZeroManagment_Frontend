@@ -14,6 +14,10 @@ export async function LivingInit(container){
 let currentPage = 0;
 let currentSize = 10;
 
+    export async function setCurrentPage(page) {
+    currentPage = page;
+    }
+
 //Metodo reload y el container sera igual al contenedor que le estemos pasando, en este caso el final en page va a ser el de house
 
 export async function reloadHouse(container){
@@ -22,12 +26,23 @@ export async function reloadHouse(container){
     
     //Si no hacemos un Get y le pasamos el array del alimento y el tab que queremos agregarle al grid
     try{
-        const data = await LivingSpaceService.getLivingSpaceTypes(currentPage, currentSize);
-        const house = data.content; 
+        const search = document.querySelector('#searchHouse')
+        const searchHouse = search.value.trim();
+
+        let living;
+        if(!searchHouse){
+            living = await LivingSpaceService.getLivingSpaceTypes(currentPage, currentSize);
+            
+        }
+        else {
+            living = await LivingSpaceService.getLivingSpaceTypeByName(searchHouse, currentPage, currentSize)
+            
+        }
+        const house = living.content
         const $tabContent = container.querySelector('#tabContent');
         LoadTable(house, $tabContent);
         ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload\
-        renderPagination(data.number, data.totalPages, container);
+        renderPagination(living.number, living.totalPages, container);
     }
     catch (e){
         console.error(e)
@@ -48,7 +63,6 @@ export async function reloadHouse(container){
                 }
             
                 const tab = container.querySelector("#tabContent");
-                console.log("Tab encontrado:", tab)
                 if (!tab) {
                     console.error("No se encontró #tabContent dentro del container");
                     return;
@@ -101,7 +115,6 @@ export async function reloadHouse(container){
      ///EL base index nos sirve para que siempre se guarden las filas que llevamos en pase a la pagina y su tamaño
      const baseIndex  = currentPage * currentSize;
      tab.innerHTML = "";
-     console.log("Datos de house en LoadTable:", house);
      tab.innerHTML =
  ` 
     <div id="viviendas" class="tab-pane fade show active">

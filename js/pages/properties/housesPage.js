@@ -5,17 +5,7 @@ export async function render() {
     <h2 class="general-title">
         Viviendas
     </h2>
-    <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
-        <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
-            <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar">
-        </div>
-        <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
-            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#viviendaModal" id="addHouse-kz">
-                <i class="bi bi-plus-circle"></i> Añadir Tipo de vivienda
-            </button>
-        </div>
-    </div>
+    
     <div class="modal fade" id="viviendaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -92,7 +82,17 @@ export async function houseProcess(){
     const bsModal = bootstrap.Modal.getOrCreateInstance(houseModal)
     const btnClose = document.getElementById('btnClose') 
     const houseForm = document.querySelector('#houseForm')
+    const search = document.querySelector('#searchHouse')
 
+    search.addEventListener("keyup", (e) => {
+     if (e.key == "Enter") {
+        LivingSpaceController.setCurrentPage(0);
+        LivingSpaceController.reloadHouse(container);
+     }
+     if(search.value == ""){
+        LivingSpaceController.reloadHouse(container)
+     }
+  })
     if(adsHouseBtn){
         adsHouseBtn.addEventListener('click', ()=>{
             idHidden.value = ''
