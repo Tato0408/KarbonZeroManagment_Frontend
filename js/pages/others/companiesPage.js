@@ -1,22 +1,22 @@
 import * as CompanyController from '../../controllers/others/companiesController';
 export async function render() {
     return `
-<div class="container py-4">
+<div class="container py-4" id="company-root">
     <h2 class="general-title">
         Compañia
     </h2>
     <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
         <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
             <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar">
+            <input type="text" class="form-control border-0 bg-transparent" id="searchCompany" placeholder="Buscar">
         </div>
         <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
-            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#CompaniModal">
+            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#CompanyModal">
                 <i class="bi bi-plus-circle"></i> Añadir Compañia
             </button>
         </div>
     </div>
-    <div class="modal fade" id="CompaniModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    <div class="modal fade" id="CompanyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content kz-modal-mongo border-0">
@@ -37,6 +37,10 @@ export async function render() {
                                 <label for="dominiotxt" class="form-label">Dominio</label>
                                 <input id="dominiotxt" type="text" class="form-control" placeholder="Dominio">
                             </div>
+                             <div class="col-sm-6">
+                                <label for="idtxt"class="form-label d-none">id</label>
+                        <input id="idtxt"type="text"class="form-control d-none hidden"placeholder="id">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
@@ -48,6 +52,25 @@ export async function render() {
     </div>
     <ul class="nav nav-tabs mb-3" id="tabList"></ul>
     <div class="tab-content" id="tabContent"></div>
+    <div class="row flex-nowrap mt-2" style="overflow-x: auto;">
+        <div class="col-auto d-flex justify-content-start">
+          <select class="form-select" aria-label="Items por pagina" id="itemsSelect">
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+        <div class="col d-flex justify-content-end">
+          <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+            <ul class="pagination mb-0" id="housePagination">
+              
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
 </div>
   `;
 }
@@ -56,8 +79,8 @@ export function afterRender() {
 }
 
 export async function companiesProcess(){
-    const container = document.getElementById('companie-root')
-    CompanyController.CompanieInit(container)
+    const container = document.getElementById('company-root')
+    CompanyController.CompanyInit(container)
 
     const addCompanyBtn = container.querySelector('#addCompany')
     const closebtn = container.querySelector('#btnClose')
@@ -67,7 +90,17 @@ export async function companiesProcess(){
     const companyModal = container.querySelector('#CompanyModal')
     const bsModal = bootstrap.Modal.getOrCreateInstance(companyModal)
     const companyForm = container.querySelector('#CompaniForm')
-
+    const search = document.querySelector('#searchCompany')
+    
+        search.addEventListener("keyup", (e) => {
+         if (e.key == "Enter") {
+            CompanyController.setCurrentPage(0);
+            CompanyController.reloadCompany(container);
+         }
+         if(search.value == ""){
+            CompanyController.reloadCompany(container)
+         }
+      })
     if(addCompanyBtn){
         addCompanyBtn.addEventListener('click', ()=>{
             idCompany.value = ''
@@ -96,9 +129,7 @@ export async function companiesProcess(){
     
     const regex = /^www\.[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/; // Expresión regular para validar el dominio
 
-   if (!regex.test(val)) {
-        errorMessage.textContent = "Por favor, ingrese un dominio válido (ejemplo: www.abc.com)";
-    }
+   
 });
 
 let isLoading = false;
@@ -120,7 +151,7 @@ companyForm.addEventListener('submit', async e =>{
     isLoading = false;
     idCompany.value = ''
     if(res?.ok){
-        await CompanyController.reloadComapny(container)
+        await CompanyController.reloadCompany(container)
     }
 })
 }
