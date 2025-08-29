@@ -1,107 +1,96 @@
+import { APIURL as API_URL } from "../../../utils/api_url";
 import * as Alerts from "../../../utils/alerts"
 
 //Exportar la función para importar en el controllador 
-export async function getCompanies(page = 0, size = 10) {
+export async function getCompanies(page= 0, size=10) {
     try {
-        const response = await fetch(`http://localhost:8080/apiCompany/getAllCompany?page=${page}&size=${size}`);
-        //Evaluación de respuesta
+        const response = await fetch(`${API_URL}/apiCompany/getAllCompany?page=${page}&size=${size}`);
         if (!response.ok) {
-            throw new Error(`Error al cargar compañias: ${response.status}`)
+            throw new Error(`Error cargando las compañias: ${response.status}`);
         }
-        //Retorno de respuesta en formato json
         return response.json();
-
-    }
-    catch (err) {
-        console.error("Error cargando compañias", err)
-        return err;
+    } catch (error) {
+        console.error("Error cargando las compañias:", error);
+        throw error;
     }
 }
 
-export async function getCompanyById(id) {
+export async function getCompaniesById(id) {
     try {
-        const response = await fetch(`http://localhost:8080/apiCompany/getCompanyById/${id}`);
-        //Se guarda la respuesta en una variable al ser solamente uno
-        const res = await response.json();
+        const response = await fetch(`${API_URL}/apiCompany/getCompanyById/${id}`);
+        const u = await response.json();
         if (!response.ok) {
-            throw new Error(`Error al cargar compañias: ${response.status}`)
+            throw new Error(`Error cargando las compañias: ${response.status}`);
         }
-        return res;
-    }
-    catch (err) {
-        console.error("Error cargando compañias", err)
-        return err;
+        return u;
+    } catch (error) {
+        console.error("Error cargando las compañias:", error);
+        throw error;
     }
 }
 
-export async function getCompanyByName(searchName, page = 0, size = 10) {
+export async function getAllCompaniesByName(
+  searchName,
+  currentPage = 0,
+  currentSize = 10
+) {
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
-    const response = await fetch(`http://localhost:8080/apiCompany/getCompanyByName/${searchName}?page=${page}&size=${size}`
+    const response = await fetch(
+      `${API_URL}/apiCompany/getCompanyByName/${searchName}?page=${currentPage}&size=${currentSize}`
     );
-    ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
+    ///Si esta malo pues aja, mandamos error
     if (!response.ok) {
-      console.error(`Error : ${response}`);
+      console.error("Error fetching companies");
     }
-    ///Finalmente retornamos nuestra respuesta en formato json
+    ///Retornamos la respuesta en formato json
     return response.json();
-    ///Ya el catch, supongo que ya se la saben ok
   } catch (error) {
-    console.error(`Error fetching users: ${error}`);
+    console.error(`Error fetching companies: ${error}`);
     throw error;
   }
 }
 
-export async function insertCompany(playload) {
+export async function insertCompany(payload) {
     try {
-        const response = await fetch(`http://localhost:8080/apiCompany/insertCompany`, {
+        const response = await fetch(`${API_URL}/apiCompany/insertCompany`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(playload)
+            body: JSON.stringify(payload)
         });
+
         const data = await response.json();
 
         if (response.ok) {
-            Alerts.showToastCloseSuccess("Compañia creada exitosamente")
-            return { ok: true, data }
+            Alerts.showToastCloseSuccess("Compañia creado exitosamente");
         } else {
-            Alerts.showToastCloseError(`Error creando Compañia: ${response.status}`)
-            return { ok: false, data }
+            Alerts.showToastCloseError(`Error creando la compañia ${response.status}`);
         }
-
-        //Retorno un ok en true y la data
-        return { ok: true, data }
-    }
-    catch (err) {
-        Alerts.showToastCloseError(`Error creando Compañia. ${err}`)
-        //Retrono de false, data null y el respectivo error
-        return { ok: false, data: null, error: err }
+        return { ok: true, data };
+    } catch (err) {
+        Alerts.showToastCloseError(`Error creando la compañia ${err}`);
+        return { ok: false, data: null, error: err };
     }
 }
 
-export async function updateCompany(playload, id) {
+export async function updateCompany(payload, id) {
     try {
-        const response = await fetch(`http://localhost:8080/apiCompany/updateCompany/${id.value}`, {
+        const response = await fetch(`${API_URL}/apiCompany/updateCompany/${id.value}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(playload)
+            body: JSON.stringify(payload)
         });
-        const data = await response.json();
+        const data = await response.json().catch(() => null);
+
         if (response.ok) {
-            Alerts.showToastCloseSuccess("Compañia actualizada exitosamente")
+            Alerts.showToastCloseSuccess("Compañia actualizado exitosamente");
+        } else {
+            Alerts.showToastCloseError(`Error actualizando la compañia`);
         }
-        else {
-            Alerts.showToastCloseError(`Error actualizando Compañia: ${response.status}`)
-            console.log(response.status)
-        }
-        //Retorno un ok en true y la data
-        return { ok: true, data }
-    }
-    catch (err) {
-        Alerts.showToastCloseError(`Error actualizando Compañia. ${err}`)
-        //Retrono de false, data null y el respectivo error
-        return { ok: false, data: null, error: err }
-        console.log(err)
+        return { ok: true, data };
+    } catch (err) {
+        Alerts.showToastCloseError(`Error actualizando la compañia ${err}`);
+        return { ok: false, data: null, error: err };
     }
 }
 
@@ -113,22 +102,20 @@ export async function deleteCompany(id) {
         confirmButtonColor: "#DF4646",
         denyButtonColor: "#6d6c6c",
         denyButtonText: "Cancelar"
-    })
-
+    });
     if (!result.isConfirmed) {
         return false;
     }
-
     try {
-        const res = await fetch(`http://localhost:8080/apiCompany/deleteCompany/${id}`, { method: 'DELETE' });
-        if (!res.ok) {
-            Alerts.showToastCloseError("No ha sido posible eliminar la compañia", res.status);
+        const resp = await fetch(`${API_URL}/apiCompany/deleteCompany/${id}`, { method: 'DELETE' });
+        if (!resp.ok) {
+            Alerts.showToastCloseError("No se pudo eliminar la compañia");
             return false;
         }
         Alerts.showToastCloseSuccess("Compañia eliminado exitosamente");
-        return true
-    }
-    catch (err) {
-        Alerts.showToastCloseError("No ha sido posible eliminar la compañia", err)
+        return true;
+    } catch (e) {
+        Alerts.showToastCloseError("Error eliminando el compañia");
+        return false;
     }
 }
