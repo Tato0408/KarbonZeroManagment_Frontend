@@ -56,7 +56,7 @@ async function renderData(container) {
     const tab = container.querySelector('#tabContent-CarSize')
     
     LoadTable(carSize, tab)
-    const sizeSelector = document.getElementById('itemsSelect')
+    const sizeSelector = document.getElementById('itemsSelectCar')
     sizeSelector.addEventListener("change", () => {
         currentSize = parseInt(sizeSelector.value);
         currentPage = 0;

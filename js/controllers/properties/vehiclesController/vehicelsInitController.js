@@ -1,7 +1,7 @@
-import {CarSizeInit} from "./vehiclesController"
-import {FuelTypeInit} from "./fuelTypeController"
+import { CarSizeInit } from "./vehiclesController"
+import { FuelTypeInit } from "./fuelTypeController"
 
-export async function initAllVehiclesTabs(container){
+export async function initAllVehiclesTabs(container) {
     const $tabList = container.querySelector('#tabList')
 
     $tabList.innerHTML = `
@@ -12,6 +12,6 @@ export async function initAllVehiclesTabs(container){
                 <a class="nav-link " data-bs-toggle="tab" href="#FuelTypeTab">Tipos de combustible</a>
             </li>
             `
-            CarSizeInit(container)
-            FuelTypeInit(container)
+    CarSizeInit(container)
+    FuelTypeInit(container)
 }
