@@ -199,7 +199,7 @@ export async function afterRender() {
         const size = parseInt(itemsSelect.value);
         if (!isNaN(size)) {
             MeasureController.setPageSize?.(size);
-            MeasureUnitController.setPageSize(size);
+            MeasureUnitController.setPageSize?.(size);
 
             if (document.querySelector('#measureTab').classList.contains('show')) {
                 await MeasureController.reload(container);

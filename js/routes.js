@@ -7,9 +7,7 @@ const routes = {
     'food': ()=> import('../js/pages/resources/foodPage.js'),
     'services': ()=> import('../js/pages/resources/servicesPage.js'),
     'companies': ()=> import('../js/pages/others/companiesPage.js'),
-    'achivements': ()=> import('../js/pages/others/achivementsPage.js'),
     'contries': ()=> import('../js/pages/others/countriesPage.js'),
-    'users': ()=> import('../js/pages/others/usersPage.js'),
     'transport': ()=> import('../js/pages/others/transportationPage.js'),
 
 
