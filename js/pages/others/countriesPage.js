@@ -33,11 +33,11 @@ export async function render() {
                         <div class="row g-2 mb-3">
                             <div class="col-sm-6">
                                 <label for="nombretxt" class="form-label">Nombre</label>
-                                <input id="nombretxt" type="text" class="form-control" placeholder="Nombre">
+                                <input id="nombretxt" required type="text" class="form-control" placeholder="Nombre">
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" type="text" class="form-control" step="0.01"placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" required type="text" class="form-control" step="0.01"placeholder="Huella de carbono">
                             </div>
                              <label for="idtxt"class="form-label d-none">id</label>
                         <input id="idtxt"type="text"class="form-control d-none hidden"placeholder="id">

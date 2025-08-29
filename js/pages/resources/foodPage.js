@@ -19,12 +19,12 @@ export async function render() {
             <div class="modal-body mx-3">
               <div class="row g-2 mb-3">
                 <label for="nombreAlimento" class="form-label">Nombre</label>
-                <input id="nombreAlimento" type="text" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+" class="form-control"
+                <input id="nombreAlimento" type="text" required class="form-control"
                   placeholder="Nombre del alimento">
               </div>
               <div class="row g-2 mb-3">
                 <label for="categoriaAlimento" class="form-label">Categoría</label>
-                <select id="categoriaAlimento" class="form-select"></select>
+                <select id="categoriaAlimento" required class="form-select"></select>
               </div>
               <div class="row g-2 mb-3 d-none">
                 <label for="idtxt" class="form-label">id</label>
@@ -52,12 +52,12 @@ export async function render() {
             <div class="modal-body mx-3">
               <div class="row g-2 mb-3">
                 <label for="categoriaNombre" class="form-label">Nombre</label>
-                <input id="categoriaNombre" type="text" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+" class="form-control"
+                <input id="categoriaNombre" type="text" required class="form-control"
                   placeholder="Nombre de la categoría" required>
               </div>
               <div class="row g-2 mb-3">
                 <label for="huellaTxt" class="form-label">Huella de carbono</label>
-                <input id="huellaTxt" type="text" step="any" class="form-control" placeholder="Huella de carbono">
+                <input id="huellaTxt" required type="number" step="0.1" class="form-control" placeholder="Huella de carbono">
               </div>
               <div class="row g-2 mb-3 d-none">
                 <label for="idCategoria" class="form-label">Id</label>

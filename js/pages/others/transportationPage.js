@@ -36,11 +36,11 @@ export async function render() {
                             </div>
                             <div class="col-sm-6">
                                 <label for="nombretxt" class="form-label">Nombre</label>
-                                <input id="nombretxt" type="text" class="form-control" required placeholder="Nombre">
+                                <input id="nombretxt" required type="text" class="form-control" required placeholder="Nombre">
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" type="number" class="form-control" required placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" required type="number" class="form-control" required placeholder="Huella de carbono">
                             </div>
                         </div>
                     </div>

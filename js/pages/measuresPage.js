@@ -42,7 +42,7 @@ export async function render() {
                     </select>
 
                     <label for="unidadTxt" class="form-label mt-3">Unidad de medida</label>
-                    <input id="unidadTxt" type="text" class="form-control" placeholder="Unidad de medida">
+                    <input id="unidadTxt" type="text" required class="form-control" placeholder="Unidad de medida">
 
                     <input id="idUnidad" type="text" class="form-control d-none">
 

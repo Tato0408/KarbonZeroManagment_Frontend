@@ -36,11 +36,11 @@ export async function render() {
                             </div>
                             <div class="col-sm-6">
                                 <label for="nombretxt" class="form-label">Nombre</label>
-                                <input id="nombretxt" type="text" class="form-control" required placeholder="Nombre">
+                                <input id="nombretxt" required type="text" class="form-control" required placeholder="Nombre">
                             </div>
                             <div class="col-sm-6">
                                 <label for="dominiotxt" class="form-label">Dominio</label>
-                                <input id="dominiotxt" type="text" class="form-control" required placeholder="Dominio">
+                                <input id="dominiotxt" required type="text" class="form-control" required placeholder="Dominio">
                             </div>
                         </div>
                     </div>

@@ -43,7 +43,7 @@ export async function render() {
                         </div>
                         <div class="mb-3">
                             <label for="huellaCarbono" class="form-label">Huella de carbono</label>
-                            <input id="carbonFootprinttxt" type="number" class="form-control" required placeholder="Huella de carbono">
+                            <input id="carbonFootprinttxt" type="number" class="form-control" required placeholder="Huella de carbono" step="0.1">
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">

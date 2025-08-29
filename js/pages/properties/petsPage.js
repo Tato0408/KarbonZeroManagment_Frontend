@@ -29,11 +29,11 @@ export async function render() {
                         <div class="row g-2 mb-3">
                             <div class="col-sm-6">
                                 <label for="nombretxt" class="form-label">Tipo de mascota</label>
-                                <input id="nombretxt" type="text" class="form-control" placeholder="Tipo de mascota">
+                                <input id="nombretxt" required type="text" class="form-control" placeholder="Tipo de mascota">
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" type="number" class="form-control" placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" required type="number" class="form-control" placeholder="Huella de carbono">
                             </div>
                             <input id="idtxt" type="text" class="form-control d-none hidden" placeholder="id">
                         </div>
