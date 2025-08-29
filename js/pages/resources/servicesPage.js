@@ -1,4 +1,3 @@
-import * as FuelTypeController from '../../controllers/resources/ServicePageController/serviceController';
 import * as ServiceController from '../../controllers/resources/serviceServiceController.js';
 import { getAllServicesList } from "../../services/resources/serviceServiceService.js";
 import { getAllMeasureUnitList } from "../../services/resources/serviceServiceService.js";
@@ -44,7 +43,7 @@ export async function render() {
                         </div>
                         <div class="mb-3">
                             <label for="huellaCarbono" class="form-label">Huella de carbono</label>
-                            <input id="carbonFootprinttxt" type="number" class="form-control" placeholder="Huella de carbono">
+                            <input id="carbonFootprinttxt" type="number" class="form-control" required placeholder="Huella de carbono">
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
