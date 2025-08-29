@@ -84,7 +84,7 @@ async function renderData(container) {
       document.getElementById('idtxt').value = fuelType.idFuelType ?? '';
       document.getElementById('nombretxtFuel').value = fuelType.name ?? '';
       document.getElementById('huellatxt').value = fuelType.carbonFootprint ?? '';
-      document.getElementById('recursotxt').value = fuelType.measureUnit ?? '';
+      document.getElementById('recursotxt').value = fuelType.idMeasureUnit ?? '';
     }
 
     catch (err) {
