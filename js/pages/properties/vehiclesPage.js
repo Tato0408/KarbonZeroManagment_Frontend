@@ -102,7 +102,7 @@ export async function render() {
                 <!-- paginación tamano -->
                 <div class="row flex-nowrap mt-2" style="overflow-x: auto;">
                     <div class="col-auto d-flex justify-content-start">
-                        <select class="form-select" aria-label="Items por pagina" id="itemsSelect">
+                        <select class="form-select" aria-label="Items por pagina" id="itemsSelectCar">
                             <option value="2">2</option>
                             <option value="5">5</option>
                             <option value="10" selected>10</option>
