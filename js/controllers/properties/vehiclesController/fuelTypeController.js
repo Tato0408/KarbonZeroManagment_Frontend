@@ -159,7 +159,7 @@ export async function updateFuelType(nombrefueltype, huellaCarbono, recurso, for
     idFuelType: idtxt.value,
     name: nombrefueltype.value.trim(),
     carbonFootprint: huellaCarbono.value.trim(),
-    measureUnit: recurso.value.trim()
+    idMeasureUnit: recurso.value.trim()
   }
   console.log(playload)
   try {
