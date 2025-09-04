@@ -1,4 +1,4 @@
-import * as ServiceService from '../../../services/resources/serviceServiceService.js';
+import * as Service from '../../../services/resources/serviceService.js';
 import * as Alerts from "../../../../utils/alerts.js"
 ///Con import podemos acceder a todos los metodos exportados de X archivo
 
@@ -22,9 +22,9 @@ export async function reload(container) {
 
           let data;
           if (!searchName) {
-            data = await ServiceService.getService(currentPage, currentSize);
+            data = await Service.getService(currentPage, currentSize);
           } else {
-            data = await ServiceService.getAllMeasureUnitServiceByName(searchName, currentPage, currentSize);
+            data = await Service.getAllMeasureUnitServiceByName(searchName, currentPage, currentSize);
           }
           const service = data.content;
           const $tabContent = container.querySelector('#tabContent');
@@ -47,7 +47,7 @@ async function renderData(container) {
   ///Llenamos los servicios
   try {
     ///traemos el json en data
-    const data = await ServiceService.getService(currentPage, currentSize);
+    const data = await Service.getService(currentPage, currentSize);
     ///Accedemos al content de eso 
     services = data.content;
     ///Llamamos al renderPagination para que carge cuando inicie todo
@@ -78,7 +78,7 @@ async function renderData(container) {
     const btn = e.target.closest('.btn-delete-service');
     if (!btn) return;
     const id = btn.dataset.id;
-    const ok = await ServiceService.deleteService(id);
+    const ok = await Service.deleteService(id);
     ///En caso de que nos devuelva un true recargamos
     if (ok) await reload(container);
   });
@@ -89,7 +89,7 @@ async function renderData(container) {
     if (!editBtn) return;
     const id = editBtn.dataset.id;
     try {
-      const service = await ServiceService.getServiceById(id);
+      const service = await Service.getServiceById(id);
       document.getElementById('idtxt').value = service.idMeasureUnitService ?? '';
       document.getElementById('servicetxt').value = service.idService ?? '';
       document.getElementById('unidadServiciotxt').value = service.idMeasureUnit ?? '';
@@ -172,7 +172,7 @@ export async function insertService(idService, idMeasureUnit, carbonFootprinttxt
     carbonFootprint: parseFloat(carbonFootprinttxt.value.trim())
   }
   try {
-    const res = await ServiceService.insertService(payload);
+    const res = await Service.insertService(payload);
     form.reset();
     return res;
   } catch (err) {
@@ -191,7 +191,7 @@ export async function updateService(idService, idMeasureUnit, carbonFootprinttxt
   }
   try {
     ///Hacemos la peticion
-    const res = await ServiceService.updateService(payload, id);
+    const res = await Service.updateService(payload, id);
     form.reset();
     return res;
   } catch (err) {

@@ -1,6 +1,6 @@
 // measureUnitController.js
-import * as MeasureUnitService from "../../services/measureUnitService.js";
-import * as MeasureService from "../../services/measureService.js";
+import * as MeasureUnitService from "../../services/measures/measureUnitService.js";
+import * as MeasureService from "../../services/measures/measureService.js";
 import * as Alerts from "../../../utils/alerts.js";
 
 let currentPage = 0;

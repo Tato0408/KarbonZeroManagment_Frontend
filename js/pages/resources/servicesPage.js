@@ -1,7 +1,9 @@
 import * as ServiceController from '../../controllers/resources/ServicePageController/serviceController.js';
 import * as Alerts from "../../../utils/alerts.js";
-import { getAllServicesList } from "../../services/resources/serviceServiceService.js";
-import { getAllMeasureUnitList } from "../../services/resources/serviceServiceService.js";
+import {
+  getAllServicesList,
+  getAllMeasureUnitList,
+} from "../../services/resources/serviceService.js";
 
 export async function render() {
     return `

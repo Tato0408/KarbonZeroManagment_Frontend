@@ -1,4 +1,4 @@
-import * as MeasureService from "../../services/measureService.js";
+import * as MeasureService from "../../services/measures/measureService.js";
 import * as Alerts from "../../../utils/alerts.js";
 
 let currentPage = 0;
