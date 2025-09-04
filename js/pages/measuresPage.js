@@ -1,8 +1,9 @@
-import * as MeasureController from '../controllers/measurePageController/measureController.js';
-import * as MeasureUnitController from '../controllers/measurePageController/measureUnitController.js';
+import * as MeasureController from "../controllers/measurePageController/measureController.js";
+import * as MeasureUnitController from "../controllers/measurePageController/measureUnitController.js";
+import * as Alerts from "../../utils/alerts.js";
 
 export async function render() {
-    return `
+  return `
 <div class="container py-4" id="measures-root">
     <h2 class="general-title">Medidas</h2>
 
@@ -16,7 +17,7 @@ export async function render() {
                 </div>
                 <form id="MedidaForm" class="p-3">
                     <label for="nombreMedida" class="form-label">Medida</label>
-                    <input id="nombreMedida" type="text" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" class="form-control" placeholder="Nombre de la medida">
+                    <input id="nombreMedida" type="text" class="form-control" placeholder="Nombre de la medida" required>
                     <input id="idtxt" type="text" class="form-control d-none" placeholder="id">
                     <div class="modal-footer d-flex justify-content-center gap-2 mt-3">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
@@ -37,8 +38,7 @@ export async function render() {
                 </div>
                 <form id="UnidadForm" class="p-3">
                     <label for="selectMeasureUnit" class="form-label">Medida</label>
-                    <select id="selectMeasureUnit" class="form-select">
-                        <option value="">Seleccione medida</option>
+                    <select id="selectMeasureUnit" class="form-select" required>
                     </select>
 
                     <label for="unidadTxt" class="form-label mt-3">Unidad de medida</label>
@@ -80,132 +80,178 @@ export async function render() {
     <div class="tab-content">
         <div class="tab-pane fade show active" id="measureTab">
             <div id="tabContent"></div>
+            <!-- Paginación -->
+            <div class="row flex-nowrap mt-2" style="overflow-x: auto;">
+                <div class="col-auto d-flex justify-content-start">
+                    <select class="form-select" aria-label="Items por página" id="measureSelect">
+                        <option value="2">2</option>
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+                <div class="col d-flex justify-content-end">
+                    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                        <ul class="pagination mb-0" id="measurePagination"></ul>
+                    </nav>
+                </div>
+            </div>
         </div>
         <div class="tab-pane fade" id="unitTab">
             <div id="tab-ContentUnit"></div>
+             <!-- Paginación -->
+            <div class="row flex-nowrap mt-2" style="overflow-x: auto;">
+                <div class="col-auto d-flex justify-content-start">
+                    <select class="form-select" aria-label="Items por página" id="unitSelect">
+                        <option value="2">2</option>
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+                <div class="col d-flex justify-content-end">
+                    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                        <ul class="pagination mb-0" id="unitPagination"></ul>
+                    </nav>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Paginación -->
-    <div class="row flex-nowrap mt-2" style="overflow-x: auto;">
-        <div class="col-auto d-flex justify-content-start">
-            <select class="form-select" aria-label="Items por pagina" id="itemsSelect">
-                <option value="2">2</option>
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-            </select>
-        </div>
-        <div class="col d-flex justify-content-end">
-            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                <ul class="pagination mb-0" id="measurePagination"></ul>
-            </nav>
-        </div>
-    </div>
+    
 </div>
 `;
 }
 
 export async function afterRender() {
-    const container = document.getElementById('measures-root');
+  const container = document.getElementById("measures-root");
 
-    // Inicializar medidas y unidades
-    await MeasureController.init(container);
-    await MeasureUnitController.initUnit(container);
+  // Inicializar medidas y unidades
+  await MeasureController.init(container);
+  await MeasureUnitController.initUnit(container);
 
-    // ---- Form Medida ----
-    const measureForm = document.getElementById('MedidaForm');
-    const addMeasureBtn = document.getElementById('btn-add-measures');
-    const idMeasureHidden = document.getElementById('idtxt');
-    const measureName = document.getElementById('nombreMedida');
-    const measureModal = document.getElementById('MedidaModal');
-    const bsMeasureModal = bootstrap.Modal.getOrCreateInstance(measureModal);
+  // ---- Form Medida ----
+  const measureForm = document.getElementById("MedidaForm");
+  const addMeasureBtn = document.getElementById("btn-add-measures");
+  const idMeasureHidden = document.getElementById("idtxt");
+  const measureName = document.getElementById("nombreMedida");
+  const measureModal = document.getElementById("MedidaModal");
+  const bsMeasureModal = bootstrap.Modal.getOrCreateInstance(measureModal);
 
-    addMeasureBtn.addEventListener('click', () => {
-        idMeasureHidden.value = '';
-        measureName.value = '';
-    });
+  addMeasureBtn.addEventListener("click", () => {
+    idMeasureHidden.value = "";
+    measureName.value = "";
+  });
 
-    measureForm.addEventListener('submit', async e => {
-        e.preventDefault();
-        if (idMeasureHidden.value) {
-            await MeasureController.updateMeasure(measureName, measureForm, idMeasureHidden);
-        } else {
-            await MeasureController.insertMeasure(measureName, measureForm);
-        }
-        bsMeasureModal.hide();
-        await MeasureController.reload(container);
-    });
+  measureForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    // ---- Form Unidad ----
-    const unidadForm = document.getElementById('UnidadForm');
-    const unidadName = document.getElementById('unidadTxt');
-    const idUnidadHidden = document.getElementById('idUnidad');
-    const unidadModal = document.getElementById('UnidadModal');
-    const bsUnitModal = bootstrap.Modal.getOrCreateInstance(unidadModal);
-
-    const addUnidadBtn = document.getElementById('btn-add-unidad');
-    addUnidadBtn.addEventListener('click', () => {
-        idUnidadHidden.value = '';
-        unidadName.value = '';
-        document.getElementById("selectMeasureUnit").value = "";
-    });
-
-    unidadForm.addEventListener('submit', async e => {
-        e.preventDefault();
-        if (idUnidadHidden.value) {
-            await MeasureUnitController.updateUnit(unidadName, idUnidadHidden, unidadForm);
-        } else {
-            await MeasureUnitController.insertUnit(unidadName, unidadForm);
-        }
-        bsUnitModal.hide();
-        await MeasureUnitController.reloadUnit(container);
-    });
-
-    // ---- Search para medidas y unidades ----
-    const searchInput = container.querySelector("#findMeasure");
-    if (searchInput) {
-        searchInput.addEventListener("keyup", async e => {
-            if (e.key === "Enter") {
-                // Medidas
-                if (document.querySelector('#measureTab').classList.contains('show')) {
-                    MeasureController.setCurrentPage(0);
-                    await MeasureController.reload(container);
-                }
-                // Unidades
-                if (document.querySelector('#unitTab').classList.contains('show')) {
-                    MeasureUnitController.setCurrentPage(0);
-                    await MeasureUnitController.reloadUnit(container, searchInput.value.trim());
-                }
-            }
-        });
+    if (!measureName.value.trim()) {
+        Alerts.showToastCloseError("El nombre de la medida es obligatorio");
+        return;
     }
 
-    // ---- Mostrar solo botón de la pestaña activa ----
-    addMeasureBtn.style.display = 'block';
-    addUnidadBtn.style.display = 'none';
-    document.querySelectorAll('#tabList .nav-link').forEach(tab => {
-        tab.addEventListener('shown.bs.tab', event => {
-            const target = event.target.getAttribute('href');
-            addMeasureBtn.style.display = target === '#measureTab' ? 'block' : 'none';
-            addUnidadBtn.style.display = target === '#unitTab' ? 'block' : 'none';
-        });
-    });
+    console.log(idMeasureHidden.value)
+    if (idMeasureHidden.value) {
+      await MeasureController.updateMeasure(
+        measureName,
+        measureForm,
+        idMeasureHidden
+      );
+    } else {
+      await MeasureController.insertMeasure(measureName, measureForm);
+    }
+    bsMeasureModal.hide();
+    await MeasureController.reload(container);
+  });
 
-    // ---- Cambiar tamaño de página ----
-    const itemsSelect = document.getElementById('itemsSelect');
-    itemsSelect.addEventListener('change', async () => {
-        const size = parseInt(itemsSelect.value);
-        if (!isNaN(size)) {
-            MeasureController.setPageSize?.(size);
-            MeasureUnitController.setPageSize?.(size);
+  // ---- Form Unidad ----
+  const unidadForm = document.getElementById("UnidadForm");
+  const unidadName = document.getElementById("unidadTxt");
+  const idUnidadHidden = document.getElementById("idUnidad");
+  const unidadModal = document.getElementById("UnidadModal");
+  const bsUnitModal = bootstrap.Modal.getOrCreateInstance(unidadModal);
 
-            if (document.querySelector('#measureTab').classList.contains('show')) {
-                await MeasureController.reload(container);
-            } else {
-                await MeasureUnitController.reloadUnit(container);
-            }
+  const addUnidadBtn = document.getElementById("btn-add-unidad");
+  addUnidadBtn.addEventListener("click", () => {
+    idUnidadHidden.value = "";
+    unidadName.value = "";
+    document.getElementById("selectMeasureUnit").selectedIndex = 0;;
+  });
+
+  unidadForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!unidadName.value.trim()) {
+        Alerts.showToastCloseError("El nombre de la unidad de medida es obligatorio");
+        return;
+    };
+
+    if (idUnidadHidden.value) {
+      await MeasureUnitController.updateUnit(
+        unidadName,
+        idUnidadHidden,
+        unidadForm
+      );
+    } else {
+      await MeasureUnitController.insertUnit(unidadName, unidadForm);
+    }
+    bsUnitModal.hide();
+    await MeasureUnitController.reloadUnit(container);
+  });
+
+  // ---- Search para medidas y unidades ----
+  const searchInput = container.querySelector("#findMeasure");
+  if (searchInput) {
+    searchInput.addEventListener("keyup", async (e) => {
+      if (e.key === "Enter" || searchInput.value == "") {
+        // Medidas
+        if (document.querySelector("#measureTab").classList.contains("show")) {
+          MeasureController.setCurrentPage(0);
+          await MeasureController.reload(container);
         }
+        // Unidades
+        if (document.querySelector("#unitTab").classList.contains("show")) {
+          MeasureUnitController.setCurrentPage(0);
+          await MeasureUnitController.reloadUnit(
+            container,
+            searchInput.value.trim()
+          );
+        }
+      }
     });
+  }
+
+  // ---- Mostrar solo botón de la pestaña activa ----
+  addMeasureBtn.style.display = "block";
+  addUnidadBtn.style.display = "none";
+  document.querySelectorAll("#tabList .nav-link").forEach((tab) => {
+    tab.addEventListener("shown.bs.tab", (event) => {
+      const target = event.target.getAttribute("href");
+      addMeasureBtn.style.display = target === "#measureTab" ? "block" : "none";
+      addUnidadBtn.style.display = target === "#unitTab" ? "block" : "none";
+    });
+  });
+
+  // ---- Cambiar tamaño de página para Measures ----
+  const measureSelect = document.getElementById("measureSelect");
+  measureSelect.addEventListener("change", async () => {
+    const size = parseInt(measureSelect.value);
+    if (!isNaN(size)) {
+        MeasureController.setPageSize?.(size);
+      await MeasureController.reload(container);
+    }
+  });
+
+  // ---- Cambiar tamaño de página para Units ----
+  const unitSelect = document.getElementById("unitSelect");
+  unitSelect.addEventListener("change", async () => {
+    const size = parseInt(unitSelect.value);
+    if (!isNaN(size)) {
+      MeasureUnitController.setPageSize?.(size);
+      await MeasureUnitController.reloadUnit(container);
+    }
+  });
 }

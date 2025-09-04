@@ -1,4 +1,5 @@
 import * as CompanyController from '../../controllers/others/companiesController';
+import * as Alerts from "../../../utils/alerts.js";
 
 export async function render() {
     return `
@@ -96,9 +97,18 @@ export function afterRender() {
   }
 
   let isLoading = false;
-
   CompanyForm.addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  if (!nametxt.value.trim()) {
+    Alerts.showToastCloseError("El nombre de la compañia no puede ser nulo");
+    return;
+  }
+  if (!domaintxt.value.trim()) {
+    Alerts.showToastCloseError("El dominio de la compañia no puede ser nulo");
+    return;
+  }
+
   if (isLoading) return;
   isLoading = true;
   let res;
@@ -119,7 +129,7 @@ export function afterRender() {
 
   const companySearch = document.querySelector("#CompanySearch");
   companySearch.addEventListener("keyup", (e) => {
-  if (e.key == "Enter") {
+  if (e.key == "Enter" || companySearch.value == "") {
     CompanyController.setCurrentPage(0);
     CompanyController.reload(container);
   }

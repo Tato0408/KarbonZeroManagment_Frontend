@@ -73,7 +73,6 @@ async function renderData(container) {
         if (!btn) return;
         const id = btn.dataset.id;
         const ok = await CountryService.deleteCountry(id);
-        console.log(ok)
         //En caso de que duvuelva true retornamos
         if (ok) await reloadCountry(container);
     });
@@ -136,7 +135,6 @@ export async function insertCountry(nombrePais, huellaCarbono, form){
         carbonFootprint:huellaCarbono.value.trim()
     }
     try{
-        console.log(playload)
         const res = await CountryService.insertCountry(playload)
         form.reset()
         return res
@@ -153,10 +151,8 @@ export async function updateCountry( nombrePais, huellaCarbono, form, idtxt){
          name: nombrePais.value.trim(),
          carbonFootprint: huellaCarbono.value.trim()
      }
-     console.log(playload)
      try{
          const res = await CountryService.updateCountry(playload, idtxt);
-         console.log(res)
          form.reset();
          return res;
      }

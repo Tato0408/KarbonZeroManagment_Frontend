@@ -1,6 +1,8 @@
-import * as LivingSpaceController from '../../controllers/properties/housesController';
+import * as LivingSpaceController from "../../controllers/properties/housesController";
+import * as Alerts from "../../../utils/alerts.js";
+
 export async function render() {
-    return `
+  return `
 <div class="container py-4" id="house-root">
     <h2 class="general-title">
         Viviendas
@@ -35,7 +37,7 @@ export async function render() {
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" required type="text" step="any"class="form-control" placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" required type="number" step="0.01" class="form-control" placeholder="Huella de carbono" step="0.01" min=0>
                             </div>
                              <label for="idtxt"class="form-label d-none">id</label>
                         <input id="idtxt"type="text"class="form-control d-none hidden"placeholder="id">
@@ -76,104 +78,120 @@ export async function render() {
   `;
 }
 export function afterRender() {
-    houseProcess();
+  houseProcess();
 }
 
-export async function houseProcess(){
-    const container = document.getElementById('house-root')
-    LivingSpaceController.LivingInit(container)
+export async function houseProcess() {
+  const container = document.getElementById("house-root");
+  LivingSpaceController.LivingInit(container);
 
-    
-    const adsHouseBtn = document.querySelector('#addHouse-kz')
-    const houseName = document.querySelector('#nombretxt')
-    const carbonFootPrint = document.querySelector('#huellacarbontxt') 
-    const idHidden = document.querySelector('#idtxt')
-    const houseModal = document.querySelector('#viviendaModal') 
-    const bsModal = bootstrap.Modal.getOrCreateInstance(houseModal)
-    const btnClose = document.getElementById('btnClose') 
-    const houseForm = document.querySelector('#houseForm')
-    const search = document.querySelector('#searchHouse')
+  const adsHouseBtn = document.querySelector("#addHouse-kz");
+  const houseName = document.querySelector("#nombretxt");
+  const carbonFootPrint = document.querySelector("#huellacarbontxt");
+  const idHidden = document.querySelector("#idtxt");
+  const houseModal = document.querySelector("#viviendaModal");
+  const bsModal = bootstrap.Modal.getOrCreateInstance(houseModal);
+  const btnClose = document.getElementById("btnClose");
+  const houseForm = document.querySelector("#houseForm");
+  const search = document.querySelector("#searchHouse");
 
-    search.addEventListener("keyup", (e) => {
-     if (e.key == "Enter") {
-        LivingSpaceController.setCurrentPage(0);
-        LivingSpaceController.reloadHouse(container);
-     }
-     if(search.value == ""){
-        LivingSpaceController.reloadHouse(container)
-     }
-  })
-
-    if(adsHouseBtn){
-        adsHouseBtn.addEventListener('click', ()=>{
-            idHidden.value = ''
-            houseName.value = ''
-            carbonFootPrint.value = "";
-        });
+  search.addEventListener("keyup", (e) => {
+    if (e.key == "Enter" || search.value == "") {
+      LivingSpaceController.setCurrentPage(0);
+      LivingSpaceController.reloadHouse(container);
     }
-    if(btnClose){
-        btnClose.addEventListener('click', ()=>{
-            idHidden.value = ''
-            houseName.value = ''
-            carbonFootPrint.value = "";
-        });
-    }
+  });
 
-    document.getElementById("nombretxt").addEventListener("keypress", function (e) {
+  if (adsHouseBtn) {
+    adsHouseBtn.addEventListener("click", () => {
+      idHidden.value = "";
+      houseName.value = "";
+      carbonFootPrint.value = "";
+    });
+  }
+  if (btnClose) {
+    btnClose.addEventListener("click", () => {
+      idHidden.value = "";
+      houseName.value = "";
+      carbonFootPrint.value = "";
+    });
+  }
+
+  houseName.addEventListener("keypress", function (e) {
     let char = String.fromCharCode(e.which); // la tecla presionada
     let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
     if (!regex.test(char)) {
-        e.preventDefault(); // cancela la tecla
+      e.preventDefault(); // cancela la tecla
     }
-});
+  });
 
- document.getElementById("huellacarbontxt").addEventListener("keypress", function (e) {
+  carbonFootPrint.addEventListener("keypress", function (e) {
     let val = String.fromCharCode(e.which);
     let p = e.target.value;
 
     //Permitir numeros y punto
     if (!/[0-9.]/.test(val)) {
-        e.preventDefault();
-        return;
+      e.preventDefault();
+      return;
     }
 
     //Validacion para no permitir mas de un punto de decimal
     if (val === "." && p.includes(".")) {
-        e.preventDefault();
-        return;
+      e.preventDefault();
+      return;
     }
 
     //No mas de dos decimales despues del punto
     if (p.includes(".")) {
-        let parte = p.split(".");
-        if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
-            e.preventDefault();
-            return;
-        }
-    }
-});
-
-    let isLoading = false;
-
-    houseForm.addEventListener('submit', async e =>{
+      let parte = p.split(".");
+      if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
         e.preventDefault();
-        if(isLoading) return;
-        isLoading = true;
-        let res;
-        if(idHidden.value){
-            res = await LivingSpaceController.updateLivingSpaceType(
-                houseName, carbonFootPrint, houseForm, idHidden
-            )
-        } else {
-            res = await LivingSpaceController.insertLivingSpaceType(
-                houseName, carbonFootPrint, houseForm
-            )
-        }
-        bsModal.hide();
-        isLoading = false;
-        idHidden.value = ''
-        if(res?.ok){
-            await LivingSpaceController.reloadHouse(container); 
-        }
-    })    
+        return;
+      }
+    }
+  });
+
+  let isLoading = false;
+
+  houseForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!houseName.value.trim()) {
+      Alerts.showToastCloseError(
+        "El nombre del tipo de vivienda no puede ser nulo"
+      );
+      return;
+    }
+
+    if (carbonFootPrint.value <= 0) {
+      Alerts.showToastCloseError(
+        "El valor de la huella de carbono no puede ser menor o igual a cero"
+      );
+      return;
+    }
+
+    if (isLoading) return;
+    isLoading = true;
+    let res;
+    if (idHidden.value) {
+      res = await LivingSpaceController.updateLivingSpaceType(
+        houseName,
+        carbonFootPrint,
+        houseForm,
+        idHidden
+      );
+    } else {
+      res = await LivingSpaceController.insertLivingSpaceType(
+        houseName,
+        carbonFootPrint,
+        houseForm
+      );
+    }
+    bsModal.hide();
+    isLoading = false;
+    idHidden.value = "";
+    if (res?.ok) {
+      await LivingSpaceController.reloadHouse(container);
+    }
+  });
 }

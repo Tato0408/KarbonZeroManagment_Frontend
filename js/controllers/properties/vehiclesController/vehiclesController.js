@@ -16,9 +16,9 @@ export async function setCurrentPage(page){
     currentPage = page
 }
 export async function reloadCarSize(container) {
-    if (!container) return
+    if (!container) return;
 
-     try {
+    try {
         const search = document.querySelector('#searchCarSize');
         const searchCar = search.value.trim();
     
@@ -93,7 +93,6 @@ async function renderData(container) {
 export function LoadTable(carSize, tab){
     const baseIndex  = currentPage * currentSize;
      tab.innerHTML = "";
-     console.log("Datos de carSize en LoadTable:", carSize);
      tab.innerHTML = `
         <div id="paises" class="tab-pane fade show active">
       <div class="table-responsive">
@@ -123,12 +122,11 @@ export function LoadTable(carSize, tab){
 }
 
 export async function insertCarSize(nombreTamaño, form){
-    const playload = {
+    const payload = {
         name: nombreTamaño.value.trim()
     }
     try{
-        console.log(playload)
-        const res = await VehicleService.insertCarSize(playload)
+        const res = await VehicleService.insertCarSize(payload)
         form.reset()
         return res
     }
@@ -139,13 +137,13 @@ export async function insertCarSize(nombreTamaño, form){
 }
 
 export async function updateCarSize( nombreTamaño, form, idtxt){
-     const playload= {
+     const payload= {
          idCarSize:idtxt.value,
          name: nombreTamaño.value.trim()
      }
-     console.log(playload)
+     console.log(payload)
      try{
-         const res = await VehicleService.updateCarSize(playload, idtxt);
+         const res = await VehicleService.updateCarSize(payload, idtxt);
          console.log(res)
          form.reset();
          return res;

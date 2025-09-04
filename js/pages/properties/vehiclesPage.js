@@ -1,10 +1,11 @@
-import * as VehiclesController from '../../controllers/properties/vehiclesController/vehiclesController';
-import * as FuelTypeController from '../../controllers/properties/vehiclesController/fuelTypeController'
-import { getMeasureUnits } from '../../services/properties/fuelTypeService';
+import * as VehiclesController from "../../controllers/properties/vehiclesController/vehiclesController";
+import * as FuelTypeController from "../../controllers/properties/vehiclesController/fuelTypeController";
+import * as Alerts from "../../../utils/alerts.js";
+import { getMeasureUnits } from "../../services/properties/fuelTypeService";
 import { initAllVehiclesTabs } from "../../controllers/properties/vehiclesController/vehicelsInitController";
 
 export async function render() {
-    return `
+  return `
 <div class="container py-4" id="vehicles-root">
         <h2 class="general-title">
             Vehiculo
@@ -55,18 +56,16 @@ export async function render() {
                             <div class="row g-2 mb-3">
                                 <div class="col-sm-6">
                                     <label for="nombretxtFuel" class="form-label">Nombre</label>
-                                    <input id="nombretxtFuel"required type="text" class="form-control" placeholder="Nombre">
+                                    <input id="nombretxtFuel" required type="text" class="form-control" placeholder="Nombre">
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="huellatxt" class="form-label">Huella de Carbono</label>
-                                    <input id="huellatxt" required type="text" class="form-control"
-                                        placeholder="Huella de carbono">
+                                    <input id="huellatxt" required type="number" class="form-control"
+                                        placeholder="Huella de carbono" step="0.01" min=0>
                                 </div>
                                 <div class="row g-2 mb-2">
-                                    <label for="recursotxt" class="form-label">Unidad de medida</label>
-                                    <select id="recursotxt" class="form-select">
-                                        <option>...</option>
-                                        <option>...</option>
+                                    <label for="unitSelect" class="form-label">Unidad de medida</label>
+                                    <select id="unitSelect" class="form-select">
                                     </select>
                                 </div>
                             </div>
@@ -161,145 +160,178 @@ export async function render() {
   `;
 }
 export async function afterRender() {
-    const container = document.getElementById('vehicles-root')
-    await initAllVehiclesTabs(container);
-    carSizeProcess()
-    fuelTypeProcess()
+  const container = document.getElementById("vehicles-root");
+  await initAllVehiclesTabs(container);
+  carSizeProcess();
+  fuelTypeProcess();
 }
 
 export async function carSizeProcess() {
-    const container = document.getElementById('vehicles-root')
+  const container = document.getElementById("vehicles-root");
 
-    const addCarSizeBtn = container.querySelector('#addCarSize')
-    const closebtn = container.querySelector('#btnClose')
-    const carSizeName = container.querySelector('#nombretxt')
-    const idCarSize = container.querySelector('#idtxt')
-    const carSizeModal = container.querySelector('#CarModal')
-    const bsModal = bootstrap.Modal.getOrCreateInstance(carSizeModal)
-    const carSizeForm = container.querySelector('#CarForm')
-    const search = document.querySelector('#searchCarSize')
-        search.addEventListener("keyup", (e) => {
-            if (e.key == "Enter") {
-                VehiclesController.setCurrentPage(0);
-                VehiclesController.reloadCarSize(container);
-            }
-            if(search.value == ""){
-                VehiclesController.reloadCarSize(container)
-            }
-        })
-        
-    if (addCarSizeBtn) {
-        addCarSizeBtn.addEventListener('click', () => {
-            idCarSize.value = ''
-            carSizeName.value = '';
-        });
+  const addCarSizeBtn = container.querySelector("#addCarSize");
+  const closebtn = container.querySelector("#btnClose");
+  const carSizeName = container.querySelector("#nombretxt");
+  const idCarSize = container.querySelector("#idtxt");
+  const carSizeModal = container.querySelector("#CarModal");
+  const bsModal = bootstrap.Modal.getOrCreateInstance(carSizeModal);
+  const carSizeForm = container.querySelector("#CarForm");
+  const search = document.querySelector("#searchCarSize");
+  
+  search.addEventListener("keyup", (e) => {
+    if (e.key == "Enter" || search.value == "") {
+      VehiclesController.setCurrentPage(0);
+      VehiclesController.reloadCarSize(container);
     }
-    if (closebtn) {
-        closebtn.addEventListener('click', () => {
-            idCarSize.value = ''
-            carSizeName.value = '';
-        });
-    }
-    
-    document.getElementById("nombretxt").addEventListener("keypress", function (e) {
-        let char = String.fromCharCode(e.which); // la tecla presionada
-        let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-        if (!regex.test(char)) {
-            e.preventDefault(); // cancela la tecla
-        }
+  });
+
+  if (addCarSizeBtn) {
+    addCarSizeBtn.addEventListener("click", () => {
+      idCarSize.value = "";
+      carSizeName.value = "";
     });
+  }
+  if (closebtn) {
+    closebtn.addEventListener("click", () => {
+      idCarSize.value = "";
+      carSizeName.value = "";
+    });
+  }
 
-    let isLoading = false;
-    carSizeForm.addEventListener('submit', async e => {
-        e.preventDefault();
-        if (isLoading) return;
-        isLoading = true;
-        let res;
+  carSizeName.addEventListener("keypress", function (e) {
+    let char = String.fromCharCode(e.which); // la tecla presionada
+    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+    if (!regex.test(char)) {
+      e.preventDefault(); // cancela la tecla
+    }
+  });
 
-        if (idCarSize.value) {
-            res = await VehiclesController.updateCarSize(carSizeName, carSizeForm, idCarSize)
-        }
-        else {
-            res = await VehiclesController.insertCarSize(carSizeName, carSizeForm)
-        }
+  let isLoading = false;
+  carSizeForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-        bsModal.hide();
-        isLoading = false;
-        idC.value = ''
-        if (res?.ok) {
-            await VehiclesController.reloadCarSize(container)
-        }
-    })
+    if (!carSizeName.value.trim()) {
+      Alerts.showToastCloseError(
+        "El nombre del tamaño de vehículo no puede ser nulo"
+      );
+      return;
+    }
+
+    if (isLoading) return;
+    isLoading = true;
+    let res;
+
+    if (idCarSize.value) {
+      res = await VehiclesController.updateCarSize(
+        carSizeName,
+        carSizeForm,
+        idCarSize
+      );
+    } else {
+      res = await VehiclesController.insertCarSize(carSizeName, carSizeForm);
+    }
+
+    bsModal.hide();
+    isLoading = false;
+    idCarSize.value = "";
+    if (res?.ok) {
+      await VehiclesController.reloadCarSize(container);
+    }
+  });
 }
 
-
-
 export async function fuelTypeProcess() {
-    let data = await getMeasureUnits();
-    const container = document.getElementById('vehicles-root')
+  let data = await getMeasureUnits();
+  const container = document.getElementById("vehicles-root");
 
-    const addFuelTypeBtn = container.querySelector('#addFuelType')
-    const closebtn = container.querySelector('#btnClose')
-    const fuelTypeName = container.querySelector('#nombretxtFuel')
-    const idFuelType = container.querySelector('#idtxt')
-    const Resource = container.querySelector('#recursotxt')
-    const CarbonFoot = container.querySelector('#huellatxt')
-    const fuelTypeModal = container.querySelector('#FuelModal')
-    const bsModal = bootstrap.Modal.getOrCreateInstance(fuelTypeModal)
-    const fuelTypeForm = container.querySelector('#FuelForm')
-    const search = document.querySelector('#searchFuelType')
-        search.addEventListener("keyup", (e) => {
-            if (e.key == "Enter") {
-                FuelTypeController.setCurrentPage(0);
-                FuelTypeController.reloadFuelType(container);
-            }
-            if(search.value == ""){
-                FuelTypeController.reloadFuelType(container)
-            }
-        })
-        FuelTypeController.loadMeasureUnit(data, Resource);
-    if (addFuelTypeBtn) {
-        addFuelTypeBtn.addEventListener('click', () => {
-            idFuelType.value = ''
-            fuelTypeName.value = ''
-            Resource.value = ''
-            CarbonFoot.value = '';
-        });
-    }
-    if (closebtn) {
-        closebtn.addEventListener('click', () => {
-            idCarSize.value = ''
-            carSizeName.value = '';
-        });
-    }
+  const addFuelTypeBtn = container.querySelector("#addFuelType");
+  const closebtn = container.querySelector("#btnClose");
+  const fuelTypeName = container.querySelector("#nombretxtFuel");
+  const idFuelType = container.querySelector("#idtxt");
+  const unitSelect = container.querySelector("#unitSelect");
+  const CarbonFoot = container.querySelector("#huellatxt");
+  const fuelTypeModal = container.querySelector("#FuelModal");
+  const bsModal = bootstrap.Modal.getOrCreateInstance(fuelTypeModal);
+  const fuelTypeForm = container.querySelector("#FuelForm");
+  const search = document.querySelector("#searchFuelType");
 
-    document.getElementById("nombretxt").addEventListener("keypress", function (e) {
-        let char = String.fromCharCode(e.which); // la tecla presionada
-        let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-        if (!regex.test(char)) {
-            e.preventDefault(); // cancela la tecla
-        }
+  search.addEventListener("keyup", (e) => {
+    if (e.key == "Enter") {
+      FuelTypeController.setCurrentPage(0);
+      FuelTypeController.reloadFuelType(container);
+    }
+    if (search.value == "") {
+      FuelTypeController.reloadFuelType(container);
+    }
+  });
+
+  FuelTypeController.loadMeasureUnit(data, unitSelect);
+
+  if (addFuelTypeBtn) {
+    addFuelTypeBtn.addEventListener("click", () => {
+      idFuelType.value = "";
+      fuelTypeName.value = "";
+      CarbonFoot.value = "";
+      unitSelect.selectedIndex = 0;
     });
+  }
+  if (closebtn) {
+    closebtn.addEventListener("click", () => {
+      idCarSize.value = "";
+      carSizeName.value = "";
+    });
+  }
 
-    let isLoading = false;
-    fuelTypeForm.addEventListener('submit', async e => {
-        e.preventDefault();
-        if (isLoading) return;
-        isLoading = true;
-        let res;
+  fuelTypeName.addEventListener("keypress", function (e) {
+   let char = String.fromCharCode(e.which); // la tecla presionada
+   let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+   if (!regex.test(char)) {
+     e.preventDefault(); // cancela la tecla
+   }
+ });
 
-        if (idFuelType.value) {
-            res = await FuelTypeController.updateFuelType(fuelTypeName, CarbonFoot,Resource,  fuelTypeForm, idFuelType)
-        }
-        else {
-            res = await FuelTypeController.insertFuelType(fuelTypeName, CarbonFoot, Resource, fuelTypeForm)
-        }
+  let isLoading = false;
+  fuelTypeForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-        bsModal.hide();
-        isLoading = false;
-        idFuelType.value = ''
-        if (res?.ok) {
-            await FuelTypeController.reloadFuelType(container)
-        }
-    })
+    if (!fuelTypeName.value.trim()) {
+        Alerts.showToastCloseError("El nombre del combustible no puede ser nulo");
+        return;
+    }
+
+    if (CarbonFoot.value <= 0) {
+        Alerts.showToastCloseError(
+          "El valor de la huella de carbono no puede ser menor o igual a cero"
+        );
+        return;
+    } 
+        
+    if (isLoading) return;
+    isLoading = true;
+    let res;
+
+    if (idFuelType.value) {
+      res = await FuelTypeController.updateFuelType(
+        fuelTypeName,
+        CarbonFoot,
+        unitSelect,
+        fuelTypeForm,
+        idFuelType
+      );
+    } else {
+      res = await FuelTypeController.insertFuelType(
+        fuelTypeName,
+        CarbonFoot,
+        unitSelect,
+        fuelTypeForm
+      );
+    }
+
+    bsModal.hide();
+    isLoading = false;
+    idFuelType.value = "";
+    if (res?.ok) {
+      await FuelTypeController.reloadFuelType(container);
+    }
+  });
 }

@@ -68,13 +68,16 @@ export async function insertMeasure(payload) {
 }
 
 // Actualizar medida
-export async function updateMeasure(payload) {
+export async function updateMeasure(id, payload) {
     try {
-        const res = await fetch(`http://localhost:8080/apiMeasure/updateMeasure/${payload.idMeasureHidden}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        const res = await fetch(
+          `http://localhost:8080/apiMeasure/updateMeasure/${id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
         const data = await res.json();
         res.ok
             ? Alerts.showToastCloseSuccess("Medida actualizada exitosamente")

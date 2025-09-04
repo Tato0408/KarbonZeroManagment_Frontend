@@ -1,5 +1,6 @@
 import * as FoodController from '../../controllers/resources/foodPageController/foodController';
 import * as FoodCategoryController from '../../controllers/resources/foodPageController/foodCategoryController'
+import * as Alerts from "../../../utils/alerts.js";
 import { getCategories } from '../../services/resources/foodCategoryService';
 import { initAllResourcesTabs } from "../../controllers/resources/foodPageController/foodInitController";
 
@@ -57,7 +58,7 @@ export async function render() {
               </div>
               <div class="row g-2 mb-3">
                 <label for="huellaTxt" class="form-label">Huella de carbono</label>
-                <input id="huellaTxt" required type="number" step="0.1" class="form-control" placeholder="Huella de carbono">
+                <input id="huellaTxt" required type="number" step="0.01" min=0 class="form-control" placeholder="Huella de carbono">
               </div>
               <div class="row g-2 mb-3 d-none">
                 <label for="idCategoria" class="form-label">Id</label>
@@ -176,12 +177,9 @@ export async function foodProcess() {
     const search = document.querySelector('#searchFood')
 
     search.addEventListener("keyup", (e) => {
-        if (e.key == "Enter") {
+        if (e.key == "Enter" || search.value == "") {
             FoodController.setCurrentPage(0);
             FoodController.reload(container);
-        }
-        if (search.value == "") {
-            FoodController.reload(container)
         }
     })
     ///Aca mandamos a llenar el loadCategories y le pasamos las categorias que hemos obtenido asi como el formselect
@@ -202,18 +200,24 @@ export async function foodProcess() {
         });
     }
 
-    document.getElementById("nombreAlimento").addEventListener("keypress", function (e) {
-        let char = String.fromCharCode(e.which); // la tecla presionada
-        let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-        if (!regex.test(char)) {
-            e.preventDefault(); // cancela la tecla
-        }
+    foodName.addEventListener("keypress", function (e) {
+      let char = String.fromCharCode(e.which); // la tecla presionada
+      let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+      if (!regex.test(char)) {
+        e.preventDefault(); // cancela la tecla
+      }
     });
 
     let isLoading = false;
     //Aca ya vinculamos la parte del insert/update con el submit de nuestro formulario, pasamos datos segun sean solicitados
     foodForm.addEventListener('submit', async e => {
         e.preventDefault();
+
+        if (!foodName.value.trim()) {
+            Alerts.showToastCloseError("El nombre del alimento no puede ser nulo");
+            return;
+        }
+
         if (isLoading) return;
         isLoading = true;
         let res;
@@ -247,12 +251,9 @@ export async function foodCategoriesProcess() {
     const bsModalCategory = bootstrap.Modal.getOrCreateInstance(categoryModal);
     const search = document.querySelector('#searchCategory')
     search.addEventListener("keyup", (e) => {
-        if (e.key == "Enter") {
+        if (e.key == "Enter" || search.value == "") {
             FoodCategoryController.setCurrentPage(0);
             FoodCategoryController.reloadCategories(container);
-        }
-        if (search.value == "") {
-            FoodCategoryController.reloadCategories(container)
         }
     })
 
@@ -271,44 +272,57 @@ export async function foodCategoriesProcess() {
         });
     }
 
-    document.getElementById("categoriaNombre").addEventListener("keypress", function (e) {
-        let char = String.fromCharCode(e.which); // la tecla presionada
-        let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-        if (!regex.test(char)) {
-            e.preventDefault(); // cancela la tecla
-        }
-    });
+    categoryName.addEventListener("keypress", function (e) {
+     let char = String.fromCharCode(e.which); // la tecla presionada
+     let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
+     if (!regex.test(char)) {
+       e.preventDefault(); // cancela la tecla
+     }
+   });
 
-    document.getElementById("huellaTxt").addEventListener("keypress", function (e) {
-        let val = String.fromCharCode(e.which);
-        let p = e.target.value;
+    carbonFootPrint.addEventListener("keypress", function (e) {
+      let val = String.fromCharCode(e.which);
+      let p = e.target.value;
 
-        //Permitir numeros y punto
-        if (!/[0-9.]/.test(val)) {
-            e.preventDefault();
-            return;
-        }
+      //Permitir numeros y punto
+      if (!/[0-9.]/.test(val)) {
+        e.preventDefault();
+        return;
+      }
 
-        //Validacion para no permitir mas de un punto de decimal
-        if (val === "." && p.includes(".")) {
-            e.preventDefault();
-            return;
-        }
+      //Validacion para no permitir mas de un punto de decimal
+      if (val === "." && p.includes(".")) {
+        e.preventDefault();
+        return;
+      }
 
-        //No mas de dos decimales despues del punto
-        if (p.includes(".")) {
-            let parte = p.split(".");
-            if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
-                e.preventDefault();
-                return;
-            }
+      //No mas de dos decimales despues del punto
+      if (p.includes(".")) {
+        let parte = p.split(".");
+        if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
+          e.preventDefault();
+          return;
         }
+      }
     });
 
     let isLoading = false;
 
     categoryForm.addEventListener("submit", async e => {
         e.preventDefault();
+
+        if (!categoryName.value.trim()) {
+            Alerts.showToastCloseError("EL nombre de la categoria alimenticia no puede ser nulo");
+            return;
+        }
+
+        if (carbonFootPrint.value <= 0) {
+            Alerts.showToastCloseError(
+              "El valor de la huella de carbono no puede ser menor o igual a cero"
+            );
+            return;
+        }
+
         if (isLoading) return
         isLoading = true;
         let respuesta;

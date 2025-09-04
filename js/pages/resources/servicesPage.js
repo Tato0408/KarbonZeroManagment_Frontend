@@ -1,4 +1,5 @@
-import * as ServiceController from '../../controllers/resources/serviceServiceController.js';
+import * as ServiceController from '../../controllers/resources/ServicePageController/serviceController.js';
+import * as Alerts from "../../../utils/alerts.js";
 import { getAllServicesList } from "../../services/resources/serviceServiceService.js";
 import { getAllMeasureUnitList } from "../../services/resources/serviceServiceService.js";
 
@@ -43,7 +44,7 @@ export async function render() {
                         </div>
                         <div class="mb-3">
                             <label for="huellaCarbono" class="form-label">Huella de carbono</label>
-                            <input id="carbonFootprinttxt" type="number" class="form-control" required placeholder="Huella de carbono" step="0.1">
+                            <input id="carbonFootprinttxt" type="number" class="form-control" required placeholder="Huella de carbono" step="0.01" min=0>
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">
@@ -118,6 +119,14 @@ export async function afterRender() {
   ///Aca ya vinculamos la parte del insert/update con el submit de nuestro formulario, pasamos datos segun sean solicitados
   serviceForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (carbonFootprinttxt.value <= 0) {
+        Alerts.showToastCloseError(
+          "El valor de la huella de carbono no puede ser menor o igual a cero"
+        );
+        return;
+    }
+
     if (isLoading) return;
     isLoading = true;   
     let res;
@@ -138,7 +147,7 @@ export async function afterRender() {
   
   const serviceSearch = document.querySelector("#ServiceSearch");
     serviceSearch.addEventListener("keyup", (e) => {
-    if (e.key == "Enter") {
+    if (e.key == "Enter" || serviceSearch.value == "") {
       ServiceController.setCurrentPage(0);
       ServiceController.reload(container);
     }
