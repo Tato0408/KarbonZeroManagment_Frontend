@@ -139,7 +139,7 @@ export async function updateFoodCategory(playload, id) {
 export async function deleteFoodCategory(id) {
   const result = await Swal.fire({
     title:
-      "¿Estás seguro de eliminar esta categoria de alimento?. Esta acción hará que los alimentos relacionados con la categora sean elimminados tambien ",
+      "¿Estás seguro de eliminar esta categoria de alimento? Los alimentos relacionados con la categoria serán elimminados también",
     showDenyButton: true,
     confirmButtonText: "Eliminar",
     confirmButtonColor: "#DF4646",

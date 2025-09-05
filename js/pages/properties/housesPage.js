@@ -1,5 +1,6 @@
 import * as LivingSpaceController from "../../controllers/properties/housesController";
 import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
 
 export async function render() {
   return `
@@ -14,7 +15,7 @@ export async function render() {
         </div>
         <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
             <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#viviendaModal" id="addHouse-kz">
-                <i class="bi bi-plus-circle"></i> Añadir Tipo de vivienda
+                <i class="bi bi-plus-circle"></i> Añadir Tipo de Vivienda
             </button>
         </div>
     </div>
@@ -95,6 +96,8 @@ export async function houseProcess() {
   const houseForm = document.querySelector("#houseForm");
   const search = document.querySelector("#searchHouse");
 
+  search.addEventListener("keypress", (e) => Validations.textValidation(e));
+
   search.addEventListener("keyup", (e) => {
     if (e.key == "Enter" || search.value == "") {
       LivingSpaceController.setCurrentPage(0);
@@ -117,42 +120,10 @@ export async function houseProcess() {
     });
   }
 
-  houseName.addEventListener("keypress", function (e) {
-    let char = String.fromCharCode(e.which); // la tecla presionada
-    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-    if (!regex.test(char)) {
-      e.preventDefault(); // cancela la tecla
-    }
-  });
-
-  carbonFootPrint.addEventListener("keypress", function (e) {
-    let val = String.fromCharCode(e.which);
-    let p = e.target.value;
-
-    //Permitir numeros y punto
-    if (!/[0-9.]/.test(val)) {
-      e.preventDefault();
-      return;
-    }
-
-    //Validacion para no permitir mas de un punto de decimal
-    if (val === "." && p.includes(".")) {
-      e.preventDefault();
-      return;
-    }
-
-    //No mas de dos decimales despues del punto
-    if (p.includes(".")) {
-      let parte = p.split(".");
-      if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
-        e.preventDefault();
-        return;
-      }
-    }
-  });
+  houseName.addEventListener("keypress", (e) => Validations.textValidation(e));
+  carbonFootPrint.addEventListener("keypress", (e) => Validations.numberValidation(e));
 
   let isLoading = false;
-
   houseForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 

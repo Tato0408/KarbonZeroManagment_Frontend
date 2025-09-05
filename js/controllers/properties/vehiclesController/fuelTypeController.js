@@ -18,7 +18,7 @@ export async function reloadFuelType(container) {
   if (!container) return;
 
   try {
-    const search = document.querySelector("#searchFuelType");
+    const search = document.querySelector("#searchVehicle");
     const searchFuel = search.value.trim();
 
     let data;

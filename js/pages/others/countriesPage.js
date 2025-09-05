@@ -1,5 +1,6 @@
 import * as CountryController from "../../controllers/others/countriesController";
 import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
 
 export async function render() {
   return `
@@ -99,12 +100,15 @@ export async function countryProcess() {
   const countryForm = container.querySelector("#CountryForm");
   const search = document.querySelector("#searchCountry");
 
+  search.addEventListener("keypress", (e) => Validations.textValidation(e));
+
   search.addEventListener("keyup", (e) => {
     if (e.key == "Enter" || search.value == "") {
       CountryController.setCurrentPage(0);
       CountryController.reloadCountry(container);
     }
   });
+
   if (addCountryBtn) {
     addCountryBtn.addEventListener("click", () => {
       idCountry.value = "";
@@ -120,42 +124,10 @@ export async function countryProcess() {
     });
   }
 
-  countryName.addEventListener("keypress", function (e) {
-    let char = String.fromCharCode(e.which); // la tecla presionada
-    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-    if (!regex.test(char)) {
-      e.preventDefault(); // cancela la tecla
-    }
-  });
-
-  carbonFootPrint.addEventListener("keypress", function (e) {
-    let val = String.fromCharCode(e.which);
-    let p = e.target.value;
-
-    //Permitir numeros y punto
-    if (!/[0-9.]/.test(val)) {
-      e.preventDefault();
-      return;
-    }
-
-    //Validacion para no permitir mas de un punto de decimal
-    if (val === "." && p.includes(".")) {
-      e.preventDefault();
-      return;
-    }
-
-    //No mas de dos decimales despues del punto
-    if (p.includes(".")) {
-      let parte = p.split(".");
-      if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
-        e.preventDefault();
-        return;
-      }
-    }
-  });
+  countryName.addEventListener("keypress", (e) => Validations.textValidation(e));
+  carbonFootPrint.addEventListener("keypress", (e) => Validations.numberValidation(e));
 
   let isLoading = false;
-
   countryForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 

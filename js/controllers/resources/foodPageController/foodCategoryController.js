@@ -13,7 +13,7 @@ export async function setCurrentPage(page) {
 export async function reloadCategories(container) {
     if (!container) return;
     try {
-        const search = document.querySelector('#searchCategory')
+        const search = document.querySelector("#searchFood");
         const searchCategory = search.value.trim();
 
         let data;
@@ -74,7 +74,6 @@ export async function renderCategoryData(container) {
             const id = editBtn.dataset.id;
             try {
                 const category = await FoodCategoryService.getFoodCategoryById(id);
-                console.log(category)
                 document.getElementById('categoriaNombre').value = category.foodCategoryName;
                 document.getElementById('huellaTxt').value = category.carbonFootPrint;
                 document.querySelector('#idCategoria').value = category.idFoodCategory;
@@ -128,11 +127,11 @@ export async function insertCategory(categoryName, carbonFootPrint, categoryForm
     }
     try {
         let res = FoodCategoryService.insertFoodCategory(payload);
-        await reloadCategories(container);
         categoryForm.reset();
         return res;
     } catch (err) {
-        Alerts.showToastCloseError(`No se pudo agregar la categoria de alimento`)
+        Alerts.showToastCloseError(`No se pudo agregar la categoria de alimento`);
+        return {ok : false};
     }
 }
 
@@ -144,13 +143,12 @@ export async function updateCategory(idCategory, categoryName, carbonFootprint, 
 
     }
     try {
-        FoodCategoryService.updateFoodCategory(playload, idCategory);
-
-        const prueba = await reloadCategories(container);
-        console.log(prueba)
+        const ans = await FoodCategoryService.updateFoodCategory(playload, idCategory);
         categoryForm.reset();
+        return ans;
     } catch (err) {
         Alerts.showToastCloseError(`No se pudo actualizar la categoria`)
+        return {ok: false}
     }
 
 }

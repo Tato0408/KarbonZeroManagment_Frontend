@@ -19,7 +19,7 @@ export async function reloadCarSize(container) {
     if (!container) return;
 
     try {
-        const search = document.querySelector('#searchCarSize');
+        const search = document.querySelector("#searchVehicle");
         const searchCar = search.value.trim();
     
         let data;

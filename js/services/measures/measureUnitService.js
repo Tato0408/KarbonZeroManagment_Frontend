@@ -42,7 +42,7 @@ export async function getUnitById(id) {
 export async function insertUnit(payload) {
   try {
     const response = await fetch(
-      "${API_URL}/apiMeasure/insertMeasureUnit",
+      `${API_URL}/apiMeasure/insertMeasureUnit`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

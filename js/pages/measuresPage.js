@@ -1,6 +1,7 @@
 import * as MeasureController from "../controllers/measurePageController/measureController.js";
 import * as MeasureUnitController from "../controllers/measurePageController/measureUnitController.js";
 import * as Alerts from "../../utils/alerts.js";
+import * as Validations from "../../utils/validations.js";
 
 export async function render() {
   return `
@@ -62,8 +63,8 @@ export async function render() {
         </div>
 
         <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
-            <button id="btn-add-measures" class="kz-button-create" data-bs-toggle="modal" data-bs-target="#MedidaModal">Agregar medida</button>
-            <button id="btn-add-unidad" class="kz-button-create" data-bs-toggle="modal" data-bs-target="#UnidadModal">Agregar unidad</button>
+            <button id="btn-add-measures" class="kz-button-create" data-bs-toggle="modal" data-bs-target="#MedidaModal">Añadir Medida</button>
+            <button id="btn-add-unidad" class="kz-button-create" data-bs-toggle="modal" data-bs-target="#UnidadModal">Añadir Unidad</button>
         </div>
     </div>
 
@@ -145,6 +146,8 @@ export async function afterRender() {
     measureName.value = "";
   });
 
+  measureName.addEventListener("keypress", (e) => Validations.textValidation(e));
+
   measureForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -173,14 +176,16 @@ export async function afterRender() {
   const idUnidadHidden = document.getElementById("idUnidad");
   const unidadModal = document.getElementById("UnidadModal");
   const bsUnitModal = bootstrap.Modal.getOrCreateInstance(unidadModal);
-
   const addUnidadBtn = document.getElementById("btn-add-unidad");
+
   addUnidadBtn.addEventListener("click", () => {
     idUnidadHidden.value = "";
     unidadName.value = "";
     document.getElementById("selectMeasureUnit").selectedIndex = 0;;
   });
 
+  unidadName.addEventListener("keypress", (e) => Validations.textValidation(e));
+  
   unidadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -204,6 +209,9 @@ export async function afterRender() {
 
   // ---- Search para medidas y unidades ----
   const searchInput = container.querySelector("#findMeasure");
+
+  searchInput.addEventListener("keypress", (e) => Validations.textValidation(e));
+
   if (searchInput) {
     searchInput.addEventListener("keyup", async (e) => {
       if (e.key === "Enter" || searchInput.value == "") {
@@ -215,10 +223,7 @@ export async function afterRender() {
         // Unidades
         if (document.querySelector("#unitTab").classList.contains("show")) {
           MeasureUnitController.setCurrentPage(0);
-          await MeasureUnitController.reloadUnit(
-            container,
-            searchInput.value.trim()
-          );
+          await MeasureUnitController.reloadUnit(container);
         }
       }
     });

@@ -1,5 +1,6 @@
 import * as CompanyController from '../../controllers/others/companiesController';
 import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
 
 export async function render() {
     return `
@@ -88,6 +89,19 @@ export function afterRender() {
   const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl)
   const idHideen = document.querySelector('#idtxt');
 
+  const companySearch = document.querySelector("#CompanySearch");
+
+  companySearch.addEventListener("keypress", (e) =>
+    Validations.textValidation(e)
+  );
+
+  companySearch.addEventListener("keyup", (e) => {
+    if (e.key == "Enter" || companySearch.value == "") {
+      CompanyController.setCurrentPage(0);
+      CompanyController.reload(container);
+    }
+  });
+
   if (addCompanyBtn) {
     addCompanyBtn.addEventListener('click', () => {
       idHideen.value = '';
@@ -95,6 +109,9 @@ export function afterRender() {
       domaintxt.value = '';
       });
   }
+
+  nametxt.addEventListener("keypress", (e) => Validations.textValidation(e));
+  domaintxt.addEventListener("keypress", (e) => Validations.domainValidation(e));
 
   let isLoading = false;
   CompanyForm.addEventListener('submit', async (e) => {
@@ -106,6 +123,12 @@ export function afterRender() {
   }
   if (!domaintxt.value.trim()) {
     Alerts.showToastCloseError("El dominio de la compañia no puede ser nulo");
+    return;
+  }
+
+  const regex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/
+  if (!regex.test(domaintxt.value.trim())) {
+    Alerts.showToastCloseError("El dominio debe tener una estructura válida");
     return;
   }
 
@@ -124,14 +147,6 @@ export function afterRender() {
   ///Si la respueta que nos retorna ya sea updateUser o insertUser es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
   if (res?.ok) {
     await CompanyController.reload(container);
-  }
-  });
-
-  const companySearch = document.querySelector("#CompanySearch");
-  companySearch.addEventListener("keyup", (e) => {
-  if (e.key == "Enter" || companySearch.value == "") {
-    CompanyController.setCurrentPage(0);
-    CompanyController.reload(container);
   }
   });
 }

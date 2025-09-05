@@ -1,5 +1,6 @@
 import * as TransportController from "../../controllers/others/transportationController";
 import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
 
 export async function render() {
   return `
@@ -88,6 +89,18 @@ export function afterRender() {
   const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
   const idHideen = document.querySelector("#idtxt");
 
+  const transportSearch = document.querySelector("#TransportSearch");
+
+  transportSearch.addEventListener("keypress", (e) =>
+    Validations.textValidation(e)
+  );
+  transportSearch.addEventListener("keyup", (e) => {
+    if (e.key == "Enter" || transportSearch.value == "") {
+      TransportController.setCurrentPage(0);
+      TransportController.reload(container);
+    }
+  });
+
   if (addTransportBtn) {
     addTransportBtn.addEventListener("click", () => {
       idHideen.value = "";
@@ -96,21 +109,23 @@ export function afterRender() {
     });
   }
 
-  let isLoading = false;
+  nametxt.addEventListener("keypress", (e) => Validations.textValidation(e));
+  huellacarbontxt.addEventListener("keypress", (e) => Validations.numberValidation(e));
 
+  let isLoading = false;
   transportForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
+
     if (!nametxt.value.trim()) {
       Alerts.showToastCloseError("El nombre del transporte no puede ser nulo");
       return;
     }
 
     if (huellacarbontxt.value <= 0) {
-        Alerts.showToastCloseError(
-          "El valor de la huella de carbono no puede ser menor o igual a cero"
-        );
-        return;
+      Alerts.showToastCloseError(
+        "El valor de la huella de carbono no puede ser menor o igual a cero"
+      );
+      return;
     }
 
     if (isLoading) return;
@@ -137,14 +152,6 @@ export function afterRender() {
     ///Si la respueta que nos retorna ya sea updateUser o insertUser es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
     if (res?.ok) {
       await TransportController.reload(container);
-    }
-  });
-
-  const transportSearch = document.querySelector("#TransportSearch");
-  transportSearch.addEventListener("keyup", (e) => {
-    if (e.key == "Enter" || transportSearch.value == "") {
-      TransportController.setCurrentPage(0);
-      TransportController.reload(container);
     }
   });
 }

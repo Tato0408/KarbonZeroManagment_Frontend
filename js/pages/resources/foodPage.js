@@ -1,6 +1,7 @@
 import * as FoodController from '../../controllers/resources/foodPageController/foodController';
 import * as FoodCategoryController from '../../controllers/resources/foodPageController/foodCategoryController'
 import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
 import { getCategories } from '../../services/resources/foodCategoryService';
 import { initAllResourcesTabs } from "../../controllers/resources/foodPageController/foodInitController";
 
@@ -66,7 +67,7 @@ export async function render() {
               </div>
             </div>
             <div class="modal-footer d-flex justify-content-center">
-              <button type="submit" class="btn kz-button-create" id="addFood-kz">Crear</button>
+              <button type="submit" class="btn kz-button-create">Crear</button>
             </div>
           </form>
         </div>
@@ -74,24 +75,26 @@ export async function render() {
     </div>
 
     <h2 class="general-title">Alimentos</h2>
+    <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap"
+        style="background:#f5f5f5;">
+        <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
+        <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control border-0 bg-transparent" id="searchFood" placeholder="Buscar">
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
+        <button id="addFood-kz" class="kz-button-create" data-bs-toggle="modal" data-bs-target="#AlimentoModal">
+            <i class="bi bi-plus-circle"></i> Añadir Alimento
+        </button>
+        <button id="addCategory-kz" class="kz-button-create" data-bs-toggle="modal" data-bs-target="#CategoriaModal">
+            <i class="bi bi-plus-circle"></i> Añadir Categoría Alimenticia
+        </button>
+        </div>
+    </div>
     <ul class="nav nav-tabs mb-3" id="tabList"></ul>
 
     <div class="tab-content" id="tabContent-foods">
       <!-- TAB ALIMENTOS -->
-      <div class="tab-pane fade show active" id="foodTab">
-        <!-- filtros alimentos -->
-        <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap"
-          style="background:#f5f5f5;">
-          <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
-            <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control border-0 bg-transparent" id="searchFood" placeholder="Buscar">
-          </div>
-          <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
-            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#AlimentoModal">
-              <i class="bi bi-plus-circle"></i> Añadir Alimento
-            </button>
-          </div>
-        </div>
+      <div class="tab-pane fade show active" id="foodTab">       
         <!-- contenido alimentos -->
         <div id="tabContent"></div>
         <!-- paginación alimentos -->
@@ -115,19 +118,6 @@ export async function render() {
 
       <!-- TAB CATEGORÍAS -->
       <div class="tab-pane fade" id="categoriesTab">
-        <!-- filtros categorías -->
-        <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap"
-          style="background:#f5f5f5;">
-          <div class="input-group search-bar flex-grow-1" style="max-width: 400px;">
-            <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control border-0 bg-transparent" placeholder="Buscar" id="searchCategory">
-          </div>
-          <div class="d-flex align-items-center gap-2 flex-nowrap ms-auto">
-            <button class="kz-button-create" data-bs-toggle="modal" data-bs-target="#CategoriaModal">
-              <i class="bi bi-plus-circle"></i> Añadir Categoría
-            </button>
-          </div>
-        </div>
         <!-- contenido categorías -->
         <div id="tabContentCategory"></div>
         <!-- paginación categorías -->
@@ -153,195 +143,199 @@ export async function render() {
  `;
 }
 export async function afterRender() {
-    const container = document.getElementById('foods-root');
-    await initAllResourcesTabs(container);
-    foodProcess();
-    foodCategoriesProcess();
-}
+  const container = document.getElementById("foods-root");
+  const search = document.querySelector("#searchFood");
 
-export async function foodProcess() {
-    let data = await getCategories();
-    //Se manda a llamar al init del foodController el cual es el que llena la tabla, por eso le pasamos el container
-    const container = document.getElementById('foods-root');
-    FoodController.init(container)
-    //Obtenemos los elementos
+  await initAllResourcesTabs(container);
 
-    const addFoodBtn = document.querySelector('#addFood-kz');
-    const foodName = document.querySelector('#nombreAlimento')
-    const foodCategorySelect = document.querySelector('#categoriaAlimento')
-    const foodForm = document.querySelector('#AlimentoForm')
-    const foodModal = document.querySelector('#AlimentoModal')
-    const bsModal = bootstrap.Modal.getOrCreateInstance(foodModal)
-    const idFoodHidden = document.querySelector('#idtxt')
-    const btnClose = document.querySelector('#closebtn')
-    const search = document.querySelector('#searchFood')
+  // === Lógica para los alimentos ===
+  let categories = await getCategories();
 
-    search.addEventListener("keyup", (e) => {
-        if (e.key == "Enter" || search.value == "") {
-            FoodController.setCurrentPage(0);
-            FoodController.reload(container);
+  //Se manda a llamar al init del foodController el cual es el que llena la tabla, por eso le pasamos el container
+  FoodController.init(container);
+
+  //Obtenemos los elementos
+  const addFoodBtn = document.querySelector("#addFood-kz");
+  const foodName = document.querySelector("#nombreAlimento");
+  const foodCategorySelect = document.querySelector("#categoriaAlimento");
+  const foodForm = document.querySelector("#AlimentoForm");
+  const foodModal = document.querySelector("#AlimentoModal");
+  const bsModal = bootstrap.Modal.getOrCreateInstance(foodModal);
+  const idFoodHidden = document.querySelector("#idtxt");
+  const btnClose = document.querySelector("#closebtn");
+
+  ///Aca mandamos a llenar el loadCategories y le pasamos las categorias que hemos obtenido asi como el formselect
+  FoodController.loadCategories(categories, foodCategorySelect);
+
+  //Aca definimos que si, el boton exite, limpiaomos los campos al cargar
+  if (addFoodBtn) {
+    addFoodBtn.addEventListener("click", () => {
+      idFoodHidden.value = "";
+      foodName.value = "";
+      foodCategorySelect.selectedIndex = 0;
+    });
+  }
+  if (btnClose) {
+    btnClose.addEventListener("click", () => {
+      idFoodHidden.value = "";
+      foodName.value = "";
+      foodCategorySelect.selectedIndex = 0;
+    });
+  }
+
+  foodName.addEventListener("keypress", (e) => Validations.textValidation(e));
+
+  let isFoodLoading = false;
+  //Aca ya vinculamos la parte del insert/update con el submit de nuestro formulario, pasamos datos segun sean solicitados
+  foodForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!foodName.value.trim()) {
+      Alerts.showToastCloseError("El nombre del alimento no puede ser nulo");
+      return;
+    }
+
+    if (isFoodLoading) return;
+    isFoodLoading = true;
+    let res;
+    if (idFoodHidden.value) {
+      res = await FoodController.updateFood(
+        foodName,
+        foodCategorySelect,
+        foodForm,
+        idFoodHidden
+      );
+    } else {
+      res = await FoodController.insertFood(
+        foodName,
+        foodCategorySelect,
+        foodForm
+      );
+    }
+    bsModal.hide();
+    isFoodLoading = false;
+    idFoodHidden.value = "";
+    ///Si la respueta que nos retorna ya sea updateFood o insertFood es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
+    if (res?.ok) {
+      await FoodController.reload(container);
+    }
+  });
+
+  // === Lógica para las categorias de comida ===
+  FoodCategoryController.initCategory(container);
+
+  const addCategory = document.getElementById("addCategory-kz");
+  const closeCategory = document.getElementById("btnCloseCategory");
+  const idHidden = document.getElementById("idCategoria");
+  const categoryName = document.getElementById("categoriaNombre");
+  const carbonFootPrint = document.getElementById("huellaTxt");
+  const categoryModal = document.getElementById("CategoriaModal");
+  const categoryForm = document.getElementById("CategoriaForm");
+  const bsModalCategory = bootstrap.Modal.getOrCreateInstance(categoryModal);
+
+  search.addEventListener("keypress", (e) => Validations.textValidation(e));
+
+  search.addEventListener("keyup", (e) => {
+    if (e.key == "Enter" || search.value == "") {
+      FoodCategoryController.setCurrentPage(0);
+      FoodCategoryController.reloadCategories(container);
+    }
+  });
+
+  if (addCategory) {
+    addCategory.addEventListener("click", () => {
+      idHidden.value = "";
+      categoryName.value = "";
+      carbonFootPrint.value = "";
+    });
+  }
+  if (closeCategory) {
+    closeCategory.addEventListener("click", () => {
+      idHidden.value = "";
+      categoryName.value = "";
+      carbonFootPrint.value = "";
+    });
+  }
+
+  categoryName.addEventListener("keypress", (e) =>
+    Validations.textValidation(e)
+  );
+  carbonFootPrint.addEventListener("keypress", (e) =>
+    Validations.numberValidation(e)
+  );
+
+  let isCategoryLoading = false;
+  categoryForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!categoryName.value.trim()) {
+      Alerts.showToastCloseError(
+        "EL nombre de la categoria alimenticia no puede ser nulo"
+      );
+      return;
+    }
+
+    if (carbonFootPrint.value <= 0) {
+      Alerts.showToastCloseError(
+        "El valor de la huella de carbono no puede ser menor o igual a cero"
+      );
+      return;
+    }
+
+    if (isCategoryLoading) return;
+    isCategoryLoading = true;
+    let respuesta;
+    if (idHidden.value) {
+      respuesta = await FoodCategoryController.updateCategory(
+        idHidden,
+        categoryName,
+        carbonFootPrint,
+        categoryForm
+      );
+    } else {
+      respuesta = await FoodCategoryController.insertCategory(
+        categoryName,
+        carbonFootPrint,
+        categoryForm
+      );
+    }
+    bsModalCategory.hide();
+    isCategoryLoading = false;
+    idHidden.value = "";
+    ///Si la respueta que nos retorna ya sea updateFood o insertFood es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
+    if (respuesta?.ok) {
+      await FoodCategoryController.reloadCategories(container);
+    }
+  });
+
+  // Le agregamos la funcionalidad de búsqueda
+  if (search) {
+    search.addEventListener("keyup", async (e) => {
+      if (e.key === "Enter" || search.value == "") {
+        // Medidas
+        if (document.querySelector("#foodTab").classList.contains("show")) {
+          FoodController.setCurrentPage(0);
+          await FoodController.reload(container);
         }
-    })
-    ///Aca mandamos a llenar el loadCategories y le pasamos las categorias que hemos obtenido asi como el formselect
-    FoodController.loadCategories(data, foodCategorySelect);
-    //Aca definimos que si, el boton exite, limpiaomos los campos al cargar
-    if (addFoodBtn) {
-        addFoodBtn.addEventListener('click', () => {
-            idFoodHidden.value = ''
-            foodName.value = ''
-            foodCategorySelect.selectedIndex = 0;
-        });
-    }
-    if (btnClose) {
-        btnClose.addEventListener('click', () => {
-            idFoodHidden.value = ''
-            foodName.value = ''
-            foodCategorySelect.selectedIndex = 0;
-        });
-    }
-
-    foodName.addEventListener("keypress", function (e) {
-      let char = String.fromCharCode(e.which); // la tecla presionada
-      let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-      if (!regex.test(char)) {
-        e.preventDefault(); // cancela la tecla
+        // Unidades
+        if (document.querySelector("#categoriesTab").classList.contains("show")) {
+          FoodCategoryController.setCurrentPage(0);
+          await FoodCategoryController.reloadCategories(container);
+        }
       }
     });
+  }
 
-    let isLoading = false;
-    //Aca ya vinculamos la parte del insert/update con el submit de nuestro formulario, pasamos datos segun sean solicitados
-    foodForm.addEventListener('submit', async e => {
-        e.preventDefault();
-
-        if (!foodName.value.trim()) {
-            Alerts.showToastCloseError("El nombre del alimento no puede ser nulo");
-            return;
-        }
-
-        if (isLoading) return;
-        isLoading = true;
-        let res;
-        if (idFoodHidden.value) {
-            res = await FoodController.updateFood(foodName, foodCategorySelect, foodForm, idFoodHidden)
-        } else {
-            res = await FoodController.insertFood(foodName, foodCategorySelect, foodForm)
-        }
-        bsModal.hide();
-        isLoading = false;
-        idFoodHidden.value = ''
-        ///Si la respueta que nos retorna ya sea updateFood o insertFood es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
-        if (res?.ok) {
-            await FoodController.reload(container);
-        }
-    })
-}
-
-export async function foodCategoriesProcess() {
-    const container = document.getElementById('foods-root');
-
-    FoodCategoryController.initCategory(container);
-
-    const addCategory = document.getElementById('addCategory-kz');
-    const closeCategory = document.getElementById('btnCloseCategory')
-    const idHidden = document.getElementById('idCategoria');
-    const categoryName = document.getElementById('categoriaNombre');
-    const carbonFootPrint = document.getElementById('huellaTxt');
-    const categoryModal = document.getElementById('CategoriaModal');
-    const categoryForm = document.getElementById('CategoriaForm');
-    const bsModalCategory = bootstrap.Modal.getOrCreateInstance(categoryModal);
-    const search = document.querySelector('#searchCategory')
-    search.addEventListener("keyup", (e) => {
-        if (e.key == "Enter" || search.value == "") {
-            FoodCategoryController.setCurrentPage(0);
-            FoodCategoryController.reloadCategories(container);
-        }
-    })
-
-    if (addCategory) {
-        addCategory.addEventListener("click", () => {
-            idHidden.value = "";
-            categoryName.value = "";
-            carbonFootPrint.value = "";
-        });
-    }
-    if (closeCategory) {
-        closeCategory.addEventListener("click", () => {
-            idHidden.value = "";
-            categoryName.value = "";
-            carbonFootPrint.value = "";
-        });
-    }
-
-    categoryName.addEventListener("keypress", function (e) {
-     let char = String.fromCharCode(e.which); // la tecla presionada
-     let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-     if (!regex.test(char)) {
-       e.preventDefault(); // cancela la tecla
-     }
-   });
-
-    carbonFootPrint.addEventListener("keypress", function (e) {
-      let val = String.fromCharCode(e.which);
-      let p = e.target.value;
-
-      //Permitir numeros y punto
-      if (!/[0-9.]/.test(val)) {
-        e.preventDefault();
-        return;
-      }
-
-      //Validacion para no permitir mas de un punto de decimal
-      if (val === "." && p.includes(".")) {
-        e.preventDefault();
-        return;
-      }
-
-      //No mas de dos decimales despues del punto
-      if (p.includes(".")) {
-        let parte = p.split(".");
-        if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
-          e.preventDefault();
-          return;
-        }
-      }
+  // ---- Mostrar solo botón de la pestaña activa ----
+  addFoodBtn.style.display = "block";
+  addCategory.style.display = "none";
+  document.querySelectorAll("#tabList .nav-link").forEach((tab) => {
+    tab.addEventListener("shown.bs.tab", (event) => {
+      const target = event.target.getAttribute("href");
+      addFoodBtn.style.display = target === "#foodTab" ? "block" : "none";
+      addCategory.style.display = target === "#categoriesTab" ? "block" : "none";
     });
-
-    let isLoading = false;
-
-    categoryForm.addEventListener("submit", async e => {
-        e.preventDefault();
-
-        if (!categoryName.value.trim()) {
-            Alerts.showToastCloseError("EL nombre de la categoria alimenticia no puede ser nulo");
-            return;
-        }
-
-        if (carbonFootPrint.value <= 0) {
-            Alerts.showToastCloseError(
-              "El valor de la huella de carbono no puede ser menor o igual a cero"
-            );
-            return;
-        }
-
-        if (isLoading) return
-        isLoading = true;
-        let respuesta;
-        if (idHidden.value) {
-            respuesta = FoodCategoryController.updateCategory(idHidden, categoryName, carbonFootPrint, categoryForm);
-        } else {
-            respuesta = FoodCategoryController.insertCategory(categoryName, carbonFootPrint, categoryForm);
-
-        }
-        bsModalCategory.hide();
-        isLoading = false;
-        idHidden.value = ''
-        ///Si la respueta que nos retorna ya sea updateFood o insertFood es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
-        if (respuesta?.ok) {
-            await FoodCategoryController.reloadCategories(container);
-
-
-        }
-    });
+  });
 }
 
 

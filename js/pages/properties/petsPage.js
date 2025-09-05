@@ -1,5 +1,6 @@
 import * as PetController from "../../controllers/properties/petsController";
 import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
 
 export async function render() {
   return `
@@ -103,15 +104,11 @@ export async function petsProcess() {
     });
   }
 
-  petName.addEventListener("keypress", function (e) {
-    let char = String.fromCharCode(e.which); // la tecla presionada
-    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-    if (!regex.test(char)) {
-      e.preventDefault(); // cancela la tecla
-    }
-  });
+  petName.addEventListener("keypress", (e) => Validations.textValidation(e));
+  carbonFootPrint.addEventListener("keypress", (e) => Validations.numberValidation(e));
 
-  // Muevo el Search afuera del submit
+  PetSearch.addEventListener("keypress", (e) => Validations.textValidation(e));
+
   if (PetSearch) {
     PetSearch.addEventListener("keyup", (e) => {
       if (e.key === "Enter" || PetSearch.value == "") {
