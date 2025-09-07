@@ -1,7 +1,9 @@
-import * as PetController from '../../controllers/properties/petsController';
+import * as PetController from "../../controllers/properties/petsController";
+import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
 
 export async function render() {
-    return `
+  return `
 <div class="container py-4" id="pet-root">
     <h2 class="general-title">Mascota</h2>
     <div class="filters-bar d-flex align-items-center gap-3 p-3 mb-3 rounded-3 flex-nowrap" style="background:#f5f5f5;">
@@ -33,7 +35,7 @@ export async function render() {
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" required type="number" class="form-control" placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" required type="number" class="form-control" placeholder="Huella de carbono" step="0.01" min=0>
                             </div>
                             <input id="idtxt" type="text" class="form-control d-none hidden" placeholder="id">
                         </div>
@@ -70,82 +72,87 @@ export async function render() {
 }
 
 export function afterRender() {
-    petsProcess();
+  petsProcess();
 }
 
 export async function petsProcess() {
-    const container = document.getElementById('pet-root');
-    PetController.PetsInit(container);
+  const container = document.getElementById("pet-root");
+  PetController.PetsInit(container);
 
-    const addPetBtn = container.querySelector('#addPet');
-    const closebtn = container.querySelector('#btnClose');
-    const petName = container.querySelector('#nombretxt');
-    const carbonFootPrint = container.querySelector('#huellacarbontxt');
-    const idPet = container.querySelector('#idtxt');
-    const PetModal = container.querySelector('#PetModal');
-    const bsModal = bootstrap.Modal.getOrCreateInstance(PetModal);
-    const petForm = container.querySelector('#PetForm');
-    const PetSearch = container.querySelector("#PetSearch"); // ✅ el search input
+  const addPetBtn = container.querySelector("#addPet");
+  const closebtn = container.querySelector("#btnClose");
+  const petName = container.querySelector("#nombretxt");
+  const carbonFootPrint = container.querySelector("#huellacarbontxt");
+  const idPet = container.querySelector("#idtxt");
+  const PetModal = container.querySelector("#PetModal");
+  const bsModal = bootstrap.Modal.getOrCreateInstance(PetModal);
+  const petForm = container.querySelector("#PetForm");
+  const PetSearch = container.querySelector("#PetSearch"); // ✅ el search input
 
-    if (addPetBtn) {
-        addPetBtn.addEventListener('click', () => {
-            idPet.value = '';
-            petName.value = '';
-            carbonFootPrint.value = "";
-        });
-    }
-    if (closebtn) {
-        closebtn.addEventListener('click', () => {
-            idPet.value = '';
-            petName.value = '';
-            carbonFootPrint.value = "";
-        });
-    }
-
-    document.getElementById("nombretxt").addEventListener("keypress", function (e) {
-        let char = String.fromCharCode(e.which);
-        let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/;
-        if (!regex.test(char)) e.preventDefault();
+  if (addPetBtn) {
+    addPetBtn.addEventListener("click", () => {
+      idPet.value = "";
+      petName.value = "";
+      carbonFootPrint.value = "";
     });
-
-    document.getElementById("huellacarbontxt").addEventListener("keypress", function (e) {
-        let val = String.fromCharCode(e.which);
-        let p = e.target.value;
-        if (!/[0-9.]/.test(val)) e.preventDefault();
-        if (val === "." && p.includes(".")) e.preventDefault();
-        if (p.includes(".")) {
-            let parte = p.split(".");
-            if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) e.preventDefault();
-        }
+  }
+  if (closebtn) {
+    closebtn.addEventListener("click", () => {
+      idPet.value = "";
+      petName.value = "";
+      carbonFootPrint.value = "";
     });
+  }
 
-    let isLoading = false;
+  petName.addEventListener("keypress", (e) => Validations.textValidation(e));
+  carbonFootPrint.addEventListener("keypress", (e) => Validations.numberValidation(e));
 
-    // ✅ Muevo el Search afuera del submit
-    if (PetSearch) {
-        PetSearch.addEventListener("keyup", (e) => {
-            if (e.key === "Enter") {
-                PetController.setCurrentPage(0);
-                PetController.reloadPet(container);
-            }
-        });
+  PetSearch.addEventListener("keypress", (e) => Validations.textValidation(e));
+
+  if (PetSearch) {
+    PetSearch.addEventListener("keyup", (e) => {
+      if (e.key === "Enter" || PetSearch.value == "") {
+        PetController.setCurrentPage(0);
+        PetController.reloadPet(container);
+      } 
+    });
+  }
+
+  let isLoading = false;
+  petForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!petName.value.trim()) {
+      Alerts.showToastCloseError(
+        "El nombre del tipo de mascota no puede ser nulo"
+      );
+      return;
+    }
+    if (carbonFootPrint.value <= 0) {
+      Alerts.showToastCloseError(
+        "El valor de la huella de carbono no puede ser menor o igual a cero"
+      );
+      return;
     }
 
-    petForm.addEventListener('submit', async e => {
-        e.preventDefault();
-        if (isLoading) return;
-        isLoading = true;
+    if (isLoading) return;
+    isLoading = true;
 
-        let res;
-        if (idPet.value) {
-            res = await PetController.updatePetType(petName, carbonFootPrint, petForm, idPet);
-        } else {
-            res = await PetController.insertPet(petName, carbonFootPrint, petForm);
-        }
+    let res;
+    if (idPet.value) {
+      res = await PetController.updatePetType(
+        petName,
+        carbonFootPrint,
+        petForm,
+        idPet
+      );
+    } else {
+      res = await PetController.insertPet(petName, carbonFootPrint, petForm);
+    }
 
-        bsModal.hide();
-        isLoading = false;
-        idPet.value = '';
-        if (res?.ok) await PetController.reloadPet(container);
-    });
+    bsModal.hide();
+    isLoading = false;
+    idPet.value = "";
+    if (res?.ok) await PetController.reloadPet(container);
+  });
 }

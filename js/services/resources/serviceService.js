@@ -5,7 +5,9 @@ import * as Alerts from '../../../utils/alerts.js'
 export async function getService(page= 0, size=10) {
     try {
         ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
-        const response = await fetch(`${API_URL}/apiService/getMeasureUnitService?page=${page}&size=${size}`);
+        const response = await fetch(
+          `${API_URL}/apiService/getAllServices?page=${page}&size=${size}`
+        );
         ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
         if (!response.ok) {
             throw new Error(`Error cargando los servicios: ${response.status}`);
@@ -20,7 +22,9 @@ export async function getService(page= 0, size=10) {
 }
 export async function getServiceById(id) {
     try {
-        const response = await fetch(`${API_URL}/apiService/getMeasureUnitServiceById/${id}`);
+        const response = await fetch(
+          `${API_URL}/apiService/getServiceById/${id}`
+        );
         const u = await response.json();
         if (!response.ok) {
             throw new Error(`Error cargando los servicios: ${response.status}`);
@@ -31,7 +35,7 @@ export async function getServiceById(id) {
         throw error;
     }
 }
-export async function getAllMeasureUnitServiceByName(
+export async function getAllServicesByName(
   searchName,
   currentPage = 0,
   currentSize = 10
@@ -39,25 +43,25 @@ export async function getAllMeasureUnitServiceByName(
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     const response = await fetch(
-      `${API_URL}/apiService/getMeasureUnitServiceByName/${searchName}?page=${currentPage}&size=${currentSize}`
+      `${API_URL}/apiService/getServiceByName/${searchName}?page=${currentPage}&size=${currentSize}`
     );
     ///Si esta malo pues aja, mandamos error
     if (!response.ok) {
-      console.error("Error fetching services");
+      console.error("Error cargando los servicios");
     }
     ///Retornamos la respuesta en formato json
     return response.json();
   } catch (error) {
-    console.error(`Error fetching services: ${error}`);
+    console.error(`Error cargando los servicios: ${error}`);
     throw error;
   }
 }
 export async function insertService(payload) {
     try {
-        const response = await fetch(`${API_URL}/apiService/insertMeasureUnitService`,  {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+        const response = await fetch(`${API_URL}/apiService/insertService`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
 
         const data = await response.json();
@@ -75,11 +79,14 @@ export async function insertService(payload) {
 }
 export async function updateService(payload, id) {
     try {
-        const response = await fetch(`${API_URL}/apiService/updateMeasureUnitService/${id.value}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        const response = await fetch(
+          `${API_URL}/apiService/updateService/${id.value}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
         const data = await response.json().catch(() => null);
 
         if (response.ok) {
@@ -106,7 +113,9 @@ export async function deleteService(id) {
         return false;
     }
     try {
-        const resp = await fetch(`${API_URL}/apiService/deleteMeasureUnitService/${id}`, { method: 'DELETE' });
+        const resp = await fetch(`${API_URL}/apiService/deleteService/${id}`, {
+          method: "DELETE",
+        });
         if (!resp.ok) {
             Alerts.showToastCloseError("No se pudo eliminar el servicio");
             return false;
@@ -129,18 +138,5 @@ export async function getAllServicesList () {
         return response.json();
     } catch (error) {
         console.error(`Error fetching Servicios ${error}`);
-    }
-}
-
-///Exportamos la funcion para poder importarla en nuestra pagina
-export async function getAllMeasureUnitList () {
-    try {
-        const response = await fetch(`${API_URL}/apiMeasure/getAllMeasureUnitList`);
-        if (!response.ok) {
-            console.error("Error fetching Unidades de medida");
-        }
-        return response.json();
-    } catch (error) {
-        console.error(`Error fetching unidades de medida ${error}`);
     }
 }

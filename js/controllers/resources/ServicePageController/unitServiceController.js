@@ -1,5 +1,5 @@
-import * as ServiceService from '../../services/resources/serviceServiceService.js';
-import * as Alerts from '../../../utils/alerts.js'
+import * as Service from "../../../services/resources/unitServiceService.js";
+import * as Alerts from "../../../../utils/alerts.js";
 ///Con import podemos acceder a todos los metodos exportados de X archivo
 
 ///Nuestro metodo de inicio, lo llamamos
@@ -13,60 +13,56 @@ let currentSize = 10;
 
 ///Aca esta nuestro metodo reload y pues container sera igual al contenedor que le estemos pasando en este caso el final en page va a ser el de servicios
 export async function reload(container) {
-    ///Si nuestro container es nulo....
-    if (!container) return;
-    ///Si no pues hacemos una peticion get y le pasamos ese array de services + el tab donde queremos poner la grid
-    try {
-          const ServiceSearch = document.querySelector("#ServiceSearch");
-          const searchName = ServiceSearch.value.trim();
+  ///Si nuestro container es nulo....
+  if (!container) return;
+  ///Si no pues hacemos una peticion get y le pasamos ese array de services + el tab donde queremos poner la grid
+  try {
+    const ServiceSearch = document.querySelector("#ServiceSearch");
+    const searchName = ServiceSearch.value.trim();
 
-          let data;
-          if (!searchName) {
-            data = await ServiceService.getService(currentPage, currentSize);
-          } else {
-            data = await ServiceService.getAllMeasureUnitServiceByName(searchName, currentPage, currentSize);
-          }
-          const service = data.content;
-          const $tabContent = container.querySelector('#tabContent');
-          loadServiceTable(service, $tabContent);
-          ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload
-          renderPagination(data.number, data.totalPages, container);  
-    } catch (e) {
-        console.error(e);
+    let data;
+    if (!searchName) {
+      data = await Service.getService(currentPage, currentSize);
+    } else {
+      data = await Service.getAllMeasureUnitServiceByName(
+        searchName,
+        currentPage,
+        currentSize
+      );
     }
+    const service = data.content;
+    const $tabContent = container.querySelector("#tabContent");
+    loadServiceTable(service, $tabContent);
+    ///Llamamos a renderPagination para que siempre pues vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload
+    renderPagination(data.number, data.totalPages, container);
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 ///Funcion para renderizar los datos asi como los eventos de nuestro formulario
 async function renderData(container) {
-  ///Variables con nuestro tabList y el contenido(nuestra tabla)
-  const $tabList = container.querySelector('#tabList');
-  const $tabContent = container.querySelector('#tabContent');
+  const $tabContent = container.querySelector("#tabContent");
   ///Array donde se guardan los usuarios
   let services = [];
 
   ///Llenamos los servicios
   try {
     ///traemos el json en data
-    const data = await ServiceService.getService(currentPage, currentSize);
-    ///Accedemos al content de eso 
+    const data = await Service.getService(currentPage, currentSize);
+    ///Accedemos al content de eso
     services = data.content;
     ///Llamamos al renderPagination para que carge cuando inicie todo
-    renderPagination(data.number, data.totalPages, container)
+    renderPagination(data.number, data.totalPages, container);
   } catch (error) {
     console.error(error);
-    return container.innerHTML = `<p class="text-danger">No se pudieron cargar los servicios.</p>`;
+    return (container.innerHTML = `<p class="text-danger">No se pudieron cargar los servicios.</p>`);
   }
-
-  ///Aca definimos nuestros tabs y de igual forma a donde estan dirigidos, puedes definir varios en page, y cada uno debe tener su div con su ID 
-  $tabList.innerHTML = `
-        <li class="nav-item d-flex">
-            <a class="nav-link active" data-bs-toggle="tab" href="#service">Servicios</a>
-        </li>`;
 
   ///Cargamos datos, pasamos nuestros servicios y nuestro contenedor
   loadServiceTable(services, $tabContent);
 
-  const sizeSelector = document.getElementById("itemsSelectService");
+  const sizeSelector = document.getElementById("itemsSelectUnitService");
   sizeSelector.addEventListener("change", () => {
     currentSize = parseInt(sizeSelector.value);
     currentPage = 0;
@@ -74,28 +70,31 @@ async function renderData(container) {
   });
 
   ///Aca definimos que hace nuestro boton de eliminar
-  container.addEventListener('click', async e => {
-    const btn = e.target.closest('.btn-delete-service');
+  container.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".btn-delete-unit-service");
     if (!btn) return;
     const id = btn.dataset.id;
-    const ok = await ServiceService.deleteService(id);
+    const ok = await Service.deleteService(id);
     ///En caso de que nos devuelva un true recargamos
     if (ok) await reload(container);
   });
 
   ///Aca lo que hacemos es llenar el formulario de editar, puesto que eso es lo que hace el boton, abrir con datos, quien se encarga de enviar el PUT es en page
-  container.addEventListener('click', async e => {
-    const editBtn = e.target.closest('.btn-edit-service');
+  container.addEventListener("click", async (e) => {
+    const editBtn = e.target.closest(".btn-edit-unit-service");
     if (!editBtn) return;
     const id = editBtn.dataset.id;
     try {
-      const service = await ServiceService.getServiceById(id);
-      document.getElementById('idtxt').value = service.idMeasureUnitService ?? '';
-      document.getElementById('servicetxt').value = service.idService ?? '';
-      document.getElementById('unidadServiciotxt').value = service.idMeasureUnit ?? '';
-      document.getElementById('carbonFootprinttxt').value = service.carbonFootprint ?? '';
+      const service = await Service.getServiceById(id);
+      document.getElementById("unitIdtxt").value =
+        service.idMeasureUnitService ?? "";
+      document.getElementById("unitServicetxt").value = service.idService ?? "";
+      document.getElementById("unidadServiciotxt").value =
+        service.idMeasureUnit ?? "";
+      document.getElementById("carbonFootprinttxt").value =
+        service.carbonFootprint ?? "";
     } catch (err) {
-      Alerts.showToastCloseError('No se pudo cargar el servicio');
+      Alerts.showToastCloseError("No se pudo cargar el servicio");
       console.error(err);
     }
   });
@@ -129,10 +128,10 @@ export function loadServiceTable(services, tab) {
                 <td>${s.measureUnitName}</td>
                 <td>${s.carbonFootprint}</td>
                 <td>
-                    <button class="btn btn-sm btn-success me-1 btn-edit-service" data-id="${
+                    <button class="btn btn-sm btn-success me-1 btn-edit-unit-service" data-id="${
                       s.idMeasureUnitService
-                    }" data-bs-toggle="modal" data-bs-target="#ServiceModal"><i class="bi bi-pencil-fill"></i></button>
-                    <button class="btn btn-sm btn-danger btn-delete-service" data-id="${
+                    }" data-bs-toggle="modal" data-bs-target="#UnitServiceModal"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="btn btn-sm btn-danger btn-delete-unit-service" data-id="${
                       s.idMeasureUnitService
                     }"><i class="bi bi-trash-fill"></i></button>
                 </td>
@@ -147,32 +146,37 @@ export function loadServiceTable(services, tab) {
 
 ///Aca llenamos nuestros Servicios, la funcionalidad esta en page
 export function loadService(service, serviceSelect) {
-  service.forEach(element => {
+  service.forEach((element) => {
     serviceSelect.innerHTML += `
         <option value="${element.idService}">${element.name}</option>
-      `
+      `;
   });
 }
 
 ///Aca llenamos nuestras unidades de medida, la funcionalidad esta en page
 export function loadMeasureUnit(idMeasureUnit, measureUnitSelect) {
-  idMeasureUnit.forEach(element => {
+  idMeasureUnit.forEach((element) => {
     measureUnitSelect.innerHTML += `
         <option value="${element.idMeasureUnit}">${element.nameMeasureUnit}</option>
-      `
+      `;
   });
 }
 
 ///!IMPORTANTE: con el tema de los idfk nosotros aca usamos el .value, en el page, pasamos el select entero
 ///Aca hacemos la funcionalidad del insert, su uso esta en page
-export async function insertService(idService, idMeasureUnit, carbonFootprinttxt, form) {
+export async function insertService(
+  idService,
+  idMeasureUnit,
+  carbonFootprinttxt,
+  form
+) {
   const payload = {
     idService: idService.value,
     idMeasureUnit: idMeasureUnit.value,
-    carbonFootprint: parseFloat(carbonFootprinttxt.value.trim())
-  }
+    carbonFootprint: parseFloat(carbonFootprinttxt.value.trim()),
+  };
   try {
-    const res = await ServiceService.insertService(payload);
+    const res = await Service.insertService(payload);
     form.reset();
     return res;
   } catch (err) {
@@ -183,15 +187,21 @@ export async function insertService(idService, idMeasureUnit, carbonFootprinttxt
 }
 
 ///Lo mismo que el insert pero ahora update,
-export async function updateService(idService, idMeasureUnit, carbonFootprinttxt, form, id) {
+export async function updateService(
+  idService,
+  idMeasureUnit,
+  carbonFootprinttxt,
+  form,
+  id
+) {
   const payload = {
     idService: idService.value,
     idMeasureUnit: idMeasureUnit.value,
-    carbonFootprint: parseFloat(carbonFootprinttxt.value.trim())
-  }
+    carbonFootprint: parseFloat(carbonFootprinttxt.value.trim()),
+  };
   try {
     ///Hacemos la peticion
-    const res = await ServiceService.updateService(payload, id);
+    const res = await Service.updateService(payload, id);
     form.reset();
     return res;
   } catch (err) {
@@ -203,10 +213,9 @@ export async function updateService(idService, idMeasureUnit, carbonFootprinttxt
 
 export function renderPagination(current, totalPages, container) {
   ///Aca accedemos a nuestro ul de pagination
-  const pagination = document.getElementById("servicePagination");
+  const pagination = document.getElementById("unitServicePagination");
   if (!pagination) return;
-  pagination.innerHTML = "";///Limpiamos la paginacion previa
-
+  pagination.innerHTML = ""; ///Limpiamos la paginacion previa
 
   ///Este es el boton para ir en retroseso
   const prev = document.createElement("li");
@@ -218,7 +227,7 @@ export function renderPagination(current, totalPages, container) {
   prev.addEventListener("click", (e) => {
     e.preventDefault();
     if (current > 0) {
-      currentPage = current - 1;///Retrocede una pagina
+      currentPage = current - 1; ///Retrocede una pagina
       ///Hacemos reload
       reload(container);
     }
@@ -249,7 +258,7 @@ export function renderPagination(current, totalPages, container) {
   next.addEventListener("click", (e) => {
     e.preventDefault();
     if (current < totalPages - 1) {
-      currentPage = current + 1;///Avanza una pagina
+      currentPage = current + 1; ///Avanza una pagina
       reload(container);
     }
   });

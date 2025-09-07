@@ -1,4 +1,4 @@
-import * as MeasureService from "../../services/measureService.js";
+import * as MeasureService from "../../services/measures/measureService.js";
 import * as Alerts from "../../../utils/alerts.js";
 
 let currentPage = 0;
@@ -85,7 +85,7 @@ function loadTable(measures, tab, container) {
             const measure = await MeasureService.getMeasureById(id);
             if (!measure) return;
             document.getElementById('nombreMedida').value = measure.nameMeasure;
-            document.getElementById('idUnidad').value = measure.idMeasure;
+            document.getElementById("idtxt").value = measure.idMeasure;
         });
     });
 
@@ -112,9 +112,10 @@ export async function insertMeasure(nombreMedida, form) {
 }
 
 export async function updateMeasure(nombreMedida, form, idtxt) {
-    const payload = { idMeasure: idtxt.value, nameMeasure: nombreMedida.value.trim() };
+    const id = idtxt.value.trim()
+    const payload = { idMeasure: id, nameMeasure: nombreMedida.value.trim() };
     try {
-        const res = await MeasureService.updateMeasure(id,payload);
+        const res = await MeasureService.updateMeasure(id, payload);
         form.reset();
         return res;
     } catch (err) {

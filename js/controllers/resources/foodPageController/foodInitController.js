@@ -2,7 +2,7 @@ import { initCategory } from "./foodCategoryController";
 import { init } from "./foodController";
 
 
-export async function initAllResourcesTabs(container) {
+export async function initAllFoodTabs(container) {
  const $tabList = container.querySelector('#tabList');
 $tabList.innerHTML = `
          <li class="nav-item d-flex">

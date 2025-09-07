@@ -1,6 +1,9 @@
-import * as CountryController from '../../controllers/others/countriesController';
+import * as CountryController from "../../controllers/others/countriesController";
+import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
+
 export async function render() {
-    return `
+  return `
 <div class="container py-4" id="country-root">
     <h2 class="general-title">
         País
@@ -37,7 +40,7 @@ export async function render() {
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" required type="text" class="form-control" step="0.01"placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" required type="number" class="form-control" step="0.01" min=0 placeholder="Huella de carbono">
                             </div>
                              <label for="idtxt"class="form-label d-none">id</label>
                         <input id="idtxt"type="text"class="form-control d-none hidden"placeholder="id">
@@ -80,101 +83,90 @@ export async function render() {
   `;
 }
 export function afterRender() {
-    countryProcess()
+  countryProcess();
 }
 
-export async function countryProcess(){
-    const container = document.getElementById('country-root')
-    CountryController.CountryInit(container)
+export async function countryProcess() {
+  const container = document.getElementById("country-root");
+  CountryController.CountryInit(container);
 
-    const addCountryBtn = container.querySelector('#addCountry')
-    const closebtn = container.querySelector('#btnClose')
-    const countryName = container.querySelector('#nombretxt')
-    const carbonFootPrint = container.querySelector('#huellacarbontxt')
-    const idCountry = container.querySelector('#idtxt')
-    const countryModal = container.querySelector('#CountryModal')
-    const bsModal = bootstrap.Modal.getOrCreateInstance(countryModal)
-    const countryForm = container.querySelector('#CountryForm')
-    const search = document.querySelector('#searchCountry')
+  const addCountryBtn = container.querySelector("#addCountry");
+  const closebtn = container.querySelector("#btnClose");
+  const countryName = container.querySelector("#nombretxt");
+  const carbonFootPrint = container.querySelector("#huellacarbontxt");
+  const idCountry = container.querySelector("#idtxt");
+  const countryModal = container.querySelector("#CountryModal");
+  const bsModal = bootstrap.Modal.getOrCreateInstance(countryModal);
+  const countryForm = container.querySelector("#CountryForm");
+  const search = document.querySelector("#searchCountry");
 
-    search.addEventListener("keyup", (e) => {
-     if (e.key == "Enter") {
-        CountryController.setCurrentPage(0);
-        CountryController.reloadCountry(container);
-     }
-     if(search.value == ""){
-        CountryController.reloadCountry(container)
-     }
-  })
-    if(addCountryBtn){
-        addCountryBtn.addEventListener('click', ()=>{
-            idCountry.value = ''
-            countryName.value = ''
-            carbonFootPrint.value = "";
-        });
+  search.addEventListener("keypress", (e) => Validations.textValidation(e));
+
+  search.addEventListener("keyup", (e) => {
+    if (e.key == "Enter" || search.value == "") {
+      CountryController.setCurrentPage(0);
+      CountryController.reloadCountry(container);
     }
-    if(closebtn){
-        closebtn.addEventListener('click', ()=>{
-            idCountry.value = ''
-            countryName.value = ''
-            carbonFootPrint.value = "";
-        });
-    }
+  });
 
-    document.getElementById("nombretxt").addEventListener("keypress", function (e) {
-    let char = String.fromCharCode(e.which); // la tecla presionada
-    let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/; // solo letras y espacios
-    if (!regex.test(char)) {
-        e.preventDefault(); // cancela la tecla
-    }
-});
+  if (addCountryBtn) {
+    addCountryBtn.addEventListener("click", () => {
+      idCountry.value = "";
+      countryName.value = "";
+      carbonFootPrint.value = "";
+    });
+  }
+  if (closebtn) {
+    closebtn.addEventListener("click", () => {
+      idCountry.value = "";
+      countryName.value = "";
+      carbonFootPrint.value = "";
+    });
+  }
 
- document.getElementById("huellacarbontxt").addEventListener("keypress", function (e) {
-    let val = String.fromCharCode(e.which);
-    let p = e.target.value;
+  countryName.addEventListener("keypress", (e) => Validations.textValidation(e));
+  carbonFootPrint.addEventListener("keypress", (e) => Validations.numberValidation(e));
 
-    //Permitir numeros y punto
-    if (!/[0-9.]/.test(val)) {
-        e.preventDefault();
-        return;
-    }
-
-    //Validacion para no permitir mas de un punto de decimal
-    if (val === "." && p.includes(".")) {
-        e.preventDefault();
-        return;
-    }
-
-    //No mas de dos decimales despues del punto
-    if (p.includes(".")) {
-        let parte = p.split(".");
-        if (parte[1].length >= 2 && e.target.selectionStart > p.indexOf(".")) {
-            e.preventDefault();
-            return;
-        }
-    }
-});
-
-let isLoading = false;
-
-countryForm.addEventListener('submit', async e =>{
+  let isLoading = false;
+  countryForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    if(isLoading) return;
+
+    if (!countryName.value.trim()) {
+        Alerts.showToastCloseError("El nombre del país no puede ser nulo");
+        return;
+    }
+
+    if (carbonFootPrint.value <= 0) {
+        Alerts.showToastCloseError(
+          "El valor de la huella de carbono no puede ser menor o igual a cero"
+        );
+        return;
+    }
+
+    if (isLoading) return;
     isLoading = true;
     let res;
 
-    if(idCountry.value){
-        res = await CountryController.updateCountry(countryName, carbonFootPrint, countryForm, idCountry)
-    }
-    else {
-        res = await CountryController.insertCountry(countryName, carbonFootPrint, countryForm)
+    if (idCountry.value) {
+      res = await CountryController.updateCountry(
+        countryName,
+        carbonFootPrint,
+        countryForm,
+        idCountry
+      );
+    } else {
+      res = await CountryController.insertCountry(
+        countryName,
+        carbonFootPrint,
+        countryForm
+      );
     }
 
     bsModal.hide();
     isLoading = false;
-    idCountry.value = ''
-    if(res?.ok){
-        await CountryController.reloadCountry(container)
+    idCountry.value = "";
+    if (res?.ok) {
+      await CountryController.reloadCountry(container);
     }
-})
+  });
 }

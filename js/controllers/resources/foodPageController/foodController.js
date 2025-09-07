@@ -79,9 +79,7 @@ async function renderData(container) {
     const btn = e.target.closest('.btn-delete-food');
     if (!btn) return;
     const id = btn.dataset.id;
-    console.log(id)
     const ok = await FoodService.deleteFood(id);
-    console.log(ok)
     //En caso de que duvuelva true retornamos
     if (ok) await reload(container);
   });
@@ -93,8 +91,6 @@ async function renderData(container) {
     const id = editBtn.dataset.id;
     try {
       const food = await FoodService.getFoodById(id);
-      console.log(food)
-
       document.getElementById('idtxt').value = food.idFood ?? '';
       document.getElementById('nombreAlimento').value = food.foodName ?? '';
       document.getElementById('categoriaAlimento').value = food.idFoodCategory ?? '';
@@ -143,7 +139,6 @@ export function LoadTable(foods, tab) {
 
 export function loadCategories(categories, categoriesSelect) {
   categoriesSelect.innerHTML = ''
-  categoriesSelect.innerHTML += `<option value="">Selecciona una Categoria</option>`
   categories.forEach(element => {
     categoriesSelect.innerHTML += `
         <option value="${element.idFoodCategory}">${element.foodCategoryName}</option>
@@ -158,7 +153,6 @@ export async function insertFood(nombreAlimento, nombreCategoria, form) {
 
   }
   try {
-    console.log(playload)
     const res = await FoodService.insertFood(playload);
     form.reset()
     return res;
@@ -177,10 +171,8 @@ export async function updateFood(nombreAlimento, categoriaAlimento, form, idtxt)
     foodName: nombreAlimento.value.trim(),
     idFoodCategory: categoriaAlimento.value.trim()
   }
-  console.log(playload)
   try {
     const res = await FoodService.updateFood(playload, idtxt);
-    console.log(res)
     form.reset();
     return res;
   }

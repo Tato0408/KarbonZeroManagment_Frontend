@@ -1,7 +1,9 @@
-import * as TransportController from '../../controllers/others/transportationController';
+import * as TransportController from "../../controllers/others/transportationController";
+import * as Alerts from "../../../utils/alerts.js";
+import * as Validations from "../../../utils/validations.js";
 
 export async function render() {
-    return `
+  return `
 <div class="container py-4" id="transport-root">
     <h2 class="general-title">
         Transporte
@@ -36,11 +38,11 @@ export async function render() {
                             </div>
                             <div class="col-sm-6">
                                 <label for="nombretxt" class="form-label">Nombre</label>
-                                <input id="nombretxt" required type="text" class="form-control" required placeholder="Nombre">
+                                <input id="nombretxt" required type="text" class="form-control" placeholder="Nombre">
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>
-                                <input id="huellacarbontxt" required type="number" class="form-control" required placeholder="Huella de carbono">
+                                <input id="huellacarbontxt" type="number" class="form-control" required placeholder="Huella de carbono" step="0.01" min=0>
                             </div>
                         </div>
                     </div>
@@ -76,52 +78,80 @@ export async function render() {
   `;
 }
 export function afterRender() {
-  const container = document.getElementById('transport-root');
+  const container = document.getElementById("transport-root");
   TransportController.init(container);
 
-  const addTransportBtn = document.querySelector('#addTransport-kz');
-  const nametxt = document.querySelector('#nombretxt');
-  const huellacarbontxt = document.querySelector('#huellacarbontxt');
-  const transportForm = document.querySelector('#TransportForm');
-  const modalEl = document.getElementById('TransportModal')
-  const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl)
-  const idHideen = document.querySelector('#idtxt');
-
-  if (addTransportBtn) {
-    addTransportBtn.addEventListener('click', () => {
-      idHideen.value = '';
-      nametxt.value = '';
-      huellacarbontxt.value = '';
-      });
-  }
-
-  let isLoading = false;
-
-  transportForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (isLoading) return;
-  isLoading = true;
-  let res;
-  if (idHideen.value) {
-    res = await TransportController.updateTransport(nametxt, huellacarbontxt, transportForm, idHideen);
-  } else {
-    res = await TransportController.insertTransport(nametxt, huellacarbontxt, transportForm);
-  }
-
-  bsModal.hide();
-  isLoading = false;
-  idHideen.value = '';
-  ///Si la respueta que nos retorna ya sea updateUser o insertUser es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
-  if (res?.ok) {
-    await TransportController.reload(container);
-  }
-  });
+  const addTransportBtn = document.querySelector("#addTransport-kz");
+  const nametxt = document.querySelector("#nombretxt");
+  const huellacarbontxt = document.querySelector("#huellacarbontxt");
+  const transportForm = document.querySelector("#TransportForm");
+  const modalEl = document.getElementById("TransportModal");
+  const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  const idHideen = document.querySelector("#idtxt");
 
   const transportSearch = document.querySelector("#TransportSearch");
+
+  transportSearch.addEventListener("keypress", (e) =>
+    Validations.textValidation(e)
+  );
   transportSearch.addEventListener("keyup", (e) => {
-  if (e.key == "Enter") {
-    TransportController.setCurrentPage(0);
-    TransportController.reload(container);
+    if (e.key == "Enter" || transportSearch.value == "") {
+      TransportController.setCurrentPage(0);
+      TransportController.reload(container);
+    }
+  });
+
+  if (addTransportBtn) {
+    addTransportBtn.addEventListener("click", () => {
+      idHideen.value = "";
+      nametxt.value = "";
+      huellacarbontxt.value = "";
+    });
   }
+
+  nametxt.addEventListener("keypress", (e) => Validations.textValidation(e));
+  huellacarbontxt.addEventListener("keypress", (e) => Validations.numberValidation(e));
+
+  let isLoading = false;
+  transportForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!nametxt.value.trim()) {
+      Alerts.showToastCloseError("El nombre del transporte no puede ser nulo");
+      return;
+    }
+
+    if (huellacarbontxt.value <= 0) {
+      Alerts.showToastCloseError(
+        "El valor de la huella de carbono no puede ser menor o igual a cero"
+      );
+      return;
+    }
+
+    if (isLoading) return;
+    isLoading = true;
+    let res;
+    if (idHideen.value) {
+      res = await TransportController.updateTransport(
+        nametxt,
+        huellacarbontxt,
+        transportForm,
+        idHideen
+      );
+    } else {
+      res = await TransportController.insertTransport(
+        nametxt,
+        huellacarbontxt,
+        transportForm
+      );
+    }
+
+    bsModal.hide();
+    isLoading = false;
+    idHideen.value = "";
+    ///Si la respueta que nos retorna ya sea updateUser o insertUser es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
+    if (res?.ok) {
+      await TransportController.reload(container);
+    }
   });
 }
