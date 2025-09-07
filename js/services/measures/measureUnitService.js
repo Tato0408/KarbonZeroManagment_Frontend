@@ -23,6 +23,19 @@ export async function getUnits(page = 0, size = 10) {
   }
 }
 
+///Exportamos la funcion para poder importarla en nuestra pagina
+export async function getAllMeasureUnitList () {
+    try {
+        const response = await fetch(`${API_URL}/apiMeasure/getAllMeasureUnitList`);
+        if (!response.ok) {
+            console.error("Error fetching Unidades de medida");
+        }
+        return response.json();
+    } catch (error) {
+        console.error(`Error fetching unidades de medida ${error}`);
+    }
+}
+
 // Obtener unidad por ID
 export async function getUnitById(id) {
   try {

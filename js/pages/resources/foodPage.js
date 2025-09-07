@@ -3,7 +3,7 @@ import * as FoodCategoryController from '../../controllers/resources/foodPageCon
 import * as Alerts from "../../../utils/alerts.js";
 import * as Validations from "../../../utils/validations.js";
 import { getCategories } from '../../services/resources/foodCategoryService';
-import { initAllResourcesTabs } from "../../controllers/resources/foodPageController/foodInitController";
+import { initAllFoodTabs } from "../../controllers/resources/foodPageController/foodInitController";
 
 export async function render() {
     return `
@@ -13,7 +13,7 @@ export async function render() {
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content kz-modal-mongo border-0">
           <div class="modal-header" style="justify-content: center; position: relative;">
-            <h4 class="kz-modal-title" id="titleAlimento">Crear alimento</h4>
+            <h4 class="kz-modal-title" id="titleAlimento">Alimento</h4>
             <button type="button" class="btn-close" style="position: absolute; right: 1rem; top: 1rem;"
               data-bs-dismiss="modal" aria-label="Close" id="closebtn"></button>
           </div>
@@ -46,7 +46,7 @@ export async function render() {
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content kz-modal-mongo border-0">
           <div class="modal-header" style="justify-content: center; position: relative;">
-            <h4 class="kz-modal-title">Crear categoría</h4>
+            <h4 class="kz-modal-title">Categoría de Alimento</h4>
             <button type="button" class="btn-close" style="position: absolute; right: 1rem; top: 1rem;"
               data-bs-dismiss="modal" aria-label="Close" id="btnCloseCategory"></button>
           </div>
@@ -146,7 +146,7 @@ export async function afterRender() {
   const container = document.getElementById("foods-root");
   const search = document.querySelector("#searchFood");
 
-  await initAllResourcesTabs(container);
+  await initAllFoodTabs(container);
 
   // === Lógica para los alimentos ===
   let categories = await getCategories();
