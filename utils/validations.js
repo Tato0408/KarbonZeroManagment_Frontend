@@ -11,7 +11,7 @@ export function domainValidation (e) {
   let p = e.target.value;
 
   // Permitir solo letras, números, puntos y guiones
-  const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9.-]/;
+  const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9.-:/]/;
   if (!regex.test(val)) {
     e.preventDefault();
     return;
@@ -31,6 +31,12 @@ export function domainValidation (e) {
 
   // No permitir 2 puntos seguidos
   if (val === "." && p[p.length - 1] === ".") {
+    e.preventDefault();
+    return;
+  }
+
+  // No permitir 2 puntos doblesseguidos
+  if (val === ":" && p[p.length - 1] === ":") {
     e.preventDefault();
     return;
   }
