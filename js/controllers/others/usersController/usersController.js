@@ -2,7 +2,7 @@ import * as UserService from "../../../services/others/usersService.js"
 import * as Alerts from '../../../../utils/alerts.js'
 
 //Metodo de inicio que se llama en el foodPage.js
-export async function init(container) {
+export async function usersInit(container) {
   //Se manda a llamar al contenedor con el metodo init
   renderData(container);
 }
@@ -22,15 +22,15 @@ export async function reload(container) {
 
     let data;
     if (!search) {
-      data = await UserService.getAdmins(currentPage, currentSize);
+      data = await UserService.getUsers(currentPage, currentSize);
     } else {
-      data = await UserService.getAdminsByName(search, currentPage, currentSize); // <-- faltaba await
+      data = await UserService.getUsersByName(search, currentPage, currentSize); // <-- faltaba await
     }
 
-    const admins = data.content; // por si viene vacío
-    const $tabContent = container.querySelector("#tabContentAdmin");
+    const users = data.content; // por si viene vacío
+    const $tabContent = container.querySelector("#tabContentUser");
 
-    LoadTable(admins, $tabContent);
+    LoadTable(users, $tabContent);
     renderPagination(data.number, data.totalPages, container);
   }
   catch (e) {
@@ -41,23 +41,23 @@ export async function reload(container) {
 //Función para renderizar los datos y eventos del formulario
 async function renderData(container) {
 
-  const $tabContent = container.querySelector("#tabContentAdmin");
+  const $tabContent = container.querySelector("#tabContentUser");
 
-  let admins = []
+  let users = []
   try {
     //Traemos al json en data
-    admins = await UserService.getAdmins(currentPage, currentSize);
-    renderPagination(admins.number, admins.totalPages, container);
+    users = await UserService.getUsers(currentPage, currentSize);
+    renderPagination(users.number, users.totalPages, container);
   }
   catch (error) {
     console.error(error);
-    return container.innerHTML = `<p class="text-danger">No se ha sido posible cargar el administrador.</p>`;
+    return container.innerHTML = `<p class="text-danger">No se ha sido posible cargar los usuarios.</p>`;
   }
 
   ///Cargamos datos, pasamos nuestros usuarios y nuestro contenedor
-  LoadTable(admins.content, $tabContent);
+  LoadTable(users.content, $tabContent);
 
-  const sizeSelector = document.getElementById("adminItemsSelect");
+  const sizeSelector = document.getElementById("userItemsSelect");
   sizeSelector.addEventListener("change", () => {
     currentSize = parseInt(sizeSelector.value)
     currentPage = 0;
@@ -66,34 +66,13 @@ async function renderData(container) {
 
   //Aca definimos que hace el botón de eliminar
   container.addEventListener('click', async e => {
-    const btn = e.target.closest('.btn-delete-admin');
+    const btn = e.target.closest('.btn-delete-user');
     if (!btn) return;
     const id = btn.dataset.id;
-    const ok = await UserService.deleteAdmin(id);
+    const ok = await UserService.deleteUser(id);
     //En caso de que duvuelva true retornamos
     if (ok) await reload(container);
   });
-
-  ///Aca lo que hacemos es llenar el formulario de editar, puesto que eso es lo que hace el boton, abrir con datos, quien se encarga de enviar el PUT es en page
-  container.addEventListener('click', async e => {
-    const editBtn = e.target.closest('.btn-edit-admin');
-    if (!editBtn) return;
-    const id = editBtn.dataset.id;
-    try {
-      const admin = await UserService.getAdminById(id);
-      document.getElementById("idtxt").value = admin.idUser ?? "";
-      document.getElementById("nombretxt").value = admin.firstName ?? "";
-      document.getElementById("apellidotxt").value = admin.lastName ?? "";
-      document.getElementById("usuariotxt").value = admin.userName ?? "";
-      document.getElementById("emailtxt").value = admin.email ?? "";
-      document.getElementById("countrySelect").value = admin.idCountry ?? "";
-    }
-
-    catch (err) {
-      Alerts.showToastCloseError('No ha sido posible cargar los alimentos');
-      console.error(err);
-    }
-  })
 }
 ///Aca cargamos nuestros alimentos, eso si en lugar del id mandamos un numero, por que pues si, usamos RAW
 
@@ -127,10 +106,7 @@ export function LoadTable(admins, tab) {
                 <td>${u.email}</td>
                 <td>${u.countryName}</td>
                 <td>
-                    <button class="btn btn-sm btn-success me-1 btn-edit-admin" data-id="${
-                      u.idUser
-                    }" data-bs-toggle="modal" data-bs-target="#usersModal"><i class="bi bi-pencil-fill"></i></button>
-                    <button class="btn btn-sm btn-danger btn-delete-admin" data-id="${
+                    <button class="btn btn-sm btn-danger btn-delete-user" data-id="${
                       u.idUser
                     }"><i class="bi bi-trash-fill"></i></button>
                 </td>
@@ -143,75 +119,9 @@ export function LoadTable(admins, tab) {
 
 }
 
-export function loadCountries(countries, countriesSelect) {
-  countriesSelect.innerHTML = "";
-  countries.forEach((element) => {
-    countriesSelect.innerHTML += `
-        <option value="${element.idCountry}">${element.name}</option>
-      `;
-  });
-}
-
-export async function insertAdmin(username, firstname, lastname, email, imagePath, idcountry, form) {
-  const payload = {
-    userName: username.value.trim(),
-    firstName: firstname.value.trim(),
-    lastName: lastname.value.trim(),
-    email: email.value.trim(),
-    passwordUser: generateRandomPassword().trim(),
-    status: 1,
-    imagePath: imagePath.value.trim(),
-    idCountry: idcountry.value.trim(),
-  };
-  try {
-    const res = await UserService.insertUser(payload);
-    form.reset()
-    return res;
-  }
-  catch (err) {
-    Alerts.showToastCloseError(`No se pudo agregar el usuario: ${err}`);
-    ///Retornamos un false
-    return { ok: false };
-  }
-
-}
-
-export async function updateAdmin(
-  username,
-  firstname,
-  lastname,
-  email,
-  imagePath,
-  idcountry,
-  form, 
-  id
-) {
-  const payload = {
-    idUser: id.value.trim(),
-    userName: username.value.trim(),
-    firstName: firstname.value.trim(),
-    lastName: lastname.value.trim(),
-    email: email.value.trim(),
-    passwordUser: generateRandomPassword().trim(),
-    status: 1,
-    imagePath: imagePath.value.trim(),
-    idCountry: idcountry.value.trim(),
-  };
-  try {
-    const res = await UserService.updateUser(idtxt.value.trim(), payload);
-    form.reset();
-    return res;
-  } catch (err) {
-    Alerts.showToastCloseError(`No se pueden actualizar el administrador ${err}`);
-    console.log(err);
-    ///Retornamos un false
-    return { ok: false };
-  }
-}
-
 export function renderPagination(current, totalPages, container) {
   //Acá accedemos al ul de paginación
-  const pagination = document.querySelector("#adminPagination");
+  const pagination = document.querySelector("#userPagination");
   if (!pagination) return;
   pagination.innerHTML = "";
 
@@ -259,19 +169,4 @@ export function renderPagination(current, totalPages, container) {
     }
   });
   pagination.appendChild(next);
-}
-
-function generateRandomPassword(length = 8) {
-  const charset =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-    "abcdefghijklmnopqrstuvwxyz" +
-    "0123456789" +
-    "!@#$%^&*()_-+={}[]";
-  let password = "";
-  for (let i = 0; i < length; i++) {
-    const randIndex = Math.floor(Math.random() * charset.length);
-    password += charset[randIndex];
-  }
-  let castPassword = toString(password);
-  return castPassword;
 }

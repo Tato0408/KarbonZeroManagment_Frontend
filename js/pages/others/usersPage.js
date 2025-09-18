@@ -1,4 +1,5 @@
 import { initAllUserTabs } from "../../controllers/others/usersController/usersInitController.js";
+import * as AdminController from "../../controllers/others/usersController/adminsController.js";
 import * as UserController from "../../controllers/others/usersController/usersController.js";
 import { getCountriesList } from "../../services/others/countriesService.js";
 import * as Validations from "../../../utils/validations.js";
@@ -106,6 +107,27 @@ export async function render() {
                 </div>
             </div>
         </div>
+        <div class="tab-pane fade show" id="userTab">
+            <!--TABLA DE CONTENIDOS-->
+            <div id="tabContentUser"></div>
+            <!--PAGINACIÓN-->
+            <div class="row flex-nowrap mt-2" style="overflow-x: auto;">
+                <div class="col-auto d-flex justify-content-start">
+                    <select class="form-select" aria-label="Items por pagina" id="userItemsSelect">
+                        <option value="2">2</option>
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+                <div class="col d-flex justify-content-end">
+                    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                        <ul id="userPagination" class="pagination mb-0"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
   `;
@@ -129,7 +151,7 @@ export async function afterRender() {
   const adminModal = document.querySelector("#usersModal");
   const bsAdminModal = bootstrap.Modal.getOrCreateInstance(adminModal);
 
-  UserController.loadCountries(countries, countrySelect);
+  AdminController.loadCountries(countries, countrySelect);
 
   addButton.addEventListener("click", () => {
     idTxt.value = "";
@@ -174,7 +196,7 @@ export async function afterRender() {
 
     let res;
     if (idTxt.value) {
-      res = await UserController.updateAdmin(
+      res = await AdminController.updateAdmin(
         userTxt,
         nameTxt,
         lastnameTxt,
@@ -185,7 +207,7 @@ export async function afterRender() {
         idTxt
       );
     } else {
-      res = await UserController.insertAdmin(
+      res = await AdminController.insertAdmin(
         userTxt,
         nameTxt,
         lastnameTxt,
@@ -200,8 +222,40 @@ export async function afterRender() {
     idTxt.value = "";
 
     if (res?.ok) {
-      await UserController.reload(container);
+      await AdminController.reload(container);
     }
   });
-}
 
+  // ---- Search para medidas y unidades ----
+  const searchInput = container.querySelector("#search");
+
+  searchInput.addEventListener("keypress", (e) =>
+    Validations.textValidation(e)
+  );
+
+  if (searchInput) {
+    searchInput.addEventListener("keyup", async (e) => {
+      if (e.key === "Enter" || searchInput.value == "") {
+        // Medidas
+        if (document.querySelector("#adminTab").classList.contains("show")) {
+          AdminController.setCurrentPage(0);
+          await AdminController.reload(container);
+        }
+        // Unidades
+        if (document.querySelector("#userTab").classList.contains("show")) {
+          UserController.setCurrentPage(0);
+          await UserController.reload(container);
+        }
+      }
+    });
+  }
+
+  // ---- Mostrar solo botón de admins ----
+  addButton.style.display = "block";
+  document.querySelectorAll("#tabList .nav-link").forEach((tab) => {
+    tab.addEventListener("shown.bs.tab", (event) => {
+      const target = event.target.getAttribute("href");
+      addButton.style.display = target === "#adminTab" ? "block" : "none";
+    });
+  });
+}

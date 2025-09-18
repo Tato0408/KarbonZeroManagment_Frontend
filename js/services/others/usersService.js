@@ -5,7 +5,7 @@ import * as Alerts from "../../../utils/alerts.js";
 export async function getAdmins(page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiUser/getAllAdmins?page=${page}&size=${size}`
+      `${API_URL}/apiUser/getAllUsersWithStatus/${1}?page=${page}&size=${size}`
     );
     if (!response.ok) {
       throw new Error(`Error cargando los administradores: ${response.status}`);
@@ -13,6 +13,51 @@ export async function getAdmins(page = 0, size = 10) {
     return response.json();
   } catch (error) {
     console.error("Error cargando los administradores:", error);
+    throw error;
+  }
+}
+
+export async function getUsers(page = 0, size = 10) {
+  try {
+    const response = await fetch(
+      `${API_URL}/apiUser/getAllUsersWithStatus/${0}?page=${page}&size=${size}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error cargando los usuarios: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error cargando los usuarios:", error);
+    throw error;
+  }
+}
+
+export async function getAdminsByName(name, page = 0, size = 10) {
+  try {
+    const response = await fetch(
+      `${API_URL}/apiUser/getAdminsByName/${name}?page=${page}&size=${size}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error cargando los administradores: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error cargando los administradores:", error);
+    throw error;
+  }
+}
+
+export async function getUsersByName(name, page = 0, size = 10) {
+  try {
+    const response = await fetch(
+      `${API_URL}/apiUser/getUsersByName/${name}?page=${page}&size=${size}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error cargando los usuarios: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error cargando los usuarios:", error);
     throw error;
   }
 }
