@@ -19,6 +19,21 @@ export async function getCountries(page = 0, size = 10) {
   }
 }
 
+export async function getCountriesList() {
+  try {
+    const response = await fetch(`${API_URL}/apiUser/getAllCountriesSP`);
+    //Evaluación de respuesta
+    if (!response.ok) {
+      throw new Error(`Error al cargar paises: ${response.status}`);
+    }
+    //Retorno de respuesta en formato json
+    return response.json();
+  } catch (err) {
+    console.error("Error cargando paises", err);
+    return err;
+  }
+}
+
 export async function getCountriesById(id) {
   try {
     const response = await fetch(
