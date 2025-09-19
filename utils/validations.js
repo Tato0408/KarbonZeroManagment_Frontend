@@ -6,6 +6,14 @@ export function textValidation (e) {
   }
 }
 
+export function emailValidation(e) {
+  let char = String.fromCharCode(e.which); // la tecla presionada
+  let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ.@\s]$/; // solo letras y espacios
+  if (!regex.test(char)) {
+    e.preventDefault(); // cancela la tecla
+  }
+}
+
 export function domainValidation (e) {
   let val = String.fromCharCode(e.which);
   let p = e.target.value;

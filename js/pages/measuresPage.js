@@ -156,7 +156,6 @@ export async function afterRender() {
         return;
     }
 
-    console.log(idMeasureHidden.value)
     if (idMeasureHidden.value) {
       await MeasureController.updateMeasure(
         measureName,
