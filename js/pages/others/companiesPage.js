@@ -126,7 +126,8 @@ export function afterRender() {
     return;
   }
 
-  const regex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/
+  const regex = /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?/
+  
   if (!regex.test(domaintxt.value.trim())) {
     Alerts.showToastCloseError("El dominio debe tener una estructura válida");
     return;

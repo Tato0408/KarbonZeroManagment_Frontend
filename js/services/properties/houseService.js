@@ -5,7 +5,8 @@ import * as Alerts from "../../../utils/alerts";
 export async function getLivingSpaceTypes(page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiLivingSpace/getAllLivingSpaceTypes?page=${page}&size=${size}`
+      `${API_URL}/apiLivingSpace/getAllLivingSpaceTypes?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     //Evaluación de respuesta
     if (!response.ok) {
@@ -22,7 +23,8 @@ export async function getLivingSpaceTypes(page = 0, size = 10) {
 export async function getLivingSpaceTypeById(id) {
   try {
     const response = await fetch(
-      `${API_URL}/apiLivingSpace/getLivingSpaceTypeById/${id}`
+      `${API_URL}/apiLivingSpace/getLivingSpaceTypeById/${id}`,
+      { credentials: "include" }
     );
     //Se guarda la respuesta en una variable al ser solamente uno
     const res = await response.json();
@@ -44,7 +46,8 @@ export async function getLivingSpaceTypeByName(
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     const response = await fetch(
-      `${API_URL}/apiLivingSpace/getLivingSpaceTypeByName/${searchName}?page=${page}&size=${size}`
+      `${API_URL}/apiLivingSpace/getLivingSpaceTypeByName/${searchName}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
     if (!response.ok) {
@@ -67,6 +70,7 @@ export async function insertLivingSpaceTypes(playload) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(playload),
+        credentials: "include",
       }
     );
     const data = await response.json();
@@ -96,6 +100,7 @@ export async function updateLivingSpaceTypes(playload, id) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(playload),
+        credentials: "include",
       }
     );
     const data = await response.json();
@@ -134,7 +139,7 @@ export async function deleteLivingSpaceTypes(id) {
   try {
     const res = await fetch(
       `${API_URL}/apiLivingSpace/deleteLivingSpaceType/${id}`,
-      { method: "DELETE" }
+      { method: "DELETE", credentials: "include" }
     );
     if (!res.ok) {
       Alerts.showToastCloseError(

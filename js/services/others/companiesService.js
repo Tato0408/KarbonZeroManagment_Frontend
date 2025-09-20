@@ -4,7 +4,10 @@ import * as Alerts from "../../../utils/alerts"
 //Exportar la función para importar en el controllador 
 export async function getCompanies(page= 0, size=10) {
     try {
-        const response = await fetch(`${API_URL}/apiCompany/getAllCompany?page=${page}&size=${size}`);
+        const response = await fetch(
+          `${API_URL}/apiCompany/getAllCompany?page=${page}&size=${size}`,
+          { credentials: "include" }
+        );
         if (!response.ok) {
             throw new Error(`Error cargando las compañias: ${response.status}`);
         }
@@ -17,7 +20,10 @@ export async function getCompanies(page= 0, size=10) {
 
 export async function getCompaniesById(id) {
     try {
-        const response = await fetch(`${API_URL}/apiCompany/getCompanyById/${id}`);
+        const response = await fetch(
+          `${API_URL}/apiCompany/getCompanyById/${id}`,
+          { credentials: "include" }
+        );
         const u = await response.json();
         if (!response.ok) {
             throw new Error(`Error cargando las compañias: ${response.status}`);
@@ -37,7 +43,8 @@ export async function getAllCompaniesByName(
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     const response = await fetch(
-      `${API_URL}/apiCompany/getCompanyByName/${searchName}?page=${currentPage}&size=${currentSize}`
+      `${API_URL}/apiCompany/getCompanyByName/${searchName}?page=${currentPage}&size=${currentSize}`,
+      { credentials: "include" }
     );
     ///Si esta malo pues aja, mandamos error
     if (!response.ok) {
@@ -54,9 +61,10 @@ export async function getAllCompaniesByName(
 export async function insertCompany(payload) {
     try {
         const response = await fetch(`${API_URL}/apiCompany/insertCompany`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          credentials: "include",
         });
 
         const data = await response.json();
@@ -65,6 +73,7 @@ export async function insertCompany(payload) {
             Alerts.showToastCloseSuccess("Compañia creado exitosamente");
         } else {
             Alerts.showToastCloseError(`Error creando la compañia ${response.status}`);
+            return { ok: false, data: null };
         }
         return { ok: true, data };
     } catch (err) {
@@ -75,17 +84,22 @@ export async function insertCompany(payload) {
 
 export async function updateCompany(payload, id) {
     try {
-        const response = await fetch(`${API_URL}/apiCompany/updateCompany/${id.value}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        const response = await fetch(
+          `${API_URL}/apiCompany/updateCompany/${id.value}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            credentials: "include",
+          }
+        );
         const data = await response.json().catch(() => null);
 
         if (response.ok) {
             Alerts.showToastCloseSuccess("Compañia actualizado exitosamente");
         } else {
             Alerts.showToastCloseError(`Error actualizando la compañia`);
+            return { ok: false, data: null };
         }
         return { ok: true, data };
     } catch (err) {
@@ -107,7 +121,10 @@ export async function deleteCompany(id) {
         return false;
     }
     try {
-        const resp = await fetch(`${API_URL}/apiCompany/deleteCompany/${id}`, { method: 'DELETE' });
+        const resp = await fetch(`${API_URL}/apiCompany/deleteCompany/${id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
         if (!resp.ok) {
             Alerts.showToastCloseError("No se pudo eliminar la compañia");
             return false;

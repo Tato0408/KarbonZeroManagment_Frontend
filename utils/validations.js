@@ -6,12 +6,20 @@ export function textValidation (e) {
   }
 }
 
+export function emailValidation(e) {
+  let char = String.fromCharCode(e.which); // la tecla presionada
+  let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ.@\s]$/; // solo letras y espacios
+  if (!regex.test(char)) {
+    e.preventDefault(); // cancela la tecla
+  }
+}
+
 export function domainValidation (e) {
   let val = String.fromCharCode(e.which);
   let p = e.target.value;
 
   // Permitir solo letras, números, puntos y guiones
-  const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9.-]/;
+  const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9.-:/]/;
   if (!regex.test(val)) {
     e.preventDefault();
     return;
@@ -31,6 +39,12 @@ export function domainValidation (e) {
 
   // No permitir 2 puntos seguidos
   if (val === "." && p[p.length - 1] === ".") {
+    e.preventDefault();
+    return;
+  }
+
+  // No permitir 2 puntos doblesseguidos
+  if (val === ":" && p[p.length - 1] === ":") {
     e.preventDefault();
     return;
   }

@@ -5,8 +5,26 @@ import * as Alerts from "../../../utils/alerts";
 export async function getCountries(page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiUser/getAllCountries?page=${page}&size=${size}`
+      `${API_URL}/apiUser/getAllCountries?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
+    //Evaluación de respuesta
+    if (!response.ok) {
+      throw new Error(`Error al cargar paises: ${response.status}`);
+    }
+    //Retorno de respuesta en formato json
+    return response.json();
+  } catch (err) {
+    console.error("Error cargando paises", err);
+    return err;
+  }
+}
+
+export async function getCountriesList() {
+  try {
+    const response = await fetch(`${API_URL}/apiUser/getAllCountriesSP`, {
+      credentials: "include",
+    });
     //Evaluación de respuesta
     if (!response.ok) {
       throw new Error(`Error al cargar paises: ${response.status}`);
@@ -21,9 +39,9 @@ export async function getCountries(page = 0, size = 10) {
 
 export async function getCountriesById(id) {
   try {
-    const response = await fetch(
-      `${API_URL}/apiUser/getCountryById/${id}`
-    );
+    const response = await fetch(`${API_URL}/apiUser/getCountryById/${id}`, {
+      credentials: "include",
+    });
     //Se guarda la respuesta en una variable al ser solamente uno
     const res = await response.json();
     if (!response.ok) {
@@ -40,7 +58,8 @@ export async function getCountryByName(searchName, page = 0, size = 10) {
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     const response = await fetch(
-      `${API_URL}/apiUser/getCountryByName/${searchName}?page=${page}&size=${size}`
+      `${API_URL}/apiUser/getCountryByName/${searchName}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
     if (!response.ok) {
@@ -57,14 +76,12 @@ export async function getCountryByName(searchName, page = 0, size = 10) {
 
 export async function insertCountry(playload) {
   try {
-    const response = await fetch(
-      `${API_URL}/apiUser/insertCountry`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(playload),
-      }
-    );
+    const response = await fetch(`${API_URL}/apiUser/insertCountry`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(playload),
+      credentials: "include",
+    });
     const data = await response.json();
 
     if (response.ok) {
@@ -92,6 +109,7 @@ export async function updateCountry(playload, id) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(playload),
+        credentials: "include",
       }
     );
     const data = await response.json();
@@ -126,10 +144,10 @@ export async function deleteCountry(id) {
   }
 
   try {
-    const res = await fetch(
-      `${API_URL}/apiUser/deleteCountry/${id}`,
-      { method: "DELETE" }
-    );
+    const res = await fetch(`${API_URL}/apiUser/deleteCountry/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
     if (!res.ok) {
       Alerts.showToastCloseError(
         "No ha sido posible eliminar el paíß",

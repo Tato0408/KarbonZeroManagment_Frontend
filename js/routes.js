@@ -1,17 +1,16 @@
 const routes = {
-    'channel': () => import('../js/pages/channelPage.js'),
-    'measures': () => import('../js/pages/measuresPage.js'),
-    'pets': ()=> import('../js/pages/properties/petsPage.js'),
-    'houses': ()=> import('../js/pages/properties/housesPage.js'),
-    'vehicles': ()=> import('../js/pages/properties/vehiclesPage.js'),
-    'food': ()=> import('../js/pages/resources/foodPage.js'),
-    'services': ()=> import('../js/pages/resources/servicesPage.js'),
-    'companies': ()=> import('../js/pages/others/companiesPage.js'),
-    'contries': ()=> import('../js/pages/others/countriesPage.js'),
-    'transport': ()=> import('../js/pages/others/transportationPage.js'),
-
-
-}
+  channel: () => import("../js/pages/channelPage.js"),
+  measures: () => import("../js/pages/measuresPage.js"),
+  pets: () => import("../js/pages/properties/petsPage.js"),
+  houses: () => import("../js/pages/properties/housesPage.js"),
+  vehicles: () => import("../js/pages/properties/vehiclesPage.js"),
+  food: () => import("../js/pages/resources/foodPage.js"),
+  services: () => import("../js/pages/resources/servicesPage.js"),
+  companies: () => import("../js/pages/others/companiesPage.js"),
+  contries: () => import("../js/pages/others/countriesPage.js"),
+  transport: () => import("../js/pages/others/transportationPage.js"),
+  users: () => import("../js/pages/others/usersPage.js")
+};
 export async function startRouter() {
     const routeName = location.hash.slice(1) || 'channel';
     const app = document.getElementById('app');

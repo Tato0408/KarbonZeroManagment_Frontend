@@ -5,7 +5,8 @@ import * as Alerts from "../../../utils/alerts.js";
 export async function getUnits(page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiMeasure/getAllMeasureUnit?page=${page}&size=${size}`
+      `${API_URL}/apiMeasure/getAllMeasureUnit?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!response.ok) {
       Alerts.showToastCloseError(`Error cargando unidades: ${response.status}`);
@@ -26,7 +27,10 @@ export async function getUnits(page = 0, size = 10) {
 ///Exportamos la funcion para poder importarla en nuestra pagina
 export async function getAllMeasureUnitList () {
     try {
-        const response = await fetch(`${API_URL}/apiMeasure/getAllMeasureUnitList`);
+        const response = await fetch(
+          `${API_URL}/apiMeasure/getAllMeasureUnitList`,
+          { credentials: "include" }
+        );
         if (!response.ok) {
             console.error("Error fetching Unidades de medida");
         }
@@ -40,7 +44,8 @@ export async function getAllMeasureUnitList () {
 export async function getUnitById(id) {
   try {
     const response = await fetch(
-      `${API_URL}/apiMeasure/getMeasureUnitById/${id}`
+      `${API_URL}/apiMeasure/getMeasureUnitById/${id}`,
+      { credentials: "include" }
     );
     if (!response.ok)
       throw new Error(`Error al cargar unidad: ${response.status}`);
@@ -54,14 +59,12 @@ export async function getUnitById(id) {
 // Insertar nueva unidad
 export async function insertUnit(payload) {
   try {
-    const response = await fetch(
-      `${API_URL}/apiMeasure/insertMeasureUnit`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
+    const response = await fetch(`${API_URL}/apiMeasure/insertMeasureUnit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });
     const data = await response.json();
     if (response.ok)
       Alerts.showToastCloseSuccess("Unidad de medida creada exitosamente");
@@ -78,7 +81,8 @@ export async function getUnitByName(searchName, page = 0, size = 10) {
     const response = await fetch(
       `${API_URL}/apiMeasure/getMeasureUnitByName/${encodeURIComponent(
         searchName
-      )}?page=${page}&size=${size}`
+      )}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!response.ok)
       throw new Error(`Error al buscar unidades: ${response.status}`);
@@ -103,6 +107,7 @@ export async function updateUnit(payload, id) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        credentials: "include",
       }
     );
     const data = await response.json();
@@ -139,7 +144,8 @@ export async function deleteUnit(id) {
 
     const response = await fetch(
       `${API_URL}/apiMeasure/deleteMeasureUnit/${id}`,
-      { method: "DELETE" }
+      { method: "DELETE", 
+        credentials: "include" }
     );
 
     if (!response.ok) {
