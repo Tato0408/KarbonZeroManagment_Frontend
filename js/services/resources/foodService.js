@@ -5,7 +5,8 @@ import * as Alerts from "../../../utils/alerts";
 export async function getFood(page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiFood/getAllFoods?page=${page}&size=${size}`
+      `${API_URL}/apiFood/getAllFoods?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     //Evaluación de respuesta
     if (!response.ok) {
@@ -21,9 +22,9 @@ export async function getFood(page = 0, size = 10) {
 
 export async function getFoodById(id) {
   try {
-    const response = await fetch(
-      `${API_URL}/apiFood/getFoodById/${id}`
-    );
+    const response = await fetch(`${API_URL}/apiFood/getFoodById/${id}`, {
+      credentials: "include",
+    });
     //Se guarda la respuesta en una variable al ser solamente uno
     const res = await response.json();
     if (!response.ok) {
@@ -40,7 +41,8 @@ export async function getFoodByName(searchName, page = 0, size = 10) {
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     const response = await fetch(
-      `${API_URL}/apiFood/getFoodByFoodName/${searchName}?page=${page}&size=${size}`
+      `${API_URL}/apiFood/getFoodByFoodName/${searchName}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
     if (!response.ok) {
@@ -61,6 +63,7 @@ export async function insertFood(playload) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(playload),
+      credentials: "include",
     });
     const data = await response.json();
 
@@ -81,14 +84,12 @@ export async function insertFood(playload) {
 
 export async function updateFood(playload, id) {
   try {
-    const response = await fetch(
-      `${API_URL}/apiFood/updateFood/${id.value}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(playload),
-      }
-    );
+    const response = await fetch(`${API_URL}/apiFood/updateFood/${id.value}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(playload),
+      credentials: "include",
+    });
     const data = await response.json();
     if (response.ok) {
       Alerts.showToastCloseSuccess("Alimento actualizada exitosamente");
@@ -125,6 +126,7 @@ export async function deleteFood(id) {
   try {
     const res = await fetch(`${API_URL}/apiFood/deleteFood/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
     if (!res.ok) {
       Alerts.showToastCloseError(

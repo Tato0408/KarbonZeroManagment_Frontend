@@ -5,7 +5,8 @@ import * as Alerts from "../../../utils/alerts";
 export async function getCarSize(page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiCar/getAllCarSize?page=${page}&size=${size}`
+      `${API_URL}/apiCar/getAllCarSize?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     //Evaluación de respuesta
     if (!response.ok) {
@@ -21,9 +22,9 @@ export async function getCarSize(page = 0, size = 10) {
 
 export async function getCarSizeById(id) {
   try {
-    const response = await fetch(
-      `${API_URL}/apiCar/getCarSizeById/${id}`
-    );
+    const response = await fetch(`${API_URL}/apiCar/getCarSizeById/${id}`, {
+      credentials: "include",
+    });
     //Se guarda la respuesta en una variable al ser solamente uno
     const res = await response.json();
     if (!response.ok) {
@@ -40,7 +41,8 @@ export async function getCarByName(searchName, page = 0, size = 10) {
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     const response = await fetch(
-      `${API_URL}/apiCar/getCarSizeByName/${searchName}?page=${page}&size=${size}`
+      `${API_URL}/apiCar/getCarSizeByName/${searchName}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
     if (!response.ok) {
@@ -61,6 +63,7 @@ export async function insertCarSize(playload) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(playload),
+      credentials: "include",
     });
     const data = await response.json();
 
@@ -91,6 +94,7 @@ export async function updateCarSize(playload, id) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(playload),
+        credentials: "include",
       }
     );
     const data = await response.json();
@@ -127,10 +131,10 @@ export async function deleteCarSize(id) {
   }
 
   try {
-    const res = await fetch(
-      `${API_URL}/apiCar/deleteCarSize/${id}`,
-      { method: "DELETE" }
-    );
+    const res = await fetch(`${API_URL}/apiCar/deleteCarSize/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
     if (!res.ok) {
       Alerts.showToastCloseError(
         "No ha sido posible eliminar el tamaño de carro",

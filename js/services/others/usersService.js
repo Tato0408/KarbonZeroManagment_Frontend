@@ -5,7 +5,8 @@ import * as Alerts from "../../../utils/alerts.js";
 export async function getAdmins(page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiUser/getAllUsersWithStatus/${1}?page=${page}&size=${size}`
+      `${API_URL}/apiUser/getAllUsersWithStatus/${1}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!response.ok) {
       throw new Error(`Error cargando los administradores: ${response.status}`);
@@ -20,7 +21,8 @@ export async function getAdmins(page = 0, size = 10) {
 export async function getUsers(page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiUser/getAllUsersWithStatus/${0}?page=${page}&size=${size}`
+      `${API_URL}/apiUser/getAllUsersWithStatus/${0}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!response.ok) {
       throw new Error(`Error cargando los usuarios: ${response.status}`);
@@ -35,7 +37,8 @@ export async function getUsers(page = 0, size = 10) {
 export async function getAdminsByName(name, page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiUser/getAdminsByName/${name}?page=${page}&size=${size}`
+      `${API_URL}/apiUser/getAdminsByName/${name}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!response.ok) {
       throw new Error(`Error cargando los administradores: ${response.status}`);
@@ -50,7 +53,8 @@ export async function getAdminsByName(name, page = 0, size = 10) {
 export async function getUsersByName(name, page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiUser/getUsersByName/${name}?page=${page}&size=${size}`
+      `${API_URL}/apiUser/getUsersByName/${name}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!response.ok) {
       throw new Error(`Error cargando los usuarios: ${response.status}`);
@@ -64,7 +68,9 @@ export async function getUsersByName(name, page = 0, size = 10) {
 
 export async function getAdminById(id) {
   try {
-    const response = await fetch(`${API_URL}/apiUser/getAdminById/${id}`);
+    const response = await fetch(`${API_URL}/apiUser/getAdminById/${id}`, {
+      credentials: "include",
+    });
     if (!response.ok) {
       throw new Error(`Error cargando el administrador: ${response.status}`);
     }
@@ -81,6 +87,7 @@ export async function insertUser(payload) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      credentials: "include",
     });
     const data = await response.json();
 
@@ -104,6 +111,7 @@ export async function updateUser(id, payload) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      credentials: "include",
     });
     const data = await response.json();
 
@@ -138,6 +146,7 @@ export async function deleteUser(id) {
   try {
     const res = await fetch(`${API_URL}/apiUser/deleteUser/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
     if (!res.ok) {
       Alerts.showToastCloseError(

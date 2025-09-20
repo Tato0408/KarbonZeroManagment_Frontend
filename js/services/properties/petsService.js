@@ -4,7 +4,8 @@ import * as Alerts from "../../../utils/alerts";
 export async function getPets(page = 0, size = 10) {
   try {
     const res = await fetch(
-      `${API_URL}/apiPet/getAllPetType?page=${page}&size=${size}`
+      `${API_URL}/apiPet/getAllPetType?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!res.ok) throw new Error(`Error al cargar mascotas: ${res.status}`);
     const data = await res.json();
@@ -24,9 +25,9 @@ export async function getPets(page = 0, size = 10) {
 
 export async function getPetTypeById(id) {
   try {
-    const res = await fetch(
-      `${API_URL}/apiPet/getPetTypeById/${id}`
-    );
+    const res = await fetch(`${API_URL}/apiPet/getPetTypeById/${id}`, {
+      credentials: "include",
+    });
     if (!res.ok) throw new Error(`Error al cargar mascota: ${res.status}`);
     const data = await res.json();
     return {
@@ -43,7 +44,8 @@ export async function getPetTypeById(id) {
 export async function getPetTypeByName(searchName, page = 0, size = 10) {
   try {
     const response = await fetch(
-      `${API_URL}/apiPet/getPetTypeByName/${searchName}?page=${page}&size=${size}`
+      `${API_URL}/apiPet/getPetTypeByName/${searchName}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!response.ok) {
       throw new Error(`Error al buscar mascotas: ${response.status}`);
@@ -73,6 +75,7 @@ export async function insertPet(payload) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
+      credentials: "include",
     });
     if (!res.ok) throw new Error(`Error creando mascota: ${res.status}`);
     Alerts.showToastCloseSuccess("Mascota creada exitosamente");
@@ -90,14 +93,12 @@ export async function updatePetType(payload, id) {
       namePetType: payload.name,
       carbonFootPrint: parseFloat(payload.carbonFootprint),
     };
-    const res = await fetch(
-      `${API_URL}/apiPet/updatePetType/${id.value}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }
-    );
+    const res = await fetch(`${API_URL}/apiPet/updatePetType/${id.value}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      credentials: "include",
+    });
     if (!res.ok) throw new Error(`Error actualizando mascota: ${res.status}`);
     Alerts.showToastCloseSuccess("Mascota actualizada exitosamente");
     return { ok: true };
@@ -119,10 +120,10 @@ export async function deletePetType(id) {
   if (!result.isConfirmed) return false;
 
   try {
-    const res = await fetch(
-      `${API_URL}/apiPet/deletePetType/${id}`,
-      { method: "DELETE" }
-    );
+    const res = await fetch(`${API_URL}/apiPet/deletePetType/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
     if (!res.ok) throw new Error(`Error eliminando mascota: ${res.status}`);
     Alerts.showToastCloseSuccess("Mascota eliminada exitosamente");
     return true;

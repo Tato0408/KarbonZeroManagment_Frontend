@@ -6,9 +6,9 @@ export async function getCategories() {
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     ///!Hacemos el get, nada nuevo
-    const response = await fetch(
-      `${API_URL}/apiFood/getAllFoodCategories`
-    );
+    const response = await fetch(`${API_URL}/apiFood/getAllFoodCategories`, {
+      credentials: "include",
+    });
     ///Si esta malo pues aja, mandamos error
     if (!response.ok) {
       Alerts.showToastCloseError(
@@ -28,7 +28,8 @@ export async function getCategoriesPagination(page, size) {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     ///!Hacemos el get, nada nuevo
     const response = await fetch(
-      `${API_URL}/apiFood/getAllFoodCategoriesPagination?page=${page}&size=${size}`
+      `${API_URL}/apiFood/getAllFoodCategoriesPagination?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     ///Si esta malo pues aja, mandamos error
     if (!response.ok) {
@@ -47,7 +48,8 @@ export async function getCategoriesPagination(page, size) {
 export async function getFoodCategoryById(id) {
   try {
     const response = await fetch(
-      `${API_URL}/apiFood/getFoodCategoryById/${id}`
+      `${API_URL}/apiFood/getFoodCategoryById/${id}`,
+      { credentials: "include" }
     );
     //Se guarda la respuesta en una variable al ser solamente uno
     const res = await response.json();
@@ -65,7 +67,8 @@ export async function getCategoryByName(searchName, page = 0, size = 10) {
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     const response = await fetch(
-      `${API_URL}/apiFood/getFoodCategoryByFoodCategoryName/${searchName}?page=${page}&size=${size}`
+      `${API_URL}/apiFood/getFoodCategoryByFoodCategoryName/${searchName}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
     if (!response.ok) {
@@ -82,14 +85,12 @@ export async function getCategoryByName(searchName, page = 0, size = 10) {
 
 export async function insertFoodCategory(playload) {
   try {
-    const response = await fetch(
-      `${API_URL}/apiFood/insertFoodCategory`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(playload),
-      }
-    );
+    const response = await fetch(`${API_URL}/apiFood/insertFoodCategory`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(playload),
+      credentials: "include",
+    });
     const data = await response.json();
 
     if (response.ok) {
@@ -115,6 +116,7 @@ export async function updateFoodCategory(playload, id) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(playload),
+        credentials: "include",
       }
     );
     const data = await response.json();
@@ -152,10 +154,10 @@ export async function deleteFoodCategory(id) {
   }
 
   try {
-    const res = await fetch(
-      `${API_URL}/apiFood/deleteFoodCategory/${id}`,
-      { method: "DELETE" }
-    );
+    const res = await fetch(`${API_URL}/apiFood/deleteFoodCategory/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
     if (!res.ok) {
       Alerts.showToastCloseError(
         "No ha sido posible eliminar la categoria",

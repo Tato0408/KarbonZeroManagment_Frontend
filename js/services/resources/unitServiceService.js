@@ -5,7 +5,10 @@ import * as Alerts from '../../../utils/alerts.js'
 export async function getService(page= 0, size=10) {
     try {
         ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
-        const response = await fetch(`${API_URL}/apiService/getMeasureUnitService?page=${page}&size=${size}`);
+        const response = await fetch(
+          `${API_URL}/apiService/getMeasureUnitService?page=${page}&size=${size}`,
+          { credentials: "include" }
+        );
         ///Pues aca evaluamos si la respuesta fue buena y si no fue mandamos el error
         if (!response.ok) {
             throw new Error(`Error cargando los servicios: ${response.status}`);
@@ -20,7 +23,10 @@ export async function getService(page= 0, size=10) {
 }
 export async function getServiceById(id) {
     try {
-        const response = await fetch(`${API_URL}/apiService/getMeasureUnitServiceById/${id}`);
+        const response = await fetch(
+          `${API_URL}/apiService/getMeasureUnitServiceById/${id}`,
+          { credentials: "include" }
+        );
         const u = await response.json();
         if (!response.ok) {
             throw new Error(`Error cargando los servicios: ${response.status}`);
@@ -39,7 +45,8 @@ export async function getAllMeasureUnitServiceByName(
   try {
     ///Hacemos la peticion a nuestra api/ API_URL esta definida en .env.local ahorita es = localhost:8080/
     const response = await fetch(
-      `${API_URL}/apiService/getMeasureUnitServiceByName/${searchName}?page=${currentPage}&size=${currentSize}`
+      `${API_URL}/apiService/getMeasureUnitServiceByName/${searchName}?page=${currentPage}&size=${currentSize}`,
+      { credentials: "include" }
     );
     ///Si esta malo pues aja, mandamos error
     if (!response.ok) {
@@ -54,11 +61,15 @@ export async function getAllMeasureUnitServiceByName(
 }
 export async function insertService(payload) {
     try {
-        const response = await fetch(`${API_URL}/apiService/insertMeasureUnitService`,  {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        const response = await fetch(
+          `${API_URL}/apiService/insertMeasureUnitService`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            credentials: "include",
+          }
+        );
 
         const data = await response.json();
 
@@ -75,11 +86,15 @@ export async function insertService(payload) {
 }
 export async function updateService(payload, id) {
     try {
-        const response = await fetch(`${API_URL}/apiService/updateMeasureUnitService/${id.value}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        const response = await fetch(
+          `${API_URL}/apiService/updateMeasureUnitService/${id.value}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            credentials: "include",
+          }
+        );
         const data = await response.json().catch(() => null);
 
         if (response.ok) {
@@ -106,7 +121,10 @@ export async function deleteService(id) {
         return false;
     }
     try {
-        const resp = await fetch(`${API_URL}/apiService/deleteMeasureUnitService/${id}`, { method: 'DELETE' });
+        const resp = await fetch(
+          `${API_URL}/apiService/deleteMeasureUnitService/${id}`,
+          { method: "DELETE", credentials: "include" }
+        );
         if (!resp.ok) {
             Alerts.showToastCloseError("No se pudo eliminar el servicio");
             return false;

@@ -5,7 +5,8 @@ import * as Alerts from "../../../utils/alerts.js";
 export async function getMeasure(page = 0, size = 10) {
   try {
     const res = await fetch(
-      `${API_URL}/apiMeasure/getAllMeasures?page=${page}&size=${size}`
+      `${API_URL}/apiMeasure/getAllMeasures?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!res.ok) throw new Error(`Error cargando medidas: ${res.status}`);
     const data = await res.json();
@@ -23,7 +24,9 @@ export async function getMeasure(page = 0, size = 10) {
 // Obtener medida por id
 export async function getMeasureById(id) {
   try {
-    const res = await fetch(`${API_URL}/apiMeasure/getMeasureById/${id}`);
+    const res = await fetch(`${API_URL}/apiMeasure/getMeasureById/${id}`, {
+      credentials: "include",
+    });
     if (!res.ok) throw new Error(`Error cargando medida: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -37,7 +40,8 @@ export async function getMeasureByName(searchName, page = 0, size = 10) {
     const response = await fetch(
       `${API_URL}/apiMeasure/getMeasureByName/${encodeURIComponent(
         searchName
-      )}?page=${page}&size=${size}`
+      )}?page=${page}&size=${size}`,
+      { credentials: "include" }
     );
     if (!response.ok)
       throw new Error(`Error al buscar medidas: ${response.status}`);
@@ -60,6 +64,7 @@ export async function insertMeasure(payload) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      credentials: "include",
     });
     const data = await res.json();
     res.ok
@@ -79,6 +84,7 @@ export async function updateMeasure(id, payload) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      credentials: "include",
     });
     const data = await res.json();
     res.ok
@@ -112,6 +118,7 @@ export async function deleteMeasure(id) {
 
     const res = await fetch(`${API_URL}/apiMeasure/deleteMeasure/${id}`, {
       method: "DELETE",
+      credentials: "include",
     });
     if (!res.ok) {
       const text = await res.text(); // capturar mensaje de error del backend
