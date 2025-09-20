@@ -65,6 +65,7 @@ export async function insertCompany(payload) {
             Alerts.showToastCloseSuccess("Compañia creado exitosamente");
         } else {
             Alerts.showToastCloseError(`Error creando la compañia ${response.status}`);
+            return { ok: false, data: null };
         }
         return { ok: true, data };
     } catch (err) {
@@ -86,6 +87,7 @@ export async function updateCompany(payload, id) {
             Alerts.showToastCloseSuccess("Compañia actualizado exitosamente");
         } else {
             Alerts.showToastCloseError(`Error actualizando la compañia`);
+            return { ok: false, data: null };
         }
         return { ok: true, data };
     } catch (err) {
