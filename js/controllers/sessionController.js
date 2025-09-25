@@ -5,6 +5,11 @@ export const auth = {
     user: null
 }
 
+export async function isAuth() {
+    const res = await me();
+    return res.ok;
+}
+
 // Funcion que redirigira al usuario al login si no está autenticado, servirá para darle una capa de seguridad a los pages que lo necesiten
 export async function  requiredAuth(redirect = true) {
     try {

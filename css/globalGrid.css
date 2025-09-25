@@ -89,7 +89,7 @@
 }
 
 .btn-success.me-1,
-.btn-danger {
+.btn-danger,.btn-warning {
     border-radius: 50%;
     width: 32px;
     height: 32px;
@@ -108,6 +108,17 @@
 .btn-danger:hover {
     background: #ffcccc;
     color: #c0392b;
+}
+
+.btn-warning {
+    background: #fff1cc;
+    color: #f0940a;
+    border: none;
+}
+
+.btn-warning:hover {
+    background: #fff1cc;
+    color: #f0940a;
 }
 
 .btn-success.me-1 {
