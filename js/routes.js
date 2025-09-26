@@ -1,3 +1,5 @@
+import {isAuth} from "./controllers/sessionController.js"
+
 const routes = {
   channel: () => import("../js/pages/channelPage.js"),
   measures: () => import("../js/pages/measuresPage.js"),
@@ -12,6 +14,13 @@ const routes = {
   users: () => import("../js/pages/others/usersPage.js")
 };
 export async function startRouter() {
+    window.addEventListener("pageshow", async (e) => {
+        const auth = await isAuth();
+        if (!auth) {
+            window.location.href = "login.html";
+        } 
+    });
+
     const routeName = location.hash.slice(1) || 'channel';
     const app = document.getElementById('app');
     const viewLoader = routes[routeName];

@@ -1,5 +1,7 @@
 import * as UserService from "../../../services/others/usersService.js"
 import * as Alerts from '../../../../utils/alerts.js'
+import {me} from "../../../services/authService.js"
+
 
 //Metodo de inicio que se llama en el foodPage.js
 export async function init(container) {
@@ -64,6 +66,28 @@ async function renderData(container) {
     reload(container);
   });
 
+  // Aca definimos que hace el botón de eliminar
+  container.addEventListener("click", async e => {
+    const btn = e.target.closest(".btn-ban-admin");
+    if (!btn) return;
+    const id = btn.dataset.id;
+
+    let ok;
+    if (btn.dataset.disabled == 0) {
+        const user = await me();
+
+        if (user.data.idUser == btn.dataset.id) {
+          Alerts.showToastCloseInfo("No se puede bloquear a usted mismo");
+          return;
+        }
+        ok = await UserService.banUser(id);
+    } else {
+        ok = await UserService.unbanUser(id);
+    }
+
+    if (ok) await reload(container);
+  })
+
   //Aca definimos que hace el botón de eliminar
   container.addEventListener('click', async e => {
     const btn = e.target.closest('.btn-delete-admin');
@@ -111,6 +135,7 @@ export function LoadTable(admins, tab) {
                 <th>Nombre</th>
                 <th>Apellido</th>
                 <th>Correo</th>
+                <th>Estado</th>
                 <th>País</th>
                 <th>Acciones</th>
             </tr>
@@ -119,17 +144,21 @@ export function LoadTable(admins, tab) {
             ${admins
               .map(
                 (u, i) => `
-              <tr>
+              <tr ${u.disabled == 1 ? 'class="table-secondary"' : ''}>
                 <td>${baseIndex + i + 1}</td>
                 <td>${u.userName}</td>
                 <td>${u.firstName}</td>
                 <td>${u.lastName}</td>
                 <td>${u.email}</td>
+                <td>${u.disabled == 1 ? "Bloqueado" : "Activo"}</td>
                 <td>${u.countryName}</td>
                 <td>
                     <button class="btn btn-sm btn-success me-1 btn-edit-admin" data-id="${
                       u.idUser
                     }" data-bs-toggle="modal" data-bs-target="#usersModal"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="btn btn-sm btn-warning btn-ban-admin me-1" data-disabled="${u.disabled}" data-id="${
+                      u.idUser
+                    }"><i class="bi bi-person-fill-slash"></i></button>
                     <button class="btn btn-sm btn-danger btn-delete-admin" data-id="${
                       u.idUser
                     }"><i class="bi bi-trash-fill"></i></button>

@@ -161,3 +161,74 @@ export async function deleteUser(id) {
     Alerts.showToastCloseError("No ha sido posible eliminar el usuario", err);
   }
 }
+export async function banUser(id) {
+  const result = await Swal.fire({
+    title: "¿Estás seguro de bloquear este usuario?",
+    showDenyButton: true,
+    confirmButtonText: "Bloquear",
+    confirmButtonColor: "#DF4646",
+    denyButtonColor: "#6d6c6c",
+    denyButtonText: "Cancelar",
+  });
+
+  if (!result.isConfirmed) {
+    return false;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/apiUser/updateDisabled/${id}`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({disabled: 1})
+    });
+
+    if (!res.ok) {
+      Alerts.showToastCloseError(
+        "No ha sido posible bloquear el usuario",
+        res.status
+      );
+      return false;
+    }
+    Alerts.showToastCloseSuccess("Usuario bloqueado exitosamente");
+    return true;
+  } catch (err) {
+    Alerts.showToastCloseError("No ha sido posible bloquear el usuario", err);
+  }
+}
+
+export async function unbanUser(id) {
+  const result = await Swal.fire({
+    title: "¿Estás seguro de desbloquear este usuario?",
+    showDenyButton: true,
+    confirmButtonText: "Desbloquear",
+    confirmButtonColor: "#DF4646",
+    denyButtonColor: "#6d6c6c",
+    denyButtonText: "Cancelar",
+  });
+
+  if (!result.isConfirmed) {
+    return false;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/apiUser/updateDisabled/${id}`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({disabled: 0})
+    });
+    
+    if (!res.ok) {
+      Alerts.showToastCloseError(
+        "No ha sido posible desbloquear el usuario",
+        res.status
+      );
+      return false;
+    }
+    Alerts.showToastCloseSuccess("Usuario desbloqueado exitosamente");
+    return true;
+  } catch (err) {
+    Alerts.showToastCloseError("No ha sido posible desbloquear el usuario", err);
+  }
+}

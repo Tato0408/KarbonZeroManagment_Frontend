@@ -30,9 +30,10 @@ export async function me() {
       console.error(`Error obteniendo el usuario actual: ${response.status}`);
       return { ok: false, data: null };
     }
-    return { ok: true, data: response.json() };
+    const data = await response.json();
+    return { ok: true, data};
   } catch (err) {
-    console.error(`Error obteniendo el usuario actual: ${response.status}`);
+    console.error(`Error obteniendo el usuario actual: ${err.status}`);
     return { ok: false, data: null };
   }
 }
