@@ -38,6 +38,8 @@ export async function render() {
                         <div class="col-sm-6 d-none">
                             <label for="idtxt" class="form-label">Id</label>
                             <input id="idtxt" type="text" class="form-control">
+                            <label for="disabledtxt" class="form-label">Disabled</label>
+                            <input id="disabledtxt" type="text" class="form-control">
                         </div>
                         <div class="row g-2 mb-3">
                             <div class="col-sm-6">
@@ -64,16 +66,6 @@ export async function render() {
                                 <label for="countrySelect" class="form-label">País</label>
                                 <select id="countrySelect" class="form-select">
                                 </select>
-                            </div>
-                        </div>
-                        <div class="row g-2 mb-3">
-                            <div class="row g-2 mb-3">
-                                <label for="imagen" class="form-label">Imagen</label>
-                                <input type="file" class="form-control" id="imagen" accept="image/*">
-                            </div>
-                            <div class="row g-2 mb-3 d-flex align-items-center">
-                                <img id="preview" src="#" alt="Vista previa" class="img-thumbnail"
-                                    style="display:none; max-height: 100px;">
                             </div>
                         </div>
                         <div class="modal-footer d-flex justify-content-center">
@@ -145,6 +137,7 @@ export async function afterRender() {
   const lastnameTxt = document.querySelector("#apellidotxt");
   const userTxt = document.querySelector("#usuariotxt");
   const emailTxt = document.querySelector("#emailtxt");
+  const disabledTxt = document.querySelector("#disabledtxt")
   const countrySelect = document.querySelector("#countrySelect");
   const image = document.querySelector("#imagen");
   const adminForm = document.querySelector("#adminForm");
@@ -203,8 +196,9 @@ export async function afterRender() {
         emailTxt,
         image,
         countrySelect,
-        adminForm,
-        idTxt
+        disabledTxt,
+        idTxt,
+        adminForm
       );
     } else {
       res = await AdminController.insertAdmin(

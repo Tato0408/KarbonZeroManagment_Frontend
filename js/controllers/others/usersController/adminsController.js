@@ -106,6 +106,7 @@ async function renderData(container) {
     try {
       const admin = await UserService.getAdminById(id);
       document.getElementById("idtxt").value = admin.idUser ?? "";
+      document.getElementById("disabledtxt").value = admin.disabled ?? "";
       document.getElementById("nombretxt").value = admin.firstName ?? "";
       document.getElementById("apellidotxt").value = admin.lastName ?? "";
       document.getElementById("usuariotxt").value = admin.userName ?? "";
@@ -189,6 +190,7 @@ export async function insertAdmin(username, firstname, lastname, email, imagePat
     email: email.value.trim(),
     passwordUser: generateRandomPassword().trim(),
     status: 1,
+    disabled: 0,
     imagePath: imagePath.value.trim(),
     idCountry: idcountry.value.trim(),
   };
@@ -212,8 +214,9 @@ export async function updateAdmin(
   email,
   imagePath,
   idcountry,
-  form, 
-  id
+  disabled,
+   id,
+  form
 ) {
   const payload = {
     idUser: id.value.trim(),
@@ -223,6 +226,7 @@ export async function updateAdmin(
     email: email.value.trim(),
     passwordUser: generateRandomPassword().trim(),
     status: 1,
+    disabled: disabled.value,
     imagePath: imagePath.value.trim(),
     idCountry: idcountry.value.trim(),
   };
