@@ -1,7 +1,6 @@
 import {isAuth} from "./controllers/sessionController.js"
 
 const routes = {
-  channel: () => import("../js/pages/channelPage.js"),
   measures: () => import("../js/pages/measuresPage.js"),
   pets: () => import("../js/pages/properties/petsPage.js"),
   houses: () => import("../js/pages/properties/housesPage.js"),
@@ -21,7 +20,7 @@ export async function startRouter() {
         } 
     });
 
-    const routeName = location.hash.slice(1) || 'channel';
+    const routeName = location.hash.slice(1) || 'measures';
     const app = document.getElementById('app');
     const viewLoader = routes[routeName];
 

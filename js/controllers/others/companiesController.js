@@ -1,5 +1,5 @@
-import * as companyService from '../../services/others/companiesService.js';
-import * as Alerts from '../../../utils/alerts.js'
+import * as companyService from "../../services/others/companiesService.js";
+import * as Alerts from "../../../utils/alerts.js";
 
 export async function init(container) {
   renderData(container);
@@ -18,15 +18,19 @@ export async function reload(container) {
     const searchName = CompanyName.value.trim();
     let data;
     if (!searchName) {
-          data = await companyService.getCompanies(currentPage, currentSize);
+      data = await companyService.getCompanies(currentPage, currentSize);
     } else {
-      data = await companyService.getAllCompaniesByName(searchName, currentPage, currentSize);
+      data = await companyService.getAllCompaniesByName(
+        searchName,
+        currentPage,
+        currentSize
+      );
     }
     const company = data.content;
-    const $tabContent = container.querySelector('#tabContent');
+    const $tabContent = container.querySelector("#tabContent");
     loadCompanyTable(company, $tabContent);
     ///Llamamos a renderPagination para que siempre vaya cambiando en base a la pagina y numero en el cual se encuentre al hacer reload
-    renderPagination(data.number, data.totalPages, container);  
+    renderPagination(data.number, data.totalPages, container);
   } catch (e) {
     console.error(e);
   }
@@ -34,8 +38,8 @@ export async function reload(container) {
 
 async function renderData(container) {
   ///Variables con nuestro tabList y el contenido(nuestra tabla)
-  const $tabList = container.querySelector('#tabList');
-  const $tabContent = container.querySelector('#tabContent');
+  const $tabList = container.querySelector("#tabList");
+  const $tabContent = container.querySelector("#tabContent");
   ///Array donde se guardan los usuarios
   let company = [];
 
@@ -43,16 +47,16 @@ async function renderData(container) {
   try {
     ///traemos el json en data
     const data = await companyService.getCompanies(currentPage, currentSize);
-    ///Accedemos al content de eso 
+    ///Accedemos al content de eso
     company = data.content;
     ///Llamamos al renderPagination para que carge cuando inicie todo
-    renderPagination(data.number, data.totalPages, container)
+    renderPagination(data.number, data.totalPages, container);
   } catch (error) {
     console.error(error);
-    return container.innerHTML = `<p class="text-danger">No se pudieron cargar las compañias.</p>`;
+    return (container.innerHTML = `<p class="text-danger">No se pudieron cargar las compañias.</p>`);
   }
 
-  ///Aca definimos nuestros tabs y de igual forma a donde estan dirigidos, puedes definir varios en page, y cada uno debe tener su div con ru ID 
+  ///Aca definimos nuestros tabs y de igual forma a donde estan dirigidos, puedes definir varios en page, y cada uno debe tener su div con ru ID
   $tabList.innerHTML = `
         <li class="nav-item d-flex">
             <a class="nav-link active" data-bs-toggle="tab" href="#compañia">Compañia</a>
@@ -69,8 +73,8 @@ async function renderData(container) {
   });
 
   ///Aca definimos que hace nuestro boton de eliminar
-  container.addEventListener('click', async e => {
-    const btn = e.target.closest('.btn-delete-company');
+  container.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".btn-delete-company");
     if (!btn) return;
     const id = btn.dataset.id;
     const ok = await companyService.deleteCompany(id);
@@ -78,18 +82,36 @@ async function renderData(container) {
     if (ok) await reload(container);
   });
 
+  container.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".btn-see-key");
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const res = await companyService.getApiKey(id);
+    ///En caso de que nos devuelva un true recargamos
+    if (res.ok) {
+      await Swal.fire({
+        title: `El apiKey de la compañia es:`,
+        text: `${res.data.apiKey}`,
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#016045",
+      });
+    }
+  });
+
   ///Aca lo que hacemos es llenar el formulario de editar, puesto que eso es lo que hace el boton, abrir con datos, quien se encarga de enviar el PUT es en page
-  container.addEventListener('click', async e => {
-    const editBtn = e.target.closest('.btn-edit-company');
+  container.addEventListener("click", async (e) => {
+    const editBtn = e.target.closest(".btn-edit-company");
     if (!editBtn) return;
     const id = editBtn.dataset.id;
     try {
       const company = await companyService.getCompaniesById(id);
-      document.getElementById('idtxt').value = company.idCompany ?? '';
-      document.getElementById('nombretxt').value = company.name ?? '';
-      document.getElementById('dominiotxt').value = company.domain ?? '';
+      document.getElementById("idtxt").value = company.idCompany ?? "";
+      document.getElementById("nombretxt").value = company.name ?? "";
+      document.getElementById("backendtxt").value = company.backendDomain ?? "";
+      document.getElementById("frontendtxt").value =
+        company.frontendDomain ?? "";
     } catch (err) {
-      Alerts.showToastCloseError('No se pudo cargar la Compañia');
+      Alerts.showToastCloseError("No se pudo cargar la Compañia");
       console.error(err);
     }
   });
@@ -107,7 +129,8 @@ export function loadCompanyTable(company, tab) {
             <tr>
                 <th>#</th>
                 <th>Nombre</th>
-                <th>Dominio</th>
+                <th>Dominio Backend</th>
+                <th>Dominio Frontend</th>
                 <th>Acciones</th>
             </tr>
           </thead>
@@ -118,11 +141,15 @@ export function loadCompanyTable(company, tab) {
               <tr>
                 <td>${baseIndex + i + 1}</td>
                 <td>${c.name}</td>
-                <td>${c.domain}</td>
+                <td>${c.backendDomain}</td>
+                <td>${c.frontendDomain}</td>
                 <td>
                     <button class="btn btn-sm btn-success me-1 btn-edit-company" data-id="${
                       c.idCompany
                     }" data-bs-toggle="modal" data-bs-target="#CompanyModal"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="btn btn-sm btn-warning btn-see-key me-1" data-id="${
+                      c.idCompany
+                    }"><i class="bi bi-eye-fill"></i></button>
                     <button class="btn btn-sm btn-danger btn-delete-company" data-id="${
                       c.idCompany
                     }"><i class="bi bi-trash-fill"></i></button>
@@ -136,11 +163,13 @@ export function loadCompanyTable(company, tab) {
     </div>`;
 }
 
-export async function insertCompany(nametxt, domaintxt, form) {
+export async function insertCompany(nametxt, backendtxt, frontendtxt, form) {
   const payload = {
     name: nametxt.value.trim(),
-    domain: domaintxt.value.trim()
-  }
+    backendDomain: backendtxt.value.trim(),
+    frontendDomain: frontendtxt.value.trim(),
+    apiKey: generateRandomPassword().trim(),
+  };
   try {
     const res = await companyService.insertCompany(payload);
     form.reset();
@@ -152,11 +181,18 @@ export async function insertCompany(nametxt, domaintxt, form) {
   }
 }
 
-export async function updateCompany(nametxt, domaintxt, form, id) {
+export async function updateCompany(
+  nametxt,
+  backendtxt,
+  frontendtxt,
+  form,
+  id
+) {
   const payload = {
     name: nametxt.value.trim(),
-    domain: domaintxt.value.trim()
-  }
+    backendDomain: backendtxt.value.trim(),
+    frontendDomain: frontendtxt.value.trim(),
+  };
   try {
     ///Hacemos la peticion
     const res = await companyService.updateCompany(payload, id);
@@ -173,8 +209,7 @@ export function renderPagination(current, totalPages, container) {
   ///Aca accedemos a nuestro ul de pagination
   const pagination = document.getElementById("companyPagination");
   if (!pagination) return;
-  pagination.innerHTML = "";///Limpiamos la paginacion previa
-
+  pagination.innerHTML = ""; ///Limpiamos la paginacion previa
 
   ///Este es el boton para ir en retroseso
   const prev = document.createElement("li");
@@ -186,7 +221,7 @@ export function renderPagination(current, totalPages, container) {
   prev.addEventListener("click", (e) => {
     e.preventDefault();
     if (current > 0) {
-      currentPage = current - 1;///Retrocede una pagina
+      currentPage = current - 1; ///Retrocede una pagina
       ///Hacemos reload
       reload(container);
     }
@@ -217,7 +252,7 @@ export function renderPagination(current, totalPages, container) {
   next.addEventListener("click", (e) => {
     e.preventDefault();
     if (current < totalPages - 1) {
-      currentPage = current + 1;///Avanza una pagina
+      currentPage = current + 1; ///Avanza una pagina
       reload(container);
     }
   });
@@ -226,4 +261,15 @@ export function renderPagination(current, totalPages, container) {
 
 export async function setCurrentPage(page) {
   currentPage = page;
+}
+
+function generateRandomPassword(length = 25) {
+  const charset =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz" + "0123456789";
+  let password = "";
+  for (let i = 0; i < length; i++) {
+    const randIndex = Math.floor(Math.random() * charset.length);
+    password += charset[randIndex];
+  }
+  return password;
 }

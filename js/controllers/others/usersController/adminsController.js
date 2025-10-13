@@ -305,6 +305,5 @@ function generateRandomPassword(length = 8) {
     const randIndex = Math.floor(Math.random() * charset.length);
     password += charset[randIndex];
   }
-  let castPassword = toString(password);
-  return castPassword;
+  return password;
 }
