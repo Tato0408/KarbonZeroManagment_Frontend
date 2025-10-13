@@ -12,23 +12,47 @@ const routes = {
   transport: () => import("../js/pages/others/transportationPage.js"),
   users: () => import("../js/pages/others/usersPage.js")
 };
+
+
 export async function startRouter() {
-    window.addEventListener("pageshow", async (e) => {
-        const auth = await isAuth();
-        if (!auth) {
-            window.location.href = "login.html";
-        } 
-    });
+  const guard = async () => {
+    const ok = await isAuth();
+    if (!ok) window.location.replace('/login.html');
+    return ok;
+  };
 
+  const render = async () => {
     const routeName = location.hash.slice(1) || 'measures';
-    const app = document.getElementById('app');
     const viewLoader = routes[routeName];
+    const app = document.getElementById('app');
 
-    if (viewLoader) {
-        const module = await viewLoader();
-        app.innerHTML = await module.render();
-        if (module.afterRender) module.afterRender();
-    } else {
-        app.innerHTML = `<h1>404 Página no encontrada</h1>`;
+    if (!viewLoader) {
+      app.innerHTML = `
+        <section class="d-flex align-items-center min-vh-100 py-5">
+          <div class="container py-5">
+            <div class="row align-items-center">
+              <div class="col-md-6 order-md-2">
+                <img class="img-fluid" src="/imgs/BoredParrot.png" alt="">
+              </div>
+              <div class="col-md-6 text-center text-md-start">
+                <h1 class="display-1 fw-bold text-success">Error 404</h1>
+                <p class="rfs-11 fw-light">La página que buscas fue movida, eliminada o nunca existió.</p>
+              </div>
+            </div>
+          </div>
+        </section>`;
+      return;
     }
+
+    const module = await viewLoader();
+    app.innerHTML = await module.render();
+    if (module.afterRender) module.afterRender();
+  };
+
+  window.addEventListener('pageshow', guard);
+  window.addEventListener('hashchange', async () => {
+    if (await guard()) await render();
+  });
+
+  if (await guard()) await render();
 }
