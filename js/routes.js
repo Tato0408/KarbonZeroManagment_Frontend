@@ -26,7 +26,7 @@ export async function startRouter() {
 
   // 2) Render de la vista actual
   const render = async () => {
-    const routeName = (location.hash || '#measures').slice(1);
+    const routeName = (location.hash || 'measures').slice(1);
     const loader = routes[routeName];
 
     if (!loader) {
