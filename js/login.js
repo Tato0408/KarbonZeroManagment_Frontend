@@ -4,7 +4,7 @@ import {me, login} from "./services/authService.js"
 document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("login");
     const email_input = document.getElementById("usuariotxt");
-    const password_input = document.getElementById("contraseñatxt");
+    const password_input = document.getElementById("contraseniatxt");
     const hide_password = document.getElementById("hide-password");
     const icon = hide_password.getElementsByTagName("i")[0];
 
