@@ -36,6 +36,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             await login(email, password);
             const info = await me();
+            if(info.data.status === 0 || info.data.disabled === 1){
+                Alerts.showToastCloseError("No tienes los permisos para ingresar al sistema")
+                return;
+            }
             if (info.ok) {
                 window.location.href = "index.html";
             } else {
