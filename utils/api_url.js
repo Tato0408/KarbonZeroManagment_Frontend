@@ -1,1 +1,1 @@
-export const APIURL = "https://karbonzeroadmin-24b8bbe283f7.herokuapp.com"
+export const APIURL = "https://karbonzero-management-14fb5e6b8dab.herokuapp.com"

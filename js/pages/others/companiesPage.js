@@ -1,9 +1,9 @@
-import * as CompanyController from '../../controllers/others/companiesController';
+import * as CompanyController from "../../controllers/others/companiesController";
 import * as Alerts from "../../../utils/alerts.js";
 import * as Validations from "../../../utils/validations.js";
 
 export async function render() {
-    return `
+  return `
 <div class="container py-4" id="company-root">
     <h2 class="general-title">
         Compañias
@@ -36,13 +36,19 @@ export async function render() {
                                 <label for="idtxt" class="form-label">id</label>
                                 <input id="idtxt" type="text" class="form-control" placeholder="id">
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <label for="nombretxt" class="form-label">Nombre</label>
                                 <input id="nombretxt" required type="text" class="form-control" required placeholder="Nombre">
                             </div>
+                        </div>
+                        <div class="row g-2 mb-3">
                             <div class="col-sm-6">
-                                <label for="dominiotxt" class="form-label">Dominio</label>
-                                <input id="dominiotxt" required type="text" class="form-control" required placeholder="Dominio">
+                                <label for="backendtxt" class="form-label">Dominio del Backend</label>
+                                <input id="backendtxt" required type="text" class="form-control" required placeholder="Dominio del Backend">
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="frontendtxt" class="form-label">Dominio del Frontend</label>
+                                <input id="frontendtxt" required type="text" class="form-control" required placeholder="Dominio del Frontend">
                             </div>
                         </div>
                     </div>
@@ -78,16 +84,17 @@ export async function render() {
   `;
 }
 export function afterRender() {
-  const container = document.getElementById('company-root');
+  const container = document.getElementById("company-root");
   CompanyController.init(container);
 
-  const addCompanyBtn = document.querySelector('#addCompany-kz');
-  const nametxt = document.querySelector('#nombretxt');
-  const domaintxt = document.querySelector('#dominiotxt');
-  const CompanyForm = document.querySelector('#CompanyForm');
-  const modalEl = document.getElementById('CompanyModal')
-  const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl)
-  const idHideen = document.querySelector('#idtxt');
+  const addCompanyBtn = document.querySelector("#addCompany-kz");
+  const nametxt = document.querySelector("#nombretxt");
+  const backendtxt = document.querySelector("#backendtxt");
+  const frontendtxt = document.querySelector("#frontendtxt");
+  const CompanyForm = document.querySelector("#CompanyForm");
+  const modalEl = document.getElementById("CompanyModal");
+  const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  const idHideen = document.querySelector("#idtxt");
 
   const companySearch = document.querySelector("#CompanySearch");
 
@@ -103,51 +110,61 @@ export function afterRender() {
   });
 
   if (addCompanyBtn) {
-    addCompanyBtn.addEventListener('click', () => {
-      idHideen.value = '';
-      nametxt.value = '';
-      domaintxt.value = '';
-      });
+    addCompanyBtn.addEventListener("click", () => {
+      idHideen.value = "";
+      nametxt.value = "";
+      backendtxt.value = "";
+      frontendtxt.value = "";
+    });
   }
 
   nametxt.addEventListener("keypress", (e) => Validations.textValidation(e));
-  domaintxt.addEventListener("keypress", (e) => Validations.domainValidation(e));
+  backendtxt.addEventListener("keypress", (e) =>
+    Validations.domainValidation(e)
+  );
+  frontendtxt.addEventListener("keypress", (e) =>
+    Validations.domainValidation(e)
+  );
 
   let isLoading = false;
-  CompanyForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
+  CompanyForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  if (!nametxt.value.trim()) {
-    Alerts.showToastCloseError("El nombre de la compañia no puede ser nulo");
-    return;
-  }
-  if (!domaintxt.value.trim()) {
-    Alerts.showToastCloseError("El dominio de la compañia no puede ser nulo");
-    return;
-  }
+    if (!nametxt.value.trim()) {
+      Alerts.showToastCloseError("El nombre de la compañia no puede ser nulo");
+      return;
+    }
+    if (!backendtxt.value.trim() || !frontendtxt.value.trim()) {
+      Alerts.showToastCloseError("Los dominios de la compañia son obligatorios");
+      return;
+    }
 
-  const regex = /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?/
-  
-  if (!regex.test(domaintxt.value.trim())) {
-    Alerts.showToastCloseError("El dominio debe tener una estructura válida");
-    return;
-  }
+    if (isLoading) return;
+    isLoading = true;
+    let res;
+    if (idHideen.value) {
+      res = await CompanyController.updateCompany(
+        nametxt,
+        backendtxt,
+        frontendtxt,
+        CompanyForm,
+        idHideen
+      );
+    } else {
+      res = await CompanyController.insertCompany(
+        nametxt,
+        backendtxt,
+        frontendtxt,
+        CompanyForm
+      );
+    }
 
-  if (isLoading) return;
-  isLoading = true;
-  let res;
-  if (idHideen.value) {
-    res = await CompanyController.updateCompany(nametxt, domaintxt, CompanyForm, idHideen);
-  } else {
-    res = await CompanyController.insertCompany(nametxt, domaintxt, CompanyForm);
-  }
-
-  bsModal.hide();
-  isLoading = false;
-  idHideen.value = '';
-  ///Si la respueta que nos retorna ya sea updateUser o insertUser es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
-  if (res?.ok) {
-    await CompanyController.reload(container);
-  }
+    bsModal.hide();
+    isLoading = false;
+    idHideen.value = "";
+    ///Si la respueta que nos retorna ya sea updateUser o insertUser es ok en positivo, pues hacemos el reload, como da la respuesta lo pueden ver en el metodo respectivo
+    if (res?.ok) {
+      await CompanyController.reload(container);
+    }
   });
 }
