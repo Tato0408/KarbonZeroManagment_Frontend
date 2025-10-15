@@ -10,12 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const code = codeInput.value.trim();
+    const codes = codeInput.value.trim();
     const newPassword = newPasswordInput.value.trim();
     const confirmPassword = confirmPasswordInput.value.trim();
-    const email = localStorage.getItem('recoveryEmail'); // obtenemos el correo usado
+    const emails = localStorage.getItem('recoveryEmail'); // obtenemos el correo usado
 
-    if (!code || !newPassword || !confirmPassword) {
+    if (!codes || !newPassword || !confirmPassword) {
       Alerts.showToastCloseError('Por favor, completa todos los campos.');
       return;
     }
@@ -25,9 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const payload2 = {
+        email:emails,
+        code: codes
+    };
+
     try {
       // Verificamos el código con el backend
-      const verifyRes = await verifyRecoveryCode(email, code);
+      const verifyRes = await verifyRecoveryCode(payload2);
       const verifyData = await verifyRes.json();
 
       if (!verifyRes.ok) {
