@@ -232,3 +232,48 @@ export async function unbanUser(id) {
     Alerts.showToastCloseError("No ha sido posible desbloquear el usuario", err);
   }
 }
+
+export async function putUserPassword(id, passwordUser) {
+
+  const res = await fetch(`${API_URL}/apiUser/updateUserPassword/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+    body: JSON.stringify( passwordUser ),
+  });
+  return res;
+}
+
+export async function sendRecoveryEmail(email) {
+  try {
+    const res = await fetch(`${API_URL}/apiAuth/forgotPassword`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+    return res;
+  } catch (err) {
+    Alerts.showToastCloseError("Error enviando correo de recuperación: ", err);
+    throw err;
+  }
+}
+
+export async function verifyRecoveryCode(code) {
+  try {
+    const response = await fetch(`${API_URL}/apiAuth/verifyCode`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code }),
+    });
+    return response;
+  } catch (err) {
+    Alerts.showToastCloseError("Error verificando código: ", err);
+    throw err;
+  }
+}  
