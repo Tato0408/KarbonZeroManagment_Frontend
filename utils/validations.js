@@ -8,7 +8,7 @@ export function textValidation (e) {
 
 export function emailValidation(e) {
   let char = String.fromCharCode(e.which); // la tecla presionada
-  let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ.@\s]$/; // solo letras y espacios
+  let regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9.@\s]$/; // letras, números, punto, arroba y espacios
   if (!regex.test(char)) {
     e.preventDefault(); // cancela la tecla
   }
