@@ -269,7 +269,7 @@ export async function verifyRecoveryCode(payload2) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({payload2}),
+      body: JSON.stringify(payload2),
     });
     return response;
   } catch (err) {
