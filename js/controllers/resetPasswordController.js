@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       // Verificamos el código con el backend
-      const verifyRes = await verifyRecoveryCode(code);
+      const verifyRes = await verifyRecoveryCode(email, code);
       const verifyData = await verifyRes.json();
 
       if (!verifyRes.ok) {
