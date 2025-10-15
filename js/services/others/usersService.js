@@ -262,7 +262,7 @@ export async function sendRecoveryEmail(email) {
   }
 }
 
-export async function verifyRecoveryCode(code) {
+export async function verifyRecoveryCode(payload2) {
   try {
     const response = await fetch(`${API_URL}/apiAuth/verifyCode`, {
       method: 'POST',
