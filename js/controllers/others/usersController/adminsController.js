@@ -1,6 +1,7 @@
 import * as UserService from "../../../services/others/usersService.js"
 import * as Alerts from '../../../../utils/alerts.js'
 import {me} from "../../../services/authService.js"
+import { useTransition } from "react";
 
 
 //Metodo de inicio que se llama en el foodPage.js
@@ -191,7 +192,6 @@ export async function insertAdmin(username, firstname, lastname, email, imagePat
     passwordUser: generateRandomPassword().trim(),
     status: 1,
     disabled: 0,
-    imagePath: imagePath.value.trim(),
     idCountry: idcountry.value.trim(),
   };
   try {
@@ -224,10 +224,8 @@ export async function updateAdmin(
     firstName: firstname.value.trim(),
     lastName: lastname.value.trim(),
     email: email.value.trim(),
-    passwordUser: generateRandomPassword().trim(),
     status: 1,
     disabled: disabled.value,
-    imagePath: imagePath.value.trim(),
     idCountry: idcountry.value.trim(),
   };
   try {
