@@ -1,7 +1,6 @@
 import * as UserService from "../../../services/others/usersService.js"
 import * as Alerts from '../../../../utils/alerts.js'
 import {me} from "../../../services/authService.js"
-import { useTransition } from "react";
 
 
 //Metodo de inicio que se llama en el foodPage.js
@@ -196,6 +195,7 @@ export async function insertAdmin(username, firstname, lastname, email, imagePat
   };
   try {
     const res = await UserService.insertUser(payload);
+    Alerts.showToastCloseSuccess("Usuario administrador ingresado exitosamente")
     form.reset()
     return res;
   }
@@ -230,6 +230,7 @@ export async function updateAdmin(
   };
   try {
     const res = await UserService.updateUser(idtxt.value.trim(), payload);
+    Alerts.showToastCloseSuccess("Usuario actualizado exitosamente")
     form.reset();
     return res;
   } catch (err) {
