@@ -197,6 +197,7 @@ export async function insertAdmin(username, firstname, lastname, email, imagePat
     const res = await UserService.insertUser(payload);
     if(!res.ok){
       Alerts.showToastCloseError("No fue posible ingresar el usuario administrador")
+      return;
     }
     Alerts.showToastCloseSuccess("Usuario administrador ingresado exitosamente")
     form.reset()
