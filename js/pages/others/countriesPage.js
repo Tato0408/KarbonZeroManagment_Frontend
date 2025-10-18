@@ -36,7 +36,7 @@ export async function render() {
                         <div class="row g-2 mb-3">
                             <div class="col-sm-6">
                                 <label for="nombretxt" class="form-label">Nombre</label>
-                                <input id="nombretxt" required type="text" class="form-control" placeholder="Nombre">
+                                <input id="nombretxt" required type="text" class="form-control" placeholder="Nombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" maxlength="200">
                             </div>
                             <div class="col-sm-6">
                                 <label for="huellacarbontxt" class="form-label">Huella de carbono</label>

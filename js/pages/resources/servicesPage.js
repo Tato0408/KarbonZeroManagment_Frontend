@@ -76,7 +76,7 @@ export async function render() {
                         </div>
                         <div class="mb-3">
                             <label for="servicetxt" class="form-label">Nombre</label>
-                            <input id="servicetxt" class="form-control" required type="text" placeholder="Nombre del servicio"></input>
+                            <input id="servicetxt" class="form-control" required type="text" placeholder="Nombre del servicio" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" maxlength="200"></input>
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-center">

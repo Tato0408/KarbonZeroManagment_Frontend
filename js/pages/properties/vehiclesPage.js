@@ -42,7 +42,7 @@ export async function render() {
                             <div class="row g-2 mb-3">
                                 <div class="col-sm-12">
                                     <label for="nombretxt" class="form-label">Nombre</label>
-                                    <input id="nombretxt" required type="text" class="form-control" placeholder="Nombre">
+                                    <input id="nombretxt" required type="text" class="form-control" placeholder="Nombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" maxlength="200">
                                 </div>
 
                                 <div class="col-sm-12 d-none">
@@ -73,7 +73,7 @@ export async function render() {
                             <div class="row g-2 mb-3">
                                 <div class="col-sm-6">
                                     <label for="nombretxtFuel" class="form-label">Nombre</label>
-                                    <input id="nombretxtFuel" required type="text" class="form-control" placeholder="Nombre">
+                                    <input id="nombretxtFuel" required type="text" class="form-control" placeholder="Nombre" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" maxlength="200">
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="huellatxt" class="form-label">Huella de Carbono</label>

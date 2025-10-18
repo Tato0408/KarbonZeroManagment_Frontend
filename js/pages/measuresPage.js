@@ -18,7 +18,7 @@ export async function render() {
                 </div>
                 <form id="MedidaForm" class="p-3">
                     <label for="nombreMedida" class="form-label">Medida</label>
-                    <input id="nombreMedida" type="text" class="form-control" placeholder="Nombre de la medida" required>
+                    <input id="nombreMedida" type="text" class="form-control" placeholder="Nombre de la medida" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" maxlength="200" required>
                     <input id="idtxt" type="text" class="form-control d-none" placeholder="id">
                     <div class="modal-footer d-flex justify-content-center gap-2 mt-3">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
@@ -43,7 +43,7 @@ export async function render() {
                     </select>
 
                     <label for="unidadTxt" class="form-label mt-3">Unidad de medida</label>
-                    <input id="unidadTxt" type="text" required class="form-control" placeholder="Unidad de medida">
+                    <input id="unidadTxt" type="text" required class="form-control" placeholder="Unidad de medida"                   pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" maxlength="200" >
 
                     <input id="idUnidad" type="text" class="form-control d-none">
 

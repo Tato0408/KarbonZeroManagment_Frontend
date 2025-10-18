@@ -22,7 +22,7 @@ export async function render() {
               <div class="row g-2 mb-3">
                 <label for="nombreAlimento" class="form-label">Nombre</label>
                 <input id="nombreAlimento" type="text" required class="form-control"
-                  placeholder="Nombre del alimento">
+                  placeholder="Nombre del alimento" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" maxlength="200">
               </div>
               <div class="row g-2 mb-3">
                 <label for="categoriaAlimento" class="form-label">Categoría</label>
@@ -55,7 +55,7 @@ export async function render() {
               <div class="row g-2 mb-3">
                 <label for="categoriaNombre" class="form-label">Nombre</label>
                 <input id="categoriaNombre" type="text" required class="form-control"
-                  placeholder="Nombre de la categoría" required>
+                  placeholder="Nombre de la categoría" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" title="Solo se permiten letras y espacios" maxlength="200" required>
               </div>
               <div class="row g-2 mb-3">
                 <label for="huellaTxt" class="form-label">Huella de carbono</label>

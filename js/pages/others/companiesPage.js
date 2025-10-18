@@ -44,11 +44,11 @@ export async function render() {
                         <div class="row g-2 mb-3">
                             <div class="col-sm-6">
                                 <label for="backendtxt" class="form-label">Dominio del Backend</label>
-                                <input id="backendtxt" required type="text" class="form-control" required placeholder="Dominio del Backend">
+                                <input id="backendtxt" required type="text" class="form-control" required placeholder="Dominio del Backend" pattern="https://.+"  title="El dominio debe incluir https://" maxlength="200">
                             </div>
                             <div class="col-sm-6">
                                 <label for="frontendtxt" class="form-label">Dominio del Frontend</label>
-                                <input id="frontendtxt" required type="text" class="form-control" required placeholder="Dominio del Frontend">
+                                <input id="frontendtxt" required type="text" class="form-control" required placeholder="Dominio del Frontend" pattern="https://.+"  title="El dominio debe incluir https:// y caracteres posterior a este" maxlength="200">
                             </div>
                         </div>
                     </div>
